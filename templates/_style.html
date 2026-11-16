@@ -283,7 +283,10 @@
   table.roster-table th{text-align:left;background:var(--navy);color:#fff;padding:7px 8px;font-size:11px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;}
   table.roster-table td{padding:7px 8px;border-bottom:1px solid var(--border);white-space:nowrap;}
   table.roster-table tr:nth-child(even){background:var(--lightgray);}
-  table.roster-table .tablewrap{overflow-x:auto;}
+  table.roster-table td.wrap-cell{white-space:normal;line-height:1.45;}
+  table.roster-table td.name-cell{vertical-align:top;}
+  table.roster-table .focus-line{color:var(--gray);margin-top:2px;}
+  .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 
   @media screen and (min-width:601px){
     .allnum-cards{display:none;}

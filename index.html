@@ -135,7 +135,6 @@
 
   <div class="step disabled" id="step2">
     <h2>2. Roster details</h2>
-    <p class="hint">Columns are matched automatically — you'll only see a mapping table below if something couldn't be matched.</p>
     <div id="mappingSummary"></div>
     <div class="mapping-wrap" id="mappingWrap">
       <table class="mapping-table" id="mappingTable"></table>
@@ -357,7 +356,7 @@ function renderMappingTable(headers, mapping, fields, missingRequired, headerRow
     wrap.classList.add("shown");
     summary.innerHTML = "";
     $("mappingError").innerHTML =
-      `<div class="alert">Missing required columns: ${missingRequired.join(", ")}. Pick them above if they exist under a different name, or re-export from GameChanger with these included.</div>`;
+      `<div class="alert">Some columns couldn't be matched automatically, so the mapping table is shown above. Missing required columns: ${missingRequired.join(", ")}. Pick them above if they exist under a different name, or re-export from GameChanger with these included.</div>`;
   } else {
     // Clean detection — collapse the table, show a one-line confirmation.
     wrap.classList.remove("shown");

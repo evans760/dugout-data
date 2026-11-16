@@ -59,18 +59,20 @@
     <div class="tablewrap">
       <table class="roster-table">
         <thead>
-          <tr><th>Player</th><th>Strength</th><th>Focus</th></tr>
+          <tr><th>Player</th><th>Strength &amp; focus</th></tr>
         </thead>
         <tbody>
           {% for s in player_summaries %}
           <tr>
-            <td>{{ s.name }}</td>
-            {% if s.no_data %}
-            <td colspan="2">Not enough at-bats yet ({{ s.pa|int }} PA) — more reps before any of this means much.</td>
-            {% else %}
-            <td>{{ s.strength_text }}</td>
-            <td>{{ s.focus_text if s.focus_text else "—" }}</td>
-            {% endif %}
+            <td class="name-cell">{{ s.name }}</td>
+            <td class="wrap-cell">
+              {% if s.no_data %}
+              Not enough at-bats yet ({{ s.pa|int }} PA) — more reps before any of this means much.
+              {% else %}
+              <div><b>Strength:</b> {{ s.strength_text }}</div>
+              <div class="focus-line">{% if s.focus_text %}{{ s.focus_text }}{% else %}<b>Focus:</b> —{% endif %}</div>
+              {% endif %}
+            </td>
           </tr>
           {% endfor %}
         </tbody>
