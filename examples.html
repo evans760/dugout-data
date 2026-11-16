@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example Reports</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme:light;
+    --primary:#00AB55;
+    --primary-dark:#007B55;
+    --primary-lighter:#E9FCD4;
+    --text-primary:#212B36;
+    --text-secondary:#637381;
+    --text-disabled:#919EAB;
+    --bg-default:#F4F6F8;
+    --bg-paper:#FFFFFF;
+    --divider:#DFE3E8;
+    --shadow-card:0 0 2px 0 rgba(145,158,171,.16),0 12px 24px -4px rgba(145,158,171,.24);
+    --radius-card:16px;
+    --radius-btn:8px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;padding:0 0 64px;font-family:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg-default);color:var(--text-primary);line-height:1.55;font-size:16px;}
+  header.hero{background:var(--text-primary);color:#fff;padding:28px 16px 22px;margin-bottom:20px;}
+  header.hero .inner{max-width:960px;margin:0 auto;}
+  header.hero h1{font-size:1.35rem;margin:0 0 6px;font-weight:700;}
+  header.hero p{margin:0;color:rgba(255,255,255,.72);font-size:0.95rem;max-width:640px;}
+  .toplink{display:inline-block;margin-bottom:14px;color:rgba(255,255,255,.8);font-size:0.88rem;font-weight:600;text-decoration:none;}
+  .toplink:hover{color:#fff;text-decoration:underline;}
+  .wrap{max-width:960px;margin:0 auto;padding:0 16px;}
+
+  .tabs{display:flex;gap:6px;background:var(--bg-paper);border:1px solid var(--divider);border-radius:12px;padding:5px;box-shadow:var(--shadow-card);position:sticky;top:8px;z-index:5;}
+  .tabs button{flex:1;border:0;background:none;font:inherit;font-weight:700;font-size:0.95rem;color:var(--text-secondary);padding:10px 8px;border-radius:var(--radius-btn);cursor:pointer;min-height:44px;}
+  .tabs button:hover{color:var(--text-primary);background:var(--bg-default);}
+  .tabs button[aria-selected="true"]{background:var(--primary);color:#fff;}
+  .tabs button:focus-visible{outline:2px solid var(--primary-dark);outline-offset:2px;}
+
+  .about{background:var(--bg-paper);border:1px solid var(--divider);border-radius:var(--radius-card);padding:16px 18px;margin:16px 0 12px;}
+  .about .who{display:inline-block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--primary-dark);background:var(--primary-lighter);border-radius:999px;padding:3px 10px;margin-bottom:8px;}
+  .about p{margin:0;color:var(--text-primary);font-size:0.95rem;}
+  .about .row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;}
+  .about .row p{flex:1 1 320px;}
+  .fullscreen{font-size:0.88rem;font-weight:700;color:var(--primary-dark);text-decoration:none;white-space:nowrap;}
+  .fullscreen:hover{text-decoration:underline;}
+
+  .frame{background:var(--bg-paper);border:1px solid var(--divider);border-radius:var(--radius-card);overflow:hidden;box-shadow:var(--shadow-card);}
+  .frame iframe{display:block;width:100%;height:900px;border:0;}
+  [role="tabpanel"][hidden]{display:none;}
+
+  .note{color:var(--text-secondary);font-size:0.85rem;text-align:center;margin:14px 0 0;}
+  .cta{text-align:center;margin-top:24px;}
+  .cta a{display:inline-block;background:var(--primary);color:#fff;font-weight:700;text-decoration:none;padding:12px 22px;border-radius:var(--radius-btn);}
+  .cta a:hover{background:var(--primary-dark);}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="inner">
+    <a class="toplink" href="./">← Back to the report generator</a>
+    <h1>What the reports look like</h1>
+    <p>Each team upload makes three kinds of report. Pick one below to see a full example.
+      These use a made-up player and team, not real kids.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="tabs" role="tablist" aria-label="Report type">
+    <button role="tab" id="tab-parent" aria-controls="panel-parent" aria-selected="true">Parent</button>
+    <button role="tab" id="tab-player" aria-controls="panel-player" aria-selected="false" tabindex="-1">Player</button>
+    <button role="tab" id="tab-coach" aria-controls="panel-coach" aria-selected="false" tabindex="-1">Coach</button>
+  </div>
+
+  <section role="tabpanel" id="panel-parent" aria-labelledby="tab-parent">
+    <div class="about">
+      <span class="who">For parents &amp; guardians · one per player</span>
+      <div class="row">
+        <p>A detailed look at one player's season: what each stat means in plain English, how the
+          player compares with the team (without naming any teammates), whether they're improving,
+          and the one thing most worth working on.</p>
+        <a class="fullscreen" href="examples/parent.html" target="_blank" rel="noopener">Open full screen ↗</a>
+      </div>
+    </div>
+    <div class="frame"><iframe data-src="examples/parent.html" title="Example parent report"></iframe></div>
+  </section>
+
+  <section role="tabpanel" id="panel-player" aria-labelledby="tab-player" hidden>
+    <div class="about">
+      <span class="who">For the player · one per player</span>
+      <div class="row">
+        <p>A shorter, encouraging version written straight to the kid. It celebrates what's going
+          well and gives one simple goal, with no comparisons to teammates.</p>
+        <a class="fullscreen" href="examples/player.html" target="_blank" rel="noopener">Open full screen ↗</a>
+      </div>
+    </div>
+    <div class="frame"><iframe data-src="examples/player.html" title="Example player report"></iframe></div>
+  </section>
+
+  <section role="tabpanel" id="panel-coach" aria-labelledby="tab-coach" hidden>
+    <div class="about">
+      <span class="who">For coaches &amp; staff only · one per team</span>
+      <div class="row">
+        <p>The whole roster on one page: each player's strength and focus, practice groups, team
+          trends, and the full stat table. It shows every player's name, so it's for staff, not
+          for sharing with families.</p>
+        <a class="fullscreen" href="examples/coach.html" target="_blank" rel="noopener">Open full screen ↗</a>
+      </div>
+    </div>
+    <div class="frame"><iframe data-src="examples/coach.html" title="Example coach summary"></iframe></div>
+  </section>
+
+  <p class="note">All examples are generated from a made-up roster. Your reports will use your team's own GameChanger stats.</p>
+  <div class="cta"><a href="./">Make reports for your team</a></div>
+</div>
+
+<script>
+(function () {
+  const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+  const names = tabs.map(t => t.id.replace("tab-", ""));
+
+  // Size each example to its full content height, so the page scrolls
+  // normally instead of a scroll box inside the page.
+  function fit(iframe) {
+    try {
+      const doc = iframe.contentDocument;
+      if (!doc || !doc.documentElement) return;
+      iframe.style.height = doc.documentElement.scrollHeight + "px";
+    } catch (e) { /* cross-origin: keep default height */ }
+  }
+  function load(panel) {
+    const iframe = panel.querySelector("iframe");
+    if (!iframe.src) {
+      iframe.addEventListener("load", () => {
+        fit(iframe);
+        try {
+          new ResizeObserver(() => fit(iframe)).observe(iframe.contentDocument.body);
+          // Web fonts load after the page; refit once they're in.
+          iframe.contentDocument.fonts && iframe.contentDocument.fonts.ready.then(() => fit(iframe));
+        } catch (e) {}
+      });
+      iframe.src = iframe.dataset.src;
+    } else {
+      fit(iframe);
+    }
+  }
+
+  function select(name, focus) {
+    tabs.forEach(t => {
+      const on = t.id === "tab-" + name;
+      t.setAttribute("aria-selected", on);
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+      if (on && focus) t.focus();
+    });
+    load(document.getElementById("panel-" + name));
+    if (location.hash !== "#" + name) history.replaceState(null, "", "#" + name);
+  }
+
+  tabs.forEach((t, i) => {
+    t.addEventListener("click", () => {
+      select(names[i]);
+      // If the reader had scrolled deep into a long example, start the new one at its top.
+      const top = document.querySelector(".tabs").parentElement.getBoundingClientRect().top + scrollY - 8;
+      if (scrollY > top) scrollTo(0, top);
+    });
+    t.addEventListener("keydown", e => {
+      let j = null;
+      if (e.key === "ArrowRight") j = (i + 1) % tabs.length;
+      if (e.key === "ArrowLeft") j = (i - 1 + tabs.length) % tabs.length;
+      if (e.key === "Home") j = 0;
+      if (e.key === "End") j = tabs.length - 1;
+      if (j !== null) { e.preventDefault(); select(names[j], true); }
+    });
+  });
+  window.addEventListener("resize", () => {
+    document.querySelectorAll('[role="tabpanel"]:not([hidden]) iframe').forEach(fit);
+  });
+
+  const start = names.includes(location.hash.slice(1)) ? location.hash.slice(1) : "parent";
+  select(start);
+})();
+</script>
+</body>
+</html>

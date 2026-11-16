@@ -63,7 +63,7 @@ CONFIG = {
     # but raise it for a league with a longer season.
     "min_pa_regular": 15,
     # Which report(s) to generate when --mode isn't passed on the CLI.
-    "output_mode": "all",  # one of: parent, player, coach, org, all
+    "output_mode": "all",  # one of: parent, player, coach, all
 }
 
 # Below this many plate appearances, a player's own parent/player report
@@ -1698,45 +1698,6 @@ def render_all(season_df: pd.DataFrame, pergame_by_player: dict, dq_flags: dict,
                 ])
         print(f"  wrote {csv_path}")
 
-    # ---- org mode: aggregate + 1-2 anonymized sample reports, no real names ----
-    if "org" in modes:
-        pa_values = [p.pa for p in all_players]
-        sample_players = [p for p in all_players if not p.below_rate_stat_floor][:2]
-        anon_samples = []
-        for i, p in enumerate(sample_players):
-            label = f"Player {chr(65 + i)}"  # Player A, Player B
-            fake = PlayerStats(**{**p.__dict__, "name": label, "number": None})
-            ctx = dict(per_player_ctx[p.name])
-            ctx["player"] = fake
-            ctx["config"] = {**config, "team_name": "Sample Team"}
-            html = env.get_template("parent.html").render(**ctx)
-            leaks = check_redaction(html, label, all_names + [label])
-            if leaks:
-                raise ReportBuildError(
-                    "REDACTION CHECK FAILED on an org-mode anonymized sample — aborting, nothing written.\n"
-                    + "\n".join(f"  contains {o} (as {v})" for o, v in leaks)
-                )
-            anon_samples.append({"label": label, "html": html})
-
-        org_ctx = {
-            "config": config,
-            "n_players_team": len(all_players),
-            "n_regulars": len(regulars),
-            "n_excluded": n_excluded,
-            "min_pa": min_pa,
-            "pa_min": min(pa_values) if pa_values else 0,
-            "pa_max": max(pa_values) if pa_values else 0,
-            "pa_median": statistics.median(pa_values) if pa_values else 0,
-            "team_ops": team_ops,
-            "dq": dq_notes,
-            "anon_samples": anon_samples,
-            "generated_date": generated_date,
-        }
-        html = env.get_template("org.html").render(**org_ctx)
-        out_path = out_dir / "org-summary.html"
-        out_path.write_text(html, encoding="utf-8")
-        print(f"  wrote {out_path}")
-
 
 # --------------------------------------------------------------------------
 # CLI
@@ -1745,7 +1706,7 @@ def render_all(season_df: pd.DataFrame, pergame_by_player: dict, dq_flags: dict,
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Generate GameChanger batting reports from a Staff CSV export.")
     parser.add_argument("csv_path", type=Path, help="Path to the GameChanger season stats export CSV.")
-    parser.add_argument("--mode", choices=["parent", "player", "coach", "org", "all"], default=None,
+    parser.add_argument("--mode", choices=["parent", "player", "coach", "all"], default=None,
                          help="Which report(s) to generate. Default: value of CONFIG['output_mode'].")
     parser.add_argument("--out", type=Path, default=Path("output"), help="Output directory (default: ./output).")
     parser.add_argument("--team-name", default=None, help="Override CONFIG['team_name'].")
@@ -1768,7 +1729,7 @@ def main(argv=None):
         config["min_pa_regular"] = args.min_pa
 
     mode = args.mode or config["output_mode"]
-    modes = ["parent", "player", "coach", "org"] if mode == "all" else [mode]
+    modes = ["parent", "player", "coach"] if mode == "all" else [mode]
 
     templates_dir = args.templates_dir or (Path(__file__).parent / "templates")
     if not templates_dir.exists():

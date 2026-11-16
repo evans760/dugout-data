@@ -28,10 +28,9 @@ CSV_PATH = WORK / "upload.csv"
 OUT_DIR = WORK / "output"
 ZIP_PATH = WORK / "batting-reports.zip"
 TEMPLATES_DIR = Path("/app/templates")
-ALLOWED_MODES = {"parent", "player", "coach", "org"}
+ALLOWED_MODES = {"parent", "player", "coach"}
 TEAM_FILE_LABELS = {
     "coach-summary.html": "Coach Summary (internal)",
-    "org-summary.html": "Org Leave-Behind",
 }
 
 STATE: dict = {}

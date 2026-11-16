@@ -48,6 +48,8 @@
   header.hero .inner{max-width:640px;margin:0 auto;}
   header.hero h1{font-size:1.35rem;margin:0 0 6px;font-weight:700;}
   header.hero p{margin:0;color:rgba(255,255,255,.72);font-size:0.95rem;}
+  .examples-btn{display:inline-block;margin-top:14px;padding:9px 16px;border:1px solid rgba(255,255,255,.4);border-radius:var(--radius-btn);color:#fff;font-weight:700;font-size:0.9rem;text-decoration:none;}
+  .examples-btn:hover{background:rgba(255,255,255,.1);border-color:#fff;}
   .step{background:var(--bg-paper);border:1px solid var(--divider);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:20px;margin-bottom:16px;opacity:1;transition:opacity .2s;}
   .step.disabled{opacity:.45;pointer-events:none;}
   .step h2{font-size:1rem;margin:0 0 4px;color:var(--text-primary);font-weight:700;}
@@ -115,6 +117,7 @@
   <div class="inner">
     <h1>Batting Report Generator</h1>
     <p>Upload a GameChanger Staff stats export. Everything runs right here in your browser — your CSV is never uploaded or sent anywhere.</p>
+    <a class="examples-btn" href="examples.html">See example reports →</a>
   </div>
 </header>
 
@@ -174,7 +177,6 @@
       <label><input type="checkbox" value="parent" checked> Parent</label>
       <label><input type="checkbox" value="player" checked> Player</label>
       <label><input type="checkbox" value="coach"> Coach (internal)</label>
-      <label><input type="checkbox" value="org"> Org leave-behind</label>
     </div>
 
     <button id="generateBtn">Generate reports</button>
@@ -198,7 +200,7 @@
 // the CSV or any results anywhere.
 (function () {
   const PY_FILES = ["py/generate_reports.py", "py/query_engine.py", "py/browser_api.py"];
-  const TEMPLATES = ["_style.html", "parent.html", "player.html", "coach.html", "org.html"];
+  const TEMPLATES = ["_style.html", "parent.html", "player.html", "coach.html"];
   const statusEl = document.getElementById("engineStatus");
   const statusText = document.getElementById("engineText");
   let blobUrls = [];

@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ava Thompson — Batting Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Palette sampled from the "Minimal Design System" component library
+     (Buttons/Cards/Chip/Notification/Table/Form PDFs) — same tokens used by
+     the web app's UI (static/index.html), so the report a coach downloads
+     matches the tool they just used. */
+  :root{
+    --navy:#212B36;
+    --blue:#00AB55;
+    --lightblue:#F9FAFB;
+    --gray:#637381;
+    --lightgray:#F4F6F8;
+    --border:#DFE3E8;
+    --text:#454F5B;
+    --success:#54D62C;
+    --success-bg:#E9FCD4;
+    --success-text:#118D57;
+    --warning:#FFC107;
+    --warning-bg:#FFF7CD;
+    --warning-text:#7A4100;
+    --error:#FF4842;
+    --error-bg:#FFE7D9;
+    --error-text:#B72136;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    font-family:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    color:var(--navy);
+    background:#fff;
+    font-size:16px;
+    line-height:1.55;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:16px;}
+  img,svg{max-width:100%;}
+
+  header.hero{
+    background:linear-gradient(135deg,var(--navy),#161C24);
+    color:#fff;
+    border-radius:16px;
+    padding:18px 18px 16px;
+    margin-bottom:16px;
+  }
+  header.hero .team{font-size:13px;opacity:.75;letter-spacing:.02em;margin-bottom:2px;}
+  header.hero .name{font-size:24px;font-weight:800;margin:0 0 2px;}
+  header.hero .sub{font-size:14px;opacity:.9;}
+  header.hero .flagbox{
+    margin-top:10px;
+    background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:8px;
+    padding:9px 11px;
+    font-size:13px;
+    line-height:1.5;
+  }
+  header.hero .flagbox b{color:var(--warning);}
+
+  h2.section-title{
+    font-size:14px;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--navy);
+    margin:26px 0 10px;
+    border-bottom:2px solid var(--navy);
+    padding-bottom:5px;
+  }
+
+  .module{margin-bottom:22px;}
+
+  .lede{
+    font-size:17px;
+    line-height:1.6;
+    color:var(--navy);
+    background:var(--lightblue);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+  }
+
+  .callout{
+    background:var(--lightgray);
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:15px;
+    color:var(--text);
+    margin-bottom:12px;
+  }
+  .callout b{color:var(--navy);}
+  .callout.note{font-size:13.5px;color:var(--gray);}
+
+  /* reliability badge — sized/weighted to sit next to the number it
+     qualifies, not the smallest text on the card. See stat-num-wrap. */
+  .badge{
+    display:inline-block;
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:.02em;
+    padding:3px 10px;
+    border-radius:99px;
+    white-space:nowrap;
+    vertical-align:middle;
+  }
+  .badge.reliable{background:var(--success-bg);color:var(--success-text);}
+  .badge.partial{background:var(--warning-bg);color:var(--warning-text);}
+  .badge.noisy{background:var(--error-bg);color:var(--error-text);}
+
+  /* compact 3-chip reliability legend (replaces a full paragraph) */
+  .legend-chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .legend-compact p{font-size:14px;color:var(--text);}
+  .legend-def-list{display:flex;flex-direction:column;gap:8px;}
+  .legend-def-row{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;}
+  .legend-def-row .badge{flex-shrink:0;margin-top:1px;}
+  .legend-def-text{font-size:13.5px;color:var(--text);line-height:1.5;flex:1 1 200px;}
+
+  /* stat card */
+  .stat-card{
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px 16px;
+    margin-bottom:12px;
+  }
+  .stat-card .top-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:4px;
+  }
+  .stat-card .stat-name{font-weight:700;font-size:15px;color:var(--navy);padding-top:3px;}
+  .stat-card .stat-num-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+  .stat-card .stat-num{font-weight:800;font-size:24px;color:var(--navy);line-height:1;}
+  .stat-card .tier-line{
+    font-size:14px;
+    color:var(--text);
+    margin:6px 0 2px;
+  }
+  .stat-card .tier-line b{color:var(--blue);}
+  .stat-card .distance{
+    font-size:13.5px;
+    color:var(--gray);
+    margin-top:2px;
+  }
+  .stat-card .explain{
+    font-size:14px;
+    color:var(--text);
+    margin-top:8px;
+    padding-top:8px;
+    border-top:1px solid var(--border);
+  }
+  .stat-card .substat{
+    margin-top:8px;
+    padding-top:8px;
+    border-top:1px dashed var(--border);
+    font-size:13px;
+    color:var(--gray);
+  }
+  .stat-card .substat b{color:var(--navy);}
+
+  /* compact comparison visual, folded into a stat card rather than living
+     as its own full-width module */
+  .inline-compare{margin-top:10px;padding-top:9px;border-top:1px solid var(--border);}
+  .inline-compare .bar-bg.small{height:9px;}
+  .inline-compare .dp-track.small{height:5px;margin:5px 3px;}
+  .inline-compare .dp-dot{width:8px;height:8px;}
+  .inline-compare .dp-dot.me{width:13px;height:13px;}
+  .inline-compare-legend{
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;
+    font-size:12px;color:var(--gray);margin-top:6px;
+  }
+  .swatch{display:inline-block;vertical-align:middle;margin-right:4px;}
+  .swatch-bar{width:10px;height:10px;border-radius:2px;background:var(--blue);}
+  .swatch-marker{width:2px;height:11px;background:var(--navy);}
+  .swatch-dot-me{width:12px;height:12px;border-radius:50%;background:var(--blue);border:2px solid #007B55;}
+  .swatch-dot-other{width:8px;height:8px;border-radius:50%;background:var(--border);border:1.5px solid #cbd0d8;}
+
+  /* trend module */
+  .trend-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+  .trend-card{
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:12px 14px;
+  }
+  .trend-card .period{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--gray);font-weight:700;margin-bottom:6px;}
+  .trend-card .rowline{display:flex;justify-content:space-between;font-size:15px;padding:3px 0;}
+  .trend-card .rowline .lbl{color:var(--text);}
+  .trend-card .rowline .val{font-weight:700;color:var(--navy);}
+  .trend-chip{
+    display:inline-block;
+    margin-left:6px;
+    font-size:12px;
+    font-weight:800;
+  }
+  .trend-chip.good{color:var(--success-text);}
+  .trend-chip.bad{color:var(--error-text);}
+  .trend-chip.flat{color:var(--gray);}
+
+  /* shared bar/dot primitives — used both at full size (none currently)
+     and compact, inline inside a stat card (see .inline-compare above) */
+  .bar-bg{
+    position:relative;
+    height:18px;
+    background:var(--lightgray);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .bar-fill{
+    position:absolute;left:0;top:0;bottom:0;
+    background:var(--blue);
+    border-radius:6px 0 0 6px;
+  }
+  .bar-team-marker{
+    position:absolute;top:0;bottom:-3px;
+    width:2px;background:var(--navy);
+  }
+  .dp-track{
+    position:relative;
+    height:6px;
+    background:var(--lightgray);
+    border-radius:3px;
+    margin:0 6px;
+  }
+  .dp-dot{
+    position:absolute;
+    top:50%;
+    width:10px;height:10px;
+    background:var(--border);
+    border:1.5px solid #cbd0d8;
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+  }
+  .dp-dot.me{
+    width:16px;height:16px;
+    background:var(--blue);
+    border:2px solid #007B55;
+    z-index:2;
+  }
+
+  /* one-focus module */
+  .focus-box{
+    background:var(--navy);
+    color:#fff;
+    border-radius:14px;
+    padding:18px;
+  }
+  .focus-box .focus-kicker{font-size:12px;text-transform:uppercase;letter-spacing:.06em;opacity:.75;margin-bottom:6px;}
+  .focus-box .focus-title{font-size:19px;font-weight:800;margin-bottom:10px;line-height:1.35;}
+  .focus-box .focus-nums{
+    display:flex;gap:10px;margin:12px 0;flex-wrap:wrap;
+  }
+  .focus-box .focus-num-pill{
+    background:rgba(255,255,255,.12);
+    border-radius:10px;
+    padding:8px 12px;
+    font-size:13px;
+  }
+  .focus-box .focus-num-pill .n{font-size:20px;font-weight:800;display:block;}
+  .focus-box p{font-size:14.5px;line-height:1.6;opacity:.95;margin:8px 0 0;}
+
+  /* all-the-numbers: cards under 600px, table above */
+  .allnum-cards{display:block;}
+  .allnum-table-wrap{display:none;}
+  .allnum-card{
+    display:flex;justify-content:space-between;align-items:center;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:10px 14px;
+    margin-bottom:8px;
+    font-size:15px;
+  }
+  .allnum-card .lbl{color:var(--text);}
+  .allnum-card .val{font-weight:800;color:var(--navy);font-size:17px;}
+
+  /* roster table (coach / org modes only) */
+  table.roster-table{width:100%;border-collapse:collapse;font-size:13px;}
+  table.roster-table th{text-align:left;background:var(--navy);color:#fff;padding:7px 8px;font-size:11px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;}
+  table.roster-table td{padding:7px 8px;border-bottom:1px solid var(--border);white-space:nowrap;}
+  table.roster-table tr:nth-child(even){background:var(--lightgray);}
+  table.roster-table td.wrap-cell{white-space:normal;line-height:1.45;}
+  table.roster-table td.name-cell{vertical-align:top;}
+  table.roster-table .focus-line{color:var(--gray);margin-top:2px;}
+  .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+
+  @media screen and (min-width:601px){
+    .allnum-cards{display:none;}
+    .allnum-table-wrap{display:block;}
+    table.count-table{width:100%;border-collapse:collapse;font-size:14.5px;}
+    table.count-table th{text-align:left;background:var(--navy);color:#fff;padding:8px 10px;font-size:12px;text-transform:uppercase;letter-spacing:.03em;}
+    table.count-table td{padding:8px 10px;border-bottom:1px solid var(--border);}
+    table.count-table tr:nth-child(even){background:var(--lightgray);}
+  }
+
+  .summary-box{
+    background:var(--lightblue);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+    font-size:16px;
+    line-height:1.6;
+  }
+  .summary-box .headline{font-weight:800;color:var(--navy);font-size:17px;margin-bottom:8px;}
+
+  .statgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;}
+  .statgrid .box{border:1px solid var(--border);border-radius:10px;padding:10px 12px;}
+  .statgrid .box .n{font-size:20px;font-weight:800;color:var(--navy);display:block;}
+  .statgrid .box .lbl{font-size:12.5px;color:var(--gray);}
+  .statgrid .box .tip{font-size:12px;color:var(--gray);line-height:1.4;margin:6px 0 0;}
+
+  footer{
+    text-align:center;
+    font-size:12px;
+    color:var(--gray);
+    margin-top:26px;
+  }
+
+  @media print{
+    body{font-size:11.5px;background:#fff;color:#000;line-height:1.4;}
+    .wrap{padding:0;max-width:100%;}
+    header.hero{background:#212B36 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-radius:0;padding:12px 14px;margin-bottom:10px;}
+    header.hero .name{font-size:19px;}
+    .focus-box{background:#212B36 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:12px;}
+    .stat-card,.trend-card,.summary-box,.lede,.focus-box{break-inside:avoid;page-break-inside:avoid;}
+    .module{margin-bottom:6px;}
+    .lede{font-size:12px;padding:8px 10px;}
+    h2.section-title{font-size:10.5px;margin:8px 0 5px;padding-bottom:2px;}
+    .callout{font-size:10px;padding:6px 9px;margin-bottom:5px;}
+    .stat-card{padding:6px 10px;margin-bottom:4px;}
+    .stat-card .stat-num{font-size:17px;}
+    .badge{font-size:10px;padding:2px 7px;}
+    .legend-chips{gap:5px;}
+    .legend-def-list{gap:4px;}
+    .legend-def-text{font-size:9.5px;}
+    .stat-card .explain{font-size:10.5px;margin-top:5px;padding-top:5px;}
+    .stat-card .tier-line,.stat-card .distance{font-size:10.5px;}
+    .stat-card .substat{font-size:9.5px;margin-top:5px;padding-top:5px;}
+    .inline-compare{margin-top:5px;padding-top:5px;}
+    .inline-compare-legend{font-size:9px;margin-top:3px;}
+    .trend-grid{grid-template-columns:1fr 1fr 1fr;gap:6px;}
+    .trend-card{padding:7px 8px;}
+    .trend-card .rowline{font-size:10.5px;padding:1px 0;}
+    .trend-card .period{font-size:9px;margin-bottom:3px;}
+    .trend-chip{font-size:9.5px;margin-left:3px;}
+    .focus-box .focus-title{font-size:14px;margin-bottom:6px;}
+    .focus-box .focus-num-pill{padding:5px 8px;font-size:10px;}
+    .focus-box .focus-num-pill .n{font-size:14px;}
+    .focus-box p{font-size:10.5px;margin-top:5px;}
+    .bar-bg{height:13px;}
+    .bar-bg.small{height:7px;}
+    .statgrid .box .tip{font-size:9px;margin-top:3px;}
+    .allnum-card{padding:4px 10px;margin-bottom:3px;font-size:10.5px;}
+    .allnum-card .val{font-size:11px;}
+    .summary-box{font-size:12px;padding:10px 12px;}
+    .summary-box .headline{font-size:12.5px;margin-bottom:4px;}
+    table.roster-table{font-size:9px;}
+    footer{margin-top:10px;font-size:9px;}
+  }
+</style></head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="team">Sample Team · Generated November 16, 2026</div>
+    <div class="name">Ava Thompson</div>
+    <div class="sub">
+      66 plate appearances
+    </div>
+  </header>
+
+
+  <div class="module summary-box">
+    <div class="headline">
+A season with real strengths and one clear thing to build on.
+    </div>
+
+    Ava's clearest established strength this stretch is
+    avoiding strikeouts — that's backed by enough plate appearances to trust
+    it, not just a good week or two.
+
+
+The trend shows the player's on-base rate cooling some since earlier in the stretch — worth watching, but one stretch of games doesn't undo a season.
+
+    Going forward, the clearest
+    opportunity is strikeout rate (k%) — that's squarely within the player's
+    control, and building on it is likely to lift the rest of the numbers along
+    with it.
+
+    Everything here is meant to be read as "the player's story so far," not a final grade — youth stats swing
+    fast, and the next stretch of games can look very different.
+  </div>
+
+  <div class="module callout" style="margin-top:-6px;">
+    Quick note before any numbers: baseball writes stats like <b>.253</b> instead of a percent — just
+    read it as "25.3%," or roughly 1 out of every 4 tries. You'll see this format a lot below.
+  </div>
+
+  <h2 class="section-title">Is the Player Improving?</h2>
+  <div class="module">
+    <div class="callout">
+      The season is split into three roughly equal chunks of games — early, middle, and late — and each
+      chunk below shows the player's numbers just for that stretch (not a running season total), so you can see
+      which direction the player is heading rather than one big average that hides it. Starting with the middle
+      column, each number also has a small triangle: <span class="trend-chip good">▲</span> or
+      <span class="trend-chip bad">▼</span> shows whether it moved up or down compared to the chunk
+      before it, and the color tells you whether that direction is good — green is good, red means it's
+      worth watching, and a gray <span class="trend-chip flat">→</span> means it barely changed. (Up
+      isn't always the "good" color — for strikeout rate, for example, down is green, because striking
+      out less is the improvement.) This compares groups of several games to each other, not one game to
+      the next, and each chunk is still a small sample on its own — read it as a pattern worth watching,
+      not a verdict.
+    </div>
+    <div class="trend-grid">
+      <div class="trend-card">
+        <div class="period">Early · 5 games</div>
+        <div class="rowline"><span class="lbl">On-base %</span><span class="val">.429</span></div>
+        <div class="rowline"><span class="lbl">Strikeout rate</span><span class="val">14.3%</span></div>
+        <div class="rowline"><span class="lbl">Walk rate</span><span class="val">23.8%</span></div>
+      </div>
+      <div class="trend-card">
+        <div class="period">Mid · 5 games</div>
+        <div class="rowline"><span class="lbl">On-base %</span><span class="val">.421<span class="trend-chip flat">→</span></span></div>
+        <div class="rowline"><span class="lbl">Strikeout rate</span><span class="val">10.5%<span class="trend-chip good">▼</span></span></div>
+        <div class="rowline"><span class="lbl">Walk rate</span><span class="val">15.8%<span class="trend-chip bad">▼</span></span></div>
+      </div>
+      <div class="trend-card">
+        <div class="period">Late · 7 games</div>
+        <div class="rowline"><span class="lbl">On-base %</span><span class="val">.346<span class="trend-chip bad">▼</span></span></div>
+        <div class="rowline"><span class="lbl">Strikeout rate</span><span class="val">26.9%<span class="trend-chip bad">▲</span></span></div>
+        <div class="rowline"><span class="lbl">Walk rate</span><span class="val">7.7%<span class="trend-chip bad">▼</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">One Thing to Work On</h2>
+  <div class="module">
+    <div class="focus-box">
+      <div class="focus-kicker">Development Focus</div>
+      <div class="focus-title">
+Focus on strikeout rate (k%)      </div>
+      <div class="focus-nums">
+        <div class="focus-num-pill"><span class="n">18.2%</span>Strikeout Rate (K%) this stretch</div>
+      </div>
+      <p>
+        Strikeout Rate (K%) is the number with the clearest room to grow, and it's backed by enough plate
+        appearances to trust the signal. Already at or beyond this benchmark for the team's regulars.        This is squarely within Ava Thompson's control at the plate.
+      </p>
+    </div>
+  </div>
+
+
+  <h2 class="section-title">What the Numbers Mean</h2>
+
+  <div class="module">
+    <div class="callout legend-compact">
+      <p style="margin:0 0 8px;">
+      A stat built from only a handful of at-bats can look great or terrible just from luck. A kid who
+      gets 2 hits in the first 4 at-bats of the season isn't necessarily "a .500 hitter" — that's only 4
+      tries, and it's just as likely to have been a lucky couple of swings as a sign of real skill. The
+      more at-bats a number is built from, the more it reflects how the player actually hits, rather than one hot
+      or cold stretch. So every number below is tagged with how much to trust it yet:
+      </p>
+      <div class="legend-def-list">
+        <div class="legend-def-row">
+          <span class="badge reliable">RELIABLE</span>
+          <span class="legend-def-text">About as many chances as a full, well-attended youth season provides — enough to call this a real pattern, not a lucky or unlucky stretch. (This is a youth-season bar, not the much bigger sample pro-baseball research uses to call a stat fully “stabilized” — nobody at this level ever reaches that.)</span>
+        </div>
+        <div class="legend-def-row">
+          <span class="badge partial">PARTIAL</span>
+          <span class="legend-def-text">Getting there, but there's still some randomness mixed in. Treat it as a meaningful signal, not the final word yet.</span>
+        </div>
+        <div class="legend-def-row">
+          <span class="badge noisy">STILL SETTLING</span>
+          <span class="legend-def-text">Too few chances so far for this number to mean much on its own — one or two more games could swing it a lot. Read it as “what happened,” not “who the player is.”</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Strikeout Rate (K%)</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">18.2%</span>
+        <span class="badge reliable">RELIABLE</span>
+      </span>
+    </div>
+    <div class="explain">A strikeout happens when the batter gets three strikes before putting the ball in play — the at-bat
+      ends with no chance to reach base or drive anyone in. This is the share of the player's trips to the plate
+      that ended that way: 12 strikeouts out of 66 trips. <b>Lower is
+      better</b> — every strikeout is a plate appearance with zero chance of a positive outcome.</div>
+    <div class="tier-line">The player is <b>right around the middle</b> among the team's regular hitters.</div>
+<div class="distance">Already at or beyond this benchmark for the team's regulars.</div>  </div>
+
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Walk Rate (BB%)</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">15.2%</span>
+        <span class="badge partial">PARTIAL</span>
+      </span>
+    </div>
+    <div class="explain">A walk happens when the pitcher throws four pitches outside the strike zone before the batter
+      gets three strikes — the batter is awarded first base without needing to hit the ball at all. It rewards
+      patience: recognizing which pitches are worth swinging at. 10 walks out of
+      66 trips to the plate. <b>Higher is better</b> — every walk is a free trip to
+      first base.</div>
+    <div class="tier-line">The player is <b>above the middle</b> among the team's regular hitters.</div>
+<div class="distance">About 6 more walks over a season this length would make the player the team's best in this stat.</div>  </div>
+
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Walks per Strikeout (BB/K)</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">0.83</span>
+        <span class="badge partial">PARTIAL</span>
+      </span>
+    </div>
+    <div class="explain">This divides the two numbers above — walks by strikeouts — into one score for plate discipline: is the player
+      controlling at-bats, or getting overpowered? A value of 1.00 would mean exactly as many walks
+      as strikeouts; above 1.00 means more walks than strikeouts, which is unusual and a very good sign.
+      <b>Higher is better.</b></div>
+    <div class="tier-line">The player is <b>above the middle</b> among the team's regular hitters.</div>
+  </div>
+
+  <div class="module">
+    <div class="callout">
+      <b>AVG, OBP and SLG take more at-bats to trust than K% or BB% do</b> — batting average
+      especially, since it's the most sensitive to a handful of lucky or unlucky bounces. Ava Thompson
+      has 56 at-bats this stretch; the badge on each card below (RELIABLE / PARTIAL /
+      STILL SETTLING) says how much weight that specific number can carry at this sample size — some may
+      already be solid even if others aren't.
+      Each card below also shows a bar against the team average (team OPS this stretch:
+      .770), measured against the team's 14 "regular" hitters
+      (15+ plate appearances this stretch); 1
+      of 15 rostered players had too few plate appearances to fairly include.
+      On that bar, <b>the filled blue portion is the player's own number</b> — the further right it reaches, the
+      higher the number is — and <b>the thin black line is where the team average falls</b>. Blue past the
+      black line means the player is above the team average; blue short of it means below.
+    </div>
+  </div>
+
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Batting Average (AVG)</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">.286</span>
+        <span class="badge partial">PARTIAL</span>
+      </span>
+    </div>
+    <div class="explain">The classic baseball stat: of all the player's at-bats (trips to the plate that didn't end in a walk or hit-by-pitch),
+      what share ended in a hit — a ball put in play that let the batter reach base safely? A .253 average means
+      the player got a hit in roughly 1 out of every 4 at-bats. <b>Higher is better.</b></div>
+    <div class="tier-line">The player is <b>above the middle</b> among the team's regular hitters.</div>
+<div class="distance">7 more hits would close most of this gap.</div>    <div class="inline-compare">
+      <div class="bar-bg small">
+        <div class="bar-fill" style="width:92.6%;"></div>
+        <div class="bar-team-marker" style="left:84.3%;"></div>
+      </div>
+      <div class="inline-compare-legend">
+        <span><span class="swatch swatch-bar"></span> Player: .286</span>
+        <span><span class="swatch swatch-marker"></span> Team avg: .260</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">On-Base % (OBP)</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">.394</span>
+        <span class="badge partial">PARTIAL</span>
+      </span>
+    </div>
+    <div class="explain">Batting average only counts hits. This counts every way of reaching base safely — a hit, a walk, or
+      getting hit by a pitch — divided by all the player's trips to the plate. It's a broader, and arguably more
+      complete, measure of "how often does the player NOT make an out." <b>Higher is better.</b></div>
+    <div class="tier-line">The player is <b>above the middle</b> among the team's regular hitters.</div>
+<div class="distance">8 more times on base would close most of this gap.</div>    <div class="inline-compare">
+      <div class="bar-bg small">
+        <div class="bar-fill" style="width:92.6%;"></div>
+        <div class="bar-team-marker" style="left:82.5%;"></div>
+      </div>
+      <div class="inline-compare-legend">
+        <span><span class="swatch swatch-bar"></span> Player: .394</span>
+        <span><span class="swatch swatch-marker"></span> Team avg: .351</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Slugging % (SLG)</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">.589</span>
+        <span class="badge partial">PARTIAL</span>
+      </span>
+    </div>
+    <div class="explain">This measures power, not just contact. Instead of every hit counting the same, a single is worth 1
+      "base," a double 2, a triple 3, and a home run 4 — those are added up and divided by at-bats. A
+      hitter who mostly singles will have a slugging % close to the batting average; a hitter who racks
+      up doubles and home runs will have one noticeably higher. <b>Higher is better.</b></div>
+    <div class="tier-line">The player is <b>above the middle</b> among the team's regular hitters.</div>
+<div class="distance">2 more total bases would close most of this gap.</div>    <div class="inline-compare">
+      <div class="bar-bg small">
+        <div class="bar-fill" style="width:92.6%;"></div>
+        <div class="bar-team-marker" style="left:65.8%;"></div>
+      </div>
+      <div class="inline-compare-legend">
+        <span><span class="swatch swatch-bar"></span> Player: .589</span>
+        <span><span class="swatch swatch-marker"></span> Team avg: .419</span>
+      </div>
+    </div>
+    <div class="substat">Isolated Power (ISO): <b>.304</b> — slugging % with batting average subtracted out, so
+      singles don't count. What's left is just extra-base pop, on its own.</div>
+  </div>
+
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">OPS</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">.983</span>
+        <span class="badge partial">PARTIAL</span>
+      </span>
+    </div>
+    <div class="explain">This just adds the two numbers above — on-base % and slugging % — into one score. It's a quick
+      answer to "is this an all-around good hitter?" without checking two separate stats. There's no
+      fixed cutoff for what counts as "good" at this level, so the card below compares it to the rest of
+      the team instead of a textbook number. <b>Higher is better.</b></div>
+    <div class="tier-line">The player is <b>above the middle</b> among the team's regular hitters.</div>
+<div class="distance">A composite of the AVG/OBP/SLG gaps above — closing those closes this one too.</div>    <div class="inline-compare">
+      <div class="bar-bg small">
+        <div class="bar-fill" style="width:92.6%;"></div>
+        <div class="bar-team-marker" style="left:72.5%;"></div>
+      </div>
+      <div class="inline-compare-legend">
+        <span><span class="swatch swatch-bar"></span> Player: .983</span>
+        <span><span class="swatch swatch-marker"></span> Team avg: .770</span>
+      </div>
+    </div>
+  </div>
+
+
+  <h2 class="section-title">All the Numbers</h2>
+  <div class="module">
+    <div class="callout note" style="margin-top:0;margin-bottom:12px;">
+      Counting totals only — AVG, OBP, SLG, OPS and ISO are already shown with full context above and
+      aren't repeated here.
+    </div>
+    <div class="allnum-cards">
+      <div class="allnum-card"><span class="lbl">Plate appearances (PA)</span><span class="val">66</span></div>
+      <div class="allnum-card"><span class="lbl">At-bats (AB)</span><span class="val">56</span></div>
+      <div class="allnum-card"><span class="lbl">Hits (H)</span><span class="val">16</span></div>
+      <div class="allnum-card"><span class="lbl">Doubles</span><span class="val">6</span></div>
+      <div class="allnum-card"><span class="lbl">Triples</span><span class="val">1</span></div>
+      <div class="allnum-card"><span class="lbl">Home runs</span><span class="val">3</span></div>
+      <div class="allnum-card"><span class="lbl">Walks (BB)</span><span class="val">10</span></div>
+      <div class="allnum-card"><span class="lbl">Strikeouts (SO)</span><span class="val">12</span></div>
+      <div class="allnum-card"><span class="lbl">RBI</span><span class="val">7</span></div>
+      <div class="allnum-card"><span class="lbl">Runs</span><span class="val">5</span></div>
+    </div>
+    <div class="allnum-table-wrap">
+      <table class="count-table">
+        <thead><tr><th>Stat</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Plate appearances (PA)</td><td>66</td></tr>
+          <tr><td>At-bats (AB)</td><td>56</td></tr>
+          <tr><td>Hits (H)</td><td>16</td></tr>
+          <tr><td>Doubles</td><td>6</td></tr>
+          <tr><td>Triples</td><td>1</td></tr>
+          <tr><td>Home runs</td><td>3</td></tr>
+          <tr><td>Walks (BB)</td><td>10</td></tr>
+          <tr><td>Strikeouts (SO)</td><td>12</td></tr>
+          <tr><td>RBI</td><td>7</td></tr>
+          <tr><td>Runs</td><td>5</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout note" style="margin-top:10px;">
+      RBI and Runs are included above for the record, but they're driven as much by where the player bats in
+      the order and who's already on base as by the hitting itself, so they're left out of the tiers
+      and comparisons elsewhere in this report.
+    </div>
+  </div>
+
+
+
+  <footer>
+    Built from a GameChanger Staff stats export · Spring 2026  </footer>
+
+</div>
+</body>
+</html>
