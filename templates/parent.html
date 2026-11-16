@@ -242,7 +242,7 @@
       ends with no chance to reach base or drive anyone in. This is the share of the player's trips to the plate
       that ended that way: {{ player.so|int }} strikeouts out of {{ player.pa|int }} trips. <b>Lower is
       better</b> — every strikeout is a plate appearance with zero chance of a positive outcome.</div>
-    <div class="tier-line">The player is <b>{{ cmp.k_pct.tier_label }}</b> among the team's regular hitters.</div>
+    <div class="tier-line">The player is <b class="tier-{{ cmp.k_pct.tier }}">{{ cmp.k_pct.tier_label }}</b> among the team's regular hitters.</div>
     {% if cmp.k_pct.distance_text %}<div class="distance">{{ cmp.k_pct.distance_text }}</div>{% endif %}
   </div>
   {% endif %}
@@ -261,7 +261,7 @@
       patience: recognizing which pitches are worth swinging at. {{ player.bb|int }} walks out of
       {{ player.pa|int }} trips to the plate. <b>Higher is better</b> — every walk is a free trip to
       first base.</div>
-    <div class="tier-line">The player is <b>{{ cmp.bb_pct.tier_label }}</b> among the team's regular hitters.</div>
+    <div class="tier-line">The player is <b class="tier-{{ cmp.bb_pct.tier }}">{{ cmp.bb_pct.tier_label }}</b> among the team's regular hitters.</div>
     {% if cmp.bb_pct.distance_text %}<div class="distance">{{ cmp.bb_pct.distance_text }}</div>{% endif %}
   </div>
   {% endif %}
@@ -279,7 +279,7 @@
       controlling at-bats, or getting overpowered? A value of 1.00 would mean exactly as many walks
       as strikeouts; above 1.00 means more walks than strikeouts, which is unusual and a very good sign.
       <b>Higher is better.</b></div>
-    <div class="tier-line">The player is <b>{{ cmp.bb_per_k.tier_label }}</b> among the team's regular hitters.</div>
+    <div class="tier-line">The player is <b class="tier-{{ cmp.bb_per_k.tier }}">{{ cmp.bb_per_k.tier_label }}</b> among the team's regular hitters.</div>
     {% if cmp.bb_per_k.distance_text %}<div class="distance">{{ cmp.bb_per_k.distance_text }}</div>{% endif %}
   </div>
   {% endif %}
@@ -298,14 +298,14 @@
       {{ team_ops.ops|fmt3 }}), measured against the team's {{ n_regulars }} "regular" hitters
       ({{ config.min_pa_regular }}+ plate appearances this stretch){% if n_excluded > 0 %}; {{ n_excluded }}
       of {{ n_players_team }} rostered players had too few plate appearances to fairly include{% endif %}.
-      On that bar, <b>the filled green portion is the player's own number</b> — the further right it reaches, the
-      higher the number is — and <b>the thin black line is where the team average falls</b>. Green past the
-      black line means the player is above the team average; green short of it means below.
+      On that bar, <b>the filled blue portion is the player's own number</b> — the further right it reaches, the
+      higher the number is — and <b>the thin black line is where the team average falls</b>. Blue past the
+      black line means the player is above the team average; blue short of it means below.
       {% else %}
       Each card below also shows where the player sits among the team's {{ n_regulars }} regular
       hitters ({{ config.min_pa_regular }}+ plate appearances this stretch){% if n_excluded > 0 %}; {{ n_excluded }}
       of {{ n_players_team }} rostered players had too few plate appearances to fairly include{% endif %}.
-      <b>Each small gray dot is one teammate; the larger green dot is the player.</b> Further right on
+      <b>Each small gray dot is one teammate; the larger blue dot is the player.</b> Further right on
       the line means a higher number.
       {% endif %}
       {% endif %}
@@ -325,7 +325,7 @@
     <div class="explain">The classic baseball stat: of all the player's at-bats (trips to the plate that didn't end in a walk or hit-by-pitch),
       what share ended in a hit — a ball put in play that let the batter reach base safely? A .253 average means
       the player got a hit in roughly 1 out of every 4 at-bats. <b>Higher is better.</b></div>
-    <div class="tier-line">The player is <b>{{ cmp.avg.tier_label }}</b> among the team's regular hitters.</div>
+    <div class="tier-line">The player is <b class="tier-{{ cmp.avg.tier }}">{{ cmp.avg.tier_label }}</b> among the team's regular hitters.</div>
     {% if cmp.avg.distance_text %}<div class="distance">{{ cmp.avg.distance_text }}</div>{% endif %}
     {% if visible.where_he_stands %}{{ inline_compare("avg") }}{% endif %}
   </div>
@@ -343,7 +343,7 @@
     <div class="explain">Batting average only counts hits. This counts every way of reaching base safely — a hit, a walk, or
       getting hit by a pitch — divided by all the player's trips to the plate. It's a broader, and arguably more
       complete, measure of "how often does the player NOT make an out." <b>Higher is better.</b></div>
-    <div class="tier-line">The player is <b>{{ cmp.obp.tier_label }}</b> among the team's regular hitters.</div>
+    <div class="tier-line">The player is <b class="tier-{{ cmp.obp.tier }}">{{ cmp.obp.tier_label }}</b> among the team's regular hitters.</div>
     {% if cmp.obp.distance_text %}<div class="distance">{{ cmp.obp.distance_text }}</div>{% endif %}
     {% if visible.where_he_stands %}{{ inline_compare("obp") }}{% endif %}
   </div>
@@ -362,7 +362,7 @@
       "base," a double 2, a triple 3, and a home run 4 — those are added up and divided by at-bats. A
       hitter who mostly singles will have a slugging % close to the batting average; a hitter who racks
       up doubles and home runs will have one noticeably higher. <b>Higher is better.</b></div>
-    <div class="tier-line">The player is <b>{{ cmp.slg.tier_label }}</b> among the team's regular hitters.</div>
+    <div class="tier-line">The player is <b class="tier-{{ cmp.slg.tier }}">{{ cmp.slg.tier_label }}</b> among the team's regular hitters.</div>
     {% if cmp.slg.distance_text %}<div class="distance">{{ cmp.slg.distance_text }}</div>{% endif %}
     {% if visible.where_he_stands %}{{ inline_compare("slg") }}{% endif %}
     {% if visible.iso %}
@@ -385,7 +385,7 @@
       answer to "is this an all-around good hitter?" without checking two separate stats. There's no
       fixed cutoff for what counts as "good" at this level, so the card below compares it to the rest of
       the team instead of a textbook number. <b>Higher is better.</b></div>
-    <div class="tier-line">The player is <b>{{ cmp.ops.tier_label }}</b> among the team's regular hitters.</div>
+    <div class="tier-line">The player is <b class="tier-{{ cmp.ops.tier }}">{{ cmp.ops.tier_label }}</b> among the team's regular hitters.</div>
     {% if cmp.ops.distance_text %}<div class="distance">{{ cmp.ops.distance_text }}</div>{% endif %}
     {% if visible.where_he_stands %}{{ inline_compare("ops") }}{% endif %}
   </div>
@@ -486,7 +486,7 @@
       plus {{ player.assists|int }} assists plus {{ player.errors|int }} errors), the share handled cleanly. Same
       .XXX notation as batting average — .950 means the player converted 95 out of 100 chances. <b>Higher is
       better.</b></div>
-    <div class="tier-line">The player is <b>{{ def_cmp.fpct.tier_label }}</b> among the roster's other fielders with enough chances to compare.</div>
+    <div class="tier-line">The player is <b class="tier-{{ def_cmp.fpct.tier }}">{{ def_cmp.fpct.tier_label }}</b> among the roster's other fielders with enough chances to compare.</div>
     {% if def_cmp.fpct.distance_text %}<div class="distance">{{ def_cmp.fpct.distance_text }}</div>{% endif %}
   </div>
 
@@ -502,7 +502,7 @@
       of how often the player is involved in a defensive play, not just how cleanly. Because it depends so much on
       position (see note above), <b>read this as the player's own trend over time more than a head-to-head
       comparison.</b> <b>Higher is better.</b></div>
-    <div class="tier-line">The player is <b>{{ def_cmp.range_factor.tier_label }}</b> among the roster's other fielders with enough innings to compare.</div>
+    <div class="tier-line">The player is <b class="tier-{{ def_cmp.range_factor.tier }}">{{ def_cmp.range_factor.tier_label }}</b> among the roster's other fielders with enough innings to compare.</div>
     {% if def_cmp.range_factor.distance_text %}<div class="distance">{{ def_cmp.range_factor.distance_text }}</div>{% endif %}
   </div>
 
@@ -517,7 +517,7 @@
     <div class="explain">{{ player.errors|int }} errors out of {{ player.def_tc|int }} chances. The flip side of fielding %, shown as its
       own number because it's the most direct read on "how often did a play get away from the player."
       <b>Lower is better.</b></div>
-    <div class="tier-line">The player is <b>{{ def_cmp.error_rate.tier_label }}</b> among the roster's other fielders with enough chances to compare.</div>
+    <div class="tier-line">The player is <b class="tier-{{ def_cmp.error_rate.tier }}">{{ def_cmp.error_rate.tier_label }}</b> among the roster's other fielders with enough chances to compare.</div>
     {% if def_cmp.error_rate.distance_text %}<div class="distance">{{ def_cmp.error_rate.distance_text }}</div>{% endif %}
     {% if player.double_plays > 0 %}
     <div class="substat">The player was also part of {{ player.double_plays|int }} double play{{ "s" if player.double_plays != 1 else "" }} this stretch.</div>

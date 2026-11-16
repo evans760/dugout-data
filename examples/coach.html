@@ -13,8 +13,9 @@
      the web app's UI (static/index.html), so the report a coach downloads
      matches the tool they just used. */
   :root{
-    --navy:#212B36;
-    --blue:#00AB55;
+    --navy:#0B2545;
+    --blue:#1D4ED8;
+    --blue-dark:#1E3A8A;
     --lightblue:#F9FAFB;
     --gray:#637381;
     --lightgray:#F4F6F8;
@@ -22,7 +23,7 @@
     --text:#454F5B;
     --success:#54D62C;
     --success-bg:#E9FCD4;
-    --success-text:#118D57;
+    --success-text:#0E7A4A;
     --warning:#FFC107;
     --warning-bg:#FFF7CD;
     --warning-text:#7A4100;
@@ -151,7 +152,11 @@
     color:var(--text);
     margin:6px 0 2px;
   }
-  .stat-card .tier-line b{color:var(--blue);}
+  /* Tier phrase colour = meaning: green good, yellow middle, red needs attention. */
+  .stat-card .tier-line b{color:var(--navy);}
+  .tier-line b.tier-leading,.tier-line b.tier-above_middle{color:var(--success-text);}
+  .tier-line b.tier-around_middle{color:var(--warning-text);}
+  .tier-line b.tier-below_middle,.tier-line b.tier-still_finding_it{color:var(--error-text);}
   .stat-card .distance{
     font-size:13.5px;
     color:var(--gray);
@@ -187,7 +192,7 @@
   .swatch{display:inline-block;vertical-align:middle;margin-right:4px;}
   .swatch-bar{width:10px;height:10px;border-radius:2px;background:var(--blue);}
   .swatch-marker{width:2px;height:11px;background:var(--navy);}
-  .swatch-dot-me{width:12px;height:12px;border-radius:50%;background:var(--blue);border:2px solid #007B55;}
+  .swatch-dot-me{width:12px;height:12px;border-radius:50%;background:var(--blue);border:2px solid var(--blue-dark);}
   .swatch-dot-other{width:8px;height:8px;border-radius:50%;background:var(--border);border:1.5px solid #cbd0d8;}
 
   /* trend module */
@@ -252,7 +257,7 @@
   .dp-dot.me{
     width:16px;height:16px;
     background:var(--blue);
-    border:2px solid #007B55;
+    border:2px solid var(--blue-dark);
     z-index:2;
   }
 
