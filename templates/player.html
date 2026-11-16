@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ player.name.split(" ")[0] }}'s Season</title>
+{% include "_style.html" %}
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="team">{{ config.team_name }}{% if generated_date %} · Generated {{ generated_date }}{% endif %}</div>
+    <div class="name">{{ player.name.split(" ")[0] }}{% if player.number %} <span style="font-weight:600;opacity:.8;">#{{ player.number }}</span>{% endif %}</div>
+    <div class="sub">{{ player.pa|int }} plate appearances this stretch</div>
+  </header>
+
+  {% if player.below_rate_stat_floor %}
+
+  <div class="module lede">
+    You've gotten {{ player.pa|int }} plate appearances so far — that's real playing time, and every
+    one of them is a rep toward getting better. It's still early to draw big conclusions from the
+    numbers, so here's what's true right now: you got {{ player.h|int }} hit{{ "s" if player.h != 1 else "" }}
+    and {{ player.bb|int }} walk{{ "s" if player.bb != 1 else "" }} this stretch. Keep showing up to the
+    plate ready to swing at a good pitch — the bigger picture will get clearer with more at-bats.
+  </div>
+
+  {% else %}
+
+  <div class="module lede">
+    You're having a real season — {{ player.pa|int }} plate appearances, {{ player.h|int }}
+    hit{{ "s" if player.h != 1 else "" }}, and {{ player.bb|int }} walk{{ "s" if player.bb != 1 else "" }}.
+    Here's what stands out.
+  </div>
+
+  <div class="module callout" style="margin-top:-6px;">
+    Quick heads up: baseball writes some numbers in a weird way. Instead of "30%," you'll see
+    <b>.300</b>. Here's the trick — ignore the dot, and just read it like a number out of 10:
+    <b>.300 means 3 hits for every 10 times you batted.</b> <b>.500</b> would mean 5 out of 10 — half the
+    time! You'll see numbers like this a lot below.
+  </div>
+
+  {% if trend and visible.trend %}
+  <h2 class="section-title">How You've Trended</h2>
+  <div class="module">
+    <div class="callout">
+      Your season is split into three chunks of games — early, middle, and late — so you can see if
+      you're heading in a good direction, not just one big average for the whole year. Starting with the
+      middle box, you'll see a little triangle next to each number:
+      <span class="trend-chip good">▲</span> or <span class="trend-chip bad">▼</span> shows if it went up
+      or down from the box before it, and green always means "that's the good direction for this stat" —
+      even if that means the number went down (like strikeouts). A gray <span class="trend-chip flat">→</span>
+      means it barely changed.
+    </div>
+    <div class="trend-grid">
+      {% for t in trend %}
+      <div class="trend-card">
+        <div class="period">{{ t.label }} · {{ t.games }} games</div>
+        <div class="rowline"><span class="lbl">Reached base</span><span class="val">{{ t.obp|fmt3 }}{% if t.obp_change %}<span class="trend-chip {{ t.obp_change.css_class }}">{{ t.obp_change.arrow }}</span>{% endif %}</span></div>
+        <div class="rowline"><span class="lbl">Struck out</span><span class="val">{{ "%.0f"|format(t.k_pct) }}%{% if t.k_pct_change %}<span class="trend-chip {{ t.k_pct_change.css_class }}">{{ t.k_pct_change.arrow }}</span>{% endif %}</span></div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if visible.avg or visible.obp or visible.slg or visible.bb_pct %}
+  <h2 class="section-title">Your Numbers</h2>
+  <div class="module">
+    <div class="statgrid">
+      {% if visible.avg %}
+      <div class="box">
+        <span class="n">{{ player.avg|fmt3 }}</span>
+        <span class="lbl">Batting average</span>
+        <p class="tip">Hits ÷ at-bats. Bigger number = more hits when you swing away.</p>
+      </div>
+      {% endif %}
+      {% if visible.obp %}
+      <div class="box">
+        <span class="n">{{ player.obp|fmt3 }}</span>
+        <span class="lbl">On-base %</span>
+        <p class="tip">Every way you didn't make an out — hits AND walks. Bigger number = reaching base more.</p>
+      </div>
+      {% endif %}
+      {% if visible.slg %}
+      <div class="box">
+        <span class="n">{{ player.slg|fmt3 }}</span>
+        <span class="lbl">Slugging %</span>
+        <p class="tip">Extra credit for extra-base hits — a double counts more than a single. Bigger number = more power.</p>
+      </div>
+      {% endif %}
+      {% if visible.bb_pct %}
+      <div class="box">
+        <span class="n">{{ "%.0f"|format(player.bb_pct) }}%</span>
+        <span class="lbl">Walk rate</span>
+        <p class="tip">How often the pitcher walked you instead of you putting the ball in play. A skill, not luck.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if focus and visible.focus %}
+  <h2 class="section-title">Your Challenge</h2>
+  <div class="module">
+    <div class="focus-box">
+      <div class="focus-kicker">One Thing to Work On</div>
+      <div class="focus-title">{{ focus.label }}: {{ focus.current_value }}</div>
+      <p>
+        {% if focus.stretch %}
+        You're already doing a lot of things well this season. {{ focus.label }} is the number with
+        the most room to keep growing — not because anything's wrong, but because that's where your
+        next step forward is.
+        {% else %}
+        This is the number worth chasing next. It's within your control every time you step in the
+        box — see the pitch, trust your swing, and keep working at it.
+        {% endif %}
+      </p>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="module summary-box">
+    <div class="headline">Keep swinging, {{ player.name.split(" ")[0] }}.</div>
+    This is a season to be proud of, and there's more ahead. Show up, work the one thing above, and
+    trust the process — that's how good seasons turn into great ones.
+  </div>
+
+  {% endif %}
+
+  {% if visible.defense and def_cmp %}
+  <h2 class="section-title">Your Defense</h2>
+  <div class="module">
+    {% if player.primary_position %}
+    <div class="callout">You've played mostly <b>{{ player.primary_position }}</b> this stretch.</div>
+    {% endif %}
+    <div class="statgrid">
+      <div class="box">
+        <span class="n">{{ player.fpct|fmt3 }}</span>
+        <span class="lbl">Fielding %</span>
+        <p class="tip">Out of every ball you had a chance at, how many you handled cleanly. .950 means 95 out of 100.</p>
+      </div>
+      {% if player.range_factor is not none %}
+      <div class="box">
+        <span class="n">{{ "%.1f"|format(player.range_factor) }}</span>
+        <span class="lbl">Plays per 9 innings</span>
+        <p class="tip">How involved you are on defense. This depends a lot on what position you play, so it's more useful to watch your own over time than to compare it to a teammate's.</p>
+      </div>
+      {% endif %}
+      <div class="box">
+        <span class="n">{{ player.putouts|int }}</span>
+        <span class="lbl">Putouts</span>
+        <p class="tip">Times you were the one who actually got the out.</p>
+      </div>
+      <div class="box">
+        <span class="n">{{ player.assists|int }}</span>
+        <span class="lbl">Assists</span>
+        <p class="tip">Times you helped get an out, like throwing to first base.</p>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <footer>
+    Built from a GameChanger Staff stats export
+  </footer>
+
+</div>
+</body>
+</html>

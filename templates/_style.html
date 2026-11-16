@@ -1,0 +1,361 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Palette sampled from the "Minimal Design System" component library
+     (Buttons/Cards/Chip/Notification/Table/Form PDFs) — same tokens used by
+     the web app's UI (static/index.html), so the report a coach downloads
+     matches the tool they just used. */
+  :root{
+    --navy:#212B36;
+    --blue:#00AB55;
+    --lightblue:#F9FAFB;
+    --gray:#637381;
+    --lightgray:#F4F6F8;
+    --border:#DFE3E8;
+    --text:#454F5B;
+    --success:#54D62C;
+    --success-bg:#E9FCD4;
+    --success-text:#118D57;
+    --warning:#FFC107;
+    --warning-bg:#FFF7CD;
+    --warning-text:#7A4100;
+    --error:#FF4842;
+    --error-bg:#FFE7D9;
+    --error-text:#B72136;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    font-family:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    color:var(--navy);
+    background:#fff;
+    font-size:16px;
+    line-height:1.55;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:16px;}
+  img,svg{max-width:100%;}
+
+  header.hero{
+    background:linear-gradient(135deg,var(--navy),#161C24);
+    color:#fff;
+    border-radius:16px;
+    padding:18px 18px 16px;
+    margin-bottom:16px;
+  }
+  header.hero .team{font-size:13px;opacity:.75;letter-spacing:.02em;margin-bottom:2px;}
+  header.hero .name{font-size:24px;font-weight:800;margin:0 0 2px;}
+  header.hero .sub{font-size:14px;opacity:.9;}
+  header.hero .flagbox{
+    margin-top:10px;
+    background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:8px;
+    padding:9px 11px;
+    font-size:13px;
+    line-height:1.5;
+  }
+  header.hero .flagbox b{color:var(--warning);}
+
+  h2.section-title{
+    font-size:14px;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--navy);
+    margin:26px 0 10px;
+    border-bottom:2px solid var(--navy);
+    padding-bottom:5px;
+  }
+
+  .module{margin-bottom:22px;}
+
+  .lede{
+    font-size:17px;
+    line-height:1.6;
+    color:var(--navy);
+    background:var(--lightblue);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+  }
+
+  .callout{
+    background:var(--lightgray);
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:15px;
+    color:var(--text);
+    margin-bottom:12px;
+  }
+  .callout b{color:var(--navy);}
+  .callout.note{font-size:13.5px;color:var(--gray);}
+
+  /* reliability badge — sized/weighted to sit next to the number it
+     qualifies, not the smallest text on the card. See stat-num-wrap. */
+  .badge{
+    display:inline-block;
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:.02em;
+    padding:3px 10px;
+    border-radius:99px;
+    white-space:nowrap;
+    vertical-align:middle;
+  }
+  .badge.reliable{background:var(--success-bg);color:var(--success-text);}
+  .badge.partial{background:var(--warning-bg);color:var(--warning-text);}
+  .badge.noisy{background:var(--error-bg);color:var(--error-text);}
+
+  /* compact 3-chip reliability legend (replaces a full paragraph) */
+  .legend-chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .legend-compact p{font-size:14px;color:var(--text);}
+  .legend-def-list{display:flex;flex-direction:column;gap:8px;}
+  .legend-def-row{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;}
+  .legend-def-row .badge{flex-shrink:0;margin-top:1px;}
+  .legend-def-text{font-size:13.5px;color:var(--text);line-height:1.5;flex:1 1 200px;}
+
+  /* stat card */
+  .stat-card{
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px 16px;
+    margin-bottom:12px;
+  }
+  .stat-card .top-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:4px;
+  }
+  .stat-card .stat-name{font-weight:700;font-size:15px;color:var(--navy);padding-top:3px;}
+  .stat-card .stat-num-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+  .stat-card .stat-num{font-weight:800;font-size:24px;color:var(--navy);line-height:1;}
+  .stat-card .tier-line{
+    font-size:14px;
+    color:var(--text);
+    margin:6px 0 2px;
+  }
+  .stat-card .tier-line b{color:var(--blue);}
+  .stat-card .distance{
+    font-size:13.5px;
+    color:var(--gray);
+    margin-top:2px;
+  }
+  .stat-card .explain{
+    font-size:14px;
+    color:var(--text);
+    margin-top:8px;
+    padding-top:8px;
+    border-top:1px solid var(--border);
+  }
+  .stat-card .substat{
+    margin-top:8px;
+    padding-top:8px;
+    border-top:1px dashed var(--border);
+    font-size:13px;
+    color:var(--gray);
+  }
+  .stat-card .substat b{color:var(--navy);}
+
+  /* compact comparison visual, folded into a stat card rather than living
+     as its own full-width module */
+  .inline-compare{margin-top:10px;padding-top:9px;border-top:1px solid var(--border);}
+  .inline-compare .bar-bg.small{height:9px;}
+  .inline-compare .dp-track.small{height:5px;margin:5px 3px;}
+  .inline-compare .dp-dot{width:8px;height:8px;}
+  .inline-compare .dp-dot.me{width:13px;height:13px;}
+  .inline-compare-legend{
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;
+    font-size:12px;color:var(--gray);margin-top:6px;
+  }
+  .swatch{display:inline-block;vertical-align:middle;margin-right:4px;}
+  .swatch-bar{width:10px;height:10px;border-radius:2px;background:var(--blue);}
+  .swatch-marker{width:2px;height:11px;background:var(--navy);}
+  .swatch-dot-me{width:12px;height:12px;border-radius:50%;background:var(--blue);border:2px solid #007B55;}
+  .swatch-dot-other{width:8px;height:8px;border-radius:50%;background:var(--border);border:1.5px solid #cbd0d8;}
+
+  /* trend module */
+  .trend-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+  .trend-card{
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:12px 14px;
+  }
+  .trend-card .period{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--gray);font-weight:700;margin-bottom:6px;}
+  .trend-card .rowline{display:flex;justify-content:space-between;font-size:15px;padding:3px 0;}
+  .trend-card .rowline .lbl{color:var(--text);}
+  .trend-card .rowline .val{font-weight:700;color:var(--navy);}
+  .trend-chip{
+    display:inline-block;
+    margin-left:6px;
+    font-size:12px;
+    font-weight:800;
+  }
+  .trend-chip.good{color:var(--success-text);}
+  .trend-chip.bad{color:var(--error-text);}
+  .trend-chip.flat{color:var(--gray);}
+
+  /* shared bar/dot primitives — used both at full size (none currently)
+     and compact, inline inside a stat card (see .inline-compare above) */
+  .bar-bg{
+    position:relative;
+    height:18px;
+    background:var(--lightgray);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .bar-fill{
+    position:absolute;left:0;top:0;bottom:0;
+    background:var(--blue);
+    border-radius:6px 0 0 6px;
+  }
+  .bar-team-marker{
+    position:absolute;top:0;bottom:-3px;
+    width:2px;background:var(--navy);
+  }
+  .dp-track{
+    position:relative;
+    height:6px;
+    background:var(--lightgray);
+    border-radius:3px;
+    margin:0 6px;
+  }
+  .dp-dot{
+    position:absolute;
+    top:50%;
+    width:10px;height:10px;
+    background:var(--border);
+    border:1.5px solid #cbd0d8;
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+  }
+  .dp-dot.me{
+    width:16px;height:16px;
+    background:var(--blue);
+    border:2px solid #007B55;
+    z-index:2;
+  }
+
+  /* one-focus module */
+  .focus-box{
+    background:var(--navy);
+    color:#fff;
+    border-radius:14px;
+    padding:18px;
+  }
+  .focus-box .focus-kicker{font-size:12px;text-transform:uppercase;letter-spacing:.06em;opacity:.75;margin-bottom:6px;}
+  .focus-box .focus-title{font-size:19px;font-weight:800;margin-bottom:10px;line-height:1.35;}
+  .focus-box .focus-nums{
+    display:flex;gap:10px;margin:12px 0;flex-wrap:wrap;
+  }
+  .focus-box .focus-num-pill{
+    background:rgba(255,255,255,.12);
+    border-radius:10px;
+    padding:8px 12px;
+    font-size:13px;
+  }
+  .focus-box .focus-num-pill .n{font-size:20px;font-weight:800;display:block;}
+  .focus-box p{font-size:14.5px;line-height:1.6;opacity:.95;margin:8px 0 0;}
+
+  /* all-the-numbers: cards under 600px, table above */
+  .allnum-cards{display:block;}
+  .allnum-table-wrap{display:none;}
+  .allnum-card{
+    display:flex;justify-content:space-between;align-items:center;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:10px 14px;
+    margin-bottom:8px;
+    font-size:15px;
+  }
+  .allnum-card .lbl{color:var(--text);}
+  .allnum-card .val{font-weight:800;color:var(--navy);font-size:17px;}
+
+  /* roster table (coach / org modes only) */
+  table.roster-table{width:100%;border-collapse:collapse;font-size:13px;}
+  table.roster-table th{text-align:left;background:var(--navy);color:#fff;padding:7px 8px;font-size:11px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;}
+  table.roster-table td{padding:7px 8px;border-bottom:1px solid var(--border);white-space:nowrap;}
+  table.roster-table tr:nth-child(even){background:var(--lightgray);}
+  table.roster-table .tablewrap{overflow-x:auto;}
+
+  @media screen and (min-width:601px){
+    .allnum-cards{display:none;}
+    .allnum-table-wrap{display:block;}
+    table.count-table{width:100%;border-collapse:collapse;font-size:14.5px;}
+    table.count-table th{text-align:left;background:var(--navy);color:#fff;padding:8px 10px;font-size:12px;text-transform:uppercase;letter-spacing:.03em;}
+    table.count-table td{padding:8px 10px;border-bottom:1px solid var(--border);}
+    table.count-table tr:nth-child(even){background:var(--lightgray);}
+  }
+
+  .summary-box{
+    background:var(--lightblue);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+    font-size:16px;
+    line-height:1.6;
+  }
+  .summary-box .headline{font-weight:800;color:var(--navy);font-size:17px;margin-bottom:8px;}
+
+  .statgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;}
+  .statgrid .box{border:1px solid var(--border);border-radius:10px;padding:10px 12px;}
+  .statgrid .box .n{font-size:20px;font-weight:800;color:var(--navy);display:block;}
+  .statgrid .box .lbl{font-size:12.5px;color:var(--gray);}
+  .statgrid .box .tip{font-size:12px;color:var(--gray);line-height:1.4;margin:6px 0 0;}
+
+  footer{
+    text-align:center;
+    font-size:12px;
+    color:var(--gray);
+    margin-top:26px;
+  }
+
+  @media print{
+    body{font-size:11.5px;background:#fff;color:#000;line-height:1.4;}
+    .wrap{padding:0;max-width:100%;}
+    header.hero{background:#212B36 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-radius:0;padding:12px 14px;margin-bottom:10px;}
+    header.hero .name{font-size:19px;}
+    .focus-box{background:#212B36 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:12px;}
+    .stat-card,.trend-card,.summary-box,.lede,.focus-box{break-inside:avoid;page-break-inside:avoid;}
+    .module{margin-bottom:6px;}
+    .lede{font-size:12px;padding:8px 10px;}
+    h2.section-title{font-size:10.5px;margin:8px 0 5px;padding-bottom:2px;}
+    .callout{font-size:10px;padding:6px 9px;margin-bottom:5px;}
+    .stat-card{padding:6px 10px;margin-bottom:4px;}
+    .stat-card .stat-num{font-size:17px;}
+    .badge{font-size:10px;padding:2px 7px;}
+    .legend-chips{gap:5px;}
+    .legend-def-list{gap:4px;}
+    .legend-def-text{font-size:9.5px;}
+    .stat-card .explain{font-size:10.5px;margin-top:5px;padding-top:5px;}
+    .stat-card .tier-line,.stat-card .distance{font-size:10.5px;}
+    .stat-card .substat{font-size:9.5px;margin-top:5px;padding-top:5px;}
+    .inline-compare{margin-top:5px;padding-top:5px;}
+    .inline-compare-legend{font-size:9px;margin-top:3px;}
+    .trend-grid{grid-template-columns:1fr 1fr 1fr;gap:6px;}
+    .trend-card{padding:7px 8px;}
+    .trend-card .rowline{font-size:10.5px;padding:1px 0;}
+    .trend-card .period{font-size:9px;margin-bottom:3px;}
+    .trend-chip{font-size:9.5px;margin-left:3px;}
+    .focus-box .focus-title{font-size:14px;margin-bottom:6px;}
+    .focus-box .focus-num-pill{padding:5px 8px;font-size:10px;}
+    .focus-box .focus-num-pill .n{font-size:14px;}
+    .focus-box p{font-size:10.5px;margin-top:5px;}
+    .bar-bg{height:13px;}
+    .bar-bg.small{height:7px;}
+    .statgrid .box .tip{font-size:9px;margin-top:3px;}
+    .allnum-card{padding:4px 10px;margin-bottom:3px;font-size:10.5px;}
+    .allnum-card .val{font-size:11px;}
+    .summary-box{font-size:12px;padding:10px 12px;}
+    .summary-box .headline{font-size:12.5px;margin-bottom:4px;}
+    table.roster-table{font-size:9px;}
+    footer{margin-top:10px;font-size:9px;}
+  }
+</style>

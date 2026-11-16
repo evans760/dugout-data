@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sample Report Pack — Batting Reports Tool</title>
+{% include "_style.html" %}
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="team">Sample Leave-Behind{% if generated_date %} · Generated {{ generated_date }}{% endif %}</div>
+    <div class="name">Batting Reports, One Per Kid</div>
+    <div class="sub">Built from a single Staff CSV export — no scraping, no API access, no per-kid data entry</div>
+  </header>
+
+  <div class="module lede">
+    This is a preview of what this tool produces for a real roster: one parent-facing report and one
+    player-facing report per kid, generated automatically from the season stats export your staff can
+    already download. No names or real stats from any specific team appear on this page — the two
+    samples below use placeholder players so you can see the format.
+  </div>
+
+  <h2 class="section-title">What It Covers</h2>
+  <div class="module">
+    <div class="statgrid">
+      <div class="box"><span class="n">{{ n_players_team }}</span><span class="lbl">Players covered (this sample roster)</span></div>
+      <div class="box"><span class="n">{{ n_regulars }}</span><span class="lbl">Regulars ({{ min_pa }}+ PA)</span></div>
+      <div class="box"><span class="n">{{ pa_min|int }}–{{ pa_max|int }}</span><span class="lbl">Plate-appearance range</span></div>
+      <div class="box"><span class="n">{{ pa_median|int }}</span><span class="lbl">Median PA (playing-time balance)</span></div>
+    </div>
+    <div class="callout note">
+      Playing-time spread is reported here because it's a question organizations ask early: does this
+      tool only flatter the star players? It doesn't — every rostered player with enough plate
+      appearances gets tier-and-distance framing (never a rank) in their own report, and every player
+      below the reliability floor still gets an honest, encouraging counting-stats report instead of
+      being skipped.
+    </div>
+  </div>
+
+  <h2 class="section-title">How It Stays Safe to Hand to a Parent</h2>
+  <div class="module callout">
+    Every individual report runs through an automated check before it's written to disk: the rendered
+    HTML is scanned against the full roster name list, and the build fails outright if any teammate's
+    name appears in a single-player report. No hand-review step to forget, no manual redaction.
+    Team-average comparisons are also audited — if a roster's OPS is unusually high, the tool switches
+    from a team-average bar to a distribution view so no kid's honest season reads as a letdown just
+    because of who else is on the team.
+  </div>
+
+  {% for sample in anon_samples %}
+  <h2 class="section-title">Sample Report — {{ sample.label }}</h2>
+  <div class="module">
+    <iframe srcdoc="{{ sample.html|e }}"
+            style="width:100%;height:640px;border:1px solid var(--border);border-radius:12px;background:#fff;"
+            title="Sample report for {{ sample.label }}"></iframe>
+  </div>
+  {% endfor %}
+
+  <h2 class="section-title">Bottom Line</h2>
+  <div class="module summary-box">
+    <div class="headline">One CSV export, one report per kid, nothing hand-built.</div>
+    This runs entirely offline against a file your staff already has permission to download — no
+    GameChanger login shared, no scraping, no ongoing access required. Point it at a season export and
+    it produces a parent report and a player report for every kid on the roster, plus an internal
+    coach-facing summary, in the time it takes to run one command.
+  </div>
+
+  <footer>
+    Sample output — generated from a synthetic roster for demonstration purposes only.
+  </footer>
+
+</div>
+</body>
+</html>

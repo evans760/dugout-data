@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ config.team_name }} — Coach Summary</title>
+{% include "_style.html" %}
+</head>
+<body>
+<div class="wrap" style="max-width:900px;">
+
+  <header class="hero">
+    <div class="team">Internal — Coach/Staff Use Only{% if generated_date %} · Generated {{ generated_date }}{% endif %}</div>
+    <div class="name">{{ config.team_name }}</div>
+    <div class="sub">{{ n_players_team }} rostered players{% if config.season_label %} · {{ config.season_label }}{% endif %}</div>
+    {% if dq.season_span_flag %}
+    <div class="flagbox"><b>Data note:</b> {{ dq.season_span_flag }}</div>
+    {% endif %}
+    {% if dq.merged_names_flag %}
+    <div class="flagbox"><b>Data note:</b> {{ dq.merged_names_flag }}</div>
+    {% endif %}
+  </header>
+
+  <div class="module lede">
+    This page is for coaching staff only — unlike the parent/player reports, it shows every player by
+    name with ordinal ranks. Regulars are players with {{ min_pa }}+ plate appearances this stretch
+    ({{ n_regulars }} of {{ n_players_team }}); rate stats below {{ rate_stat_floor }} PA are unreliable
+    enough that individual player reports skip interpreting them entirely. Beyond the raw numbers below,
+    this page also groups players by shared practice needs, flags team-wide trend direction, and calls
+    out playing-time gaps — everything a GameChanger export alone won't do for you.
+  </div>
+
+  <h2 class="section-title">Roster Snapshot</h2>
+  <div class="module">
+    <div class="statgrid">
+      <div class="box"><span class="n">{{ n_players_team }}</span><span class="lbl">Rostered players</span></div>
+      <div class="box"><span class="n">{{ n_regulars }}</span><span class="lbl">Regulars ({{ min_pa }}+ PA)</span></div>
+      <div class="box"><span class="n">{{ team_ops.ops|fmt3 }}</span><span class="lbl">Team OPS (regulars)</span></div>
+    </div>
+    <div class="callout note">
+      {% if team_ops.use_bars %}
+      This team's OPS is under .900, a fairly typical range, so the individual parent/player reports
+      compare each hitter to a bar showing the team average.
+      {% else %}
+      This team's OPS is unusually high (.900+) — high enough that comparing hitters to a single team
+      average would make nearly everyone look mediocre by comparison and not mean much. So instead, the
+      individual parent/player reports show each hitter as a dot on the spread of the whole team.
+      {% endif %}
+    </div>
+  </div>
+
+  <h2 class="section-title">Player Summaries</h2>
+  <div class="module">
+    <div class="callout">
+      One line per player: their most established strength and what to work on next, pulled straight
+      from that player's own report (same numbers, nothing new) — a quick read before practice without
+      opening every file.
+    </div>
+    <div class="tablewrap">
+      <table class="roster-table">
+        <thead>
+          <tr><th>Player</th><th>Strength</th><th>Focus</th></tr>
+        </thead>
+        <tbody>
+          {% for s in player_summaries %}
+          <tr>
+            <td>{{ s.name }}</td>
+            {% if s.no_data %}
+            <td colspan="2">Not enough at-bats yet ({{ s.pa|int }} PA) — more reps before any of this means much.</td>
+            {% else %}
+            <td>{{ s.strength_text }}</td>
+            <td>{{ s.focus_text if s.focus_text else "—" }}</td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h2 class="section-title">Practice Focus Groups</h2>
+  <div class="module">
+    <div class="callout">
+      Each player's own report already points to one development focus, chosen the same way for
+      everyone (prefer the most trustworthy stat with the clearest room to grow). This groups those
+      into shared buckets so you can run focused stations at practice instead of guessing who needs
+      what — or repeating the same drill for the whole team when only a few players actually need it.
+    </div>
+    {% for g in practice_groups.groups %}
+    <div class="stat-card">
+      <div class="top-row">
+        <span class="stat-name">{{ g.label }}</span>
+        <span class="stat-num">{{ g.players|length }}</span>
+      </div>
+      <div class="explain">
+        {% for p in g.players %}{{ p.name }}{% if p.distance_text %} <span style="color:var(--gray);">— {{ p.distance_text|lower }}</span>{% endif %}{% if not loop.last %}<br>{% endif %}{% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+    {% if practice_groups.stretch %}
+    <div class="callout note">
+      <b>Already strong — stretch goals, not real gaps</b> (skip these first if practice time is short):
+      {% for p in practice_groups.stretch %}{{ p.name }} ({{ p.label|lower }}){% if not loop.last %}, {% endif %}{% endfor %}.
+    </div>
+    {% endif %}
+    {% if practice_groups.no_focus_yet %}
+    <div class="callout note">
+      <b>Not enough at-bats yet for a focus:</b>
+      {% for p in practice_groups.no_focus_yet %}{{ p.name }} ({{ p.pa|int }} PA){% if not loop.last %}, {% endif %}{% endfor %}
+      — more reps before any number here means much.
+    </div>
+    {% endif %}
+  </div>
+
+  <h2 class="section-title">Team Trend</h2>
+  <div class="module">
+    {% if team_trend %}
+    <div class="callout">
+      Same season-thirds view as each player's own report, but summed across the whole team — shows
+      whether the team's overall approach at the plate (not any one player's) is trending better or
+      worse.
+    </div>
+    <div class="trend-grid">
+      {% for t in team_trend %}
+      <div class="trend-card">
+        <div class="period">{{ t.label }} · {{ t.games }} games</div>
+        <div class="rowline"><span class="lbl">Team OBP</span><span class="val">{{ t.obp|fmt3 }}{% if t.obp_change %}<span class="trend-chip {{ t.obp_change.css_class }}">{{ t.obp_change.arrow }}</span>{% endif %}</span></div>
+        <div class="rowline"><span class="lbl">Team K%</span><span class="val">{{ "%.1f"|format(t.k_pct) }}%{% if t.k_pct_change %}<span class="trend-chip {{ t.k_pct_change.css_class }}">{{ t.k_pct_change.arrow }}</span>{% endif %}</span></div>
+        <div class="rowline"><span class="lbl">Team BB%</span><span class="val">{{ "%.1f"|format(t.bb_pct) }}%{% if t.bb_pct_change %}<span class="trend-chip {{ t.bb_pct_change.css_class }}">{{ t.bb_pct_change.arrow }}</span>{% endif %}</span></div>
+      </div>
+      {% endfor %}
+    </div>
+    {% if movers.most_improved or movers.worth_checkin %}
+    <div class="callout note" style="margin-top:12px;">
+      {% if movers.most_improved %}
+      <b>Most improved (OBP, early → late):</b>
+      {% for m in movers.most_improved %}{{ m.name }} ({{ m.first_obp|fmt3 }} → {{ m.last_obp|fmt3 }}){% if not loop.last %}, {% endif %}{% endfor %}.
+      {% endif %}
+      {% if movers.worth_checkin %}
+      <b>Worth a check-in (OBP, early → late):</b>
+      {% for m in movers.worth_checkin %}{{ m.name }} ({{ m.first_obp|fmt3 }} → {{ m.last_obp|fmt3 }}){% if not loop.last %}, {% endif %}{% endfor %}.
+      {% endif %}
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="callout">
+      No team-wide trend this stretch — that needs real per-game dates in the export so different
+      players' games can be lined up into the same early/mid/late buckets, and this export either has
+      season totals only or no usable date column.
+    </div>
+    {% endif %}
+  </div>
+
+  {% if equity_flags %}
+  <h2 class="section-title">Playing Time</h2>
+  <div class="module">
+    <div class="callout note">
+      {{ equity_flags|length }} player{{ "s" if equity_flags|length != 1 else "" }} fell under the
+      {{ min_pa }}-PA "regular" threshold this stretch — worth a look at whether that's roster size,
+      missed games, or something worth addressing:
+      {% for f in equity_flags %}{{ f.name }} ({{ f.pa|int }} PA){% if not loop.last %}, {% endif %}{% endfor %}.
+    </div>
+  </div>
+  {% endif %}
+
+  <h2 class="section-title">Full Roster</h2>
+  <div class="module">
+    <div class="tablewrap">
+      <table class="roster-table">
+        <thead>
+          <tr>
+            <th>Rank</th><th>Player</th><th>PA</th><th>AB</th><th>AVG</th><th>OBP</th><th>SLG</th><th>OPS</th>
+            <th>K%</th><th>BB%</th><th>BB/K</th><th>Regular</th><th>K% rel.</th><th>BB% rel.</th><th>AVG rel.</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+          <tr>
+            <td>{{ row.rank if row.rank else "—" }}</td>
+            <td>{{ row.player.name }}{% if row.player.number %} #{{ row.player.number }}{% endif %}</td>
+            <td>{{ row.player.pa|int }}</td>
+            <td>{{ row.player.ab|int }}</td>
+            <td>{{ row.player.avg|fmt3 }}</td>
+            <td>{{ row.player.obp|fmt3 }}</td>
+            <td>{{ row.player.slg|fmt3 }}</td>
+            <td>{{ row.player.ops|fmt3 }}</td>
+            <td>{{ "%.1f"|format(row.player.k_pct) }}%</td>
+            <td>{{ "%.1f"|format(row.player.bb_pct) }}%</td>
+            <td>{{ "%.2f"|format(row.player.bb_per_k) if row.player.bb_per_k is not none else "—" }}</td>
+            <td>{{ "yes" if row.player.is_regular else "no" }}</td>
+            <td>{{ row.reliability.k_pct }}</td>
+            <td>{{ row.reliability.bb_pct }}</td>
+            <td>{{ row.reliability.avg }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="callout note" style="margin-top:10px;">
+      Rank is ordinal by OPS among regulars only, for internal use. This table — names plus ranks
+      together — is the one place in this tool's output where that combination is allowed; it never
+      appears in a parent or player report. A CSV version of this table is written alongside this file.
+    </div>
+  </div>
+
+  {% if defense_rows %}
+  <h2 class="section-title">Team Defense</h2>
+  <div class="module">
+    <div class="callout note" style="margin-top:0;margin-bottom:12px;">
+      Only players with at least one recorded fielding chance are listed. Below
+      {{ defense_rate_stat_floor }} total chances (PO+A+E), fielding % and range factor are too small a
+      sample to read anything into — shown as "—" rather than a misleading number.
+    </div>
+    <div class="tablewrap">
+      <table class="roster-table">
+        <thead>
+          <tr>
+            <th>Player</th><th>Position</th><th>Chances</th><th>FPCT</th><th>Range/9</th><th>E</th><th>DP</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in defense_rows %}
+          <tr>
+            <td>{{ p.name }}{% if p.number %} #{{ p.number }}{% endif %}</td>
+            <td>{{ p.primary_position or "—" }}</td>
+            <td>{{ p.def_tc|int }}</td>
+            <td>{{ p.fpct|fmt3 if p.def_tc >= defense_rate_stat_floor else "—" }}</td>
+            <td>{{ "%.1f"|format(p.range_factor) if p.range_factor is not none and p.def_tc >= defense_rate_stat_floor else "—" }}</td>
+            <td>{{ p.errors|int }}</td>
+            <td>{{ p.double_plays|int }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  <footer>
+    Built from a GameChanger Staff stats export · Internal document, not for distribution to families
+  </footer>
+
+</div>
+</body>
+</html>

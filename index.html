@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Batting Report Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Palette + tokens sampled directly from the "Minimal Design System" component
+     library (Buttons/Cards/Chip/Notification/Form/Table/Selection Controls/
+     Popover/Upload PDFs) the user provided. */
+  :root{
+    color-scheme:light;
+    --primary:#00AB55;
+    --primary-dark:#007B55;
+    --primary-darker:#004B33;
+    --primary-light:#5BE584;
+    --primary-lighter:#E9FCD4;
+    --success:#54D62C;
+    --success-lighter:#E9FCD4;
+    --info:#1890FF;
+    --info-lighter:#D0F2FF;
+    --warning:#FFC107;
+    --warning-lighter:#FFF7CD;
+    --error:#FF4842;
+    --error-lighter:#FFE7D9;
+    --text-primary:#212B36;
+    --text-secondary:#637381;
+    --text-disabled:#919EAB;
+    --bg-default:#F4F6F8;
+    --bg-paper:#FFFFFF;
+    --bg-neutral:#F4F6F8;
+    --divider:#DFE3E8;
+    --shadow-card:0 0 2px 0 rgba(145,158,171,.16),0 12px 24px -4px rgba(145,158,171,.24);
+    --shadow-primary:0 8px 16px 0 rgba(0,171,85,.24);
+    --shadow-error:0 8px 16px 0 rgba(255,72,66,.24);
+    --radius-card:16px;
+    --radius-btn:8px;
+    --radius-input:8px;
+    --radius-pill:999px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;padding:0 0 64px;font-family:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg-default);color:var(--text-primary);line-height:1.55;font-size:16px;}
+  .wrap{max-width:640px;margin:0 auto;padding:0 16px;}
+  header.hero{background:var(--text-primary);color:#fff;padding:28px 16px 22px;margin-bottom:20px;}
+  header.hero .inner{max-width:640px;margin:0 auto;}
+  header.hero h1{font-size:1.35rem;margin:0 0 6px;font-weight:700;}
+  header.hero p{margin:0;color:rgba(255,255,255,.72);font-size:0.95rem;}
+  .step{background:var(--bg-paper);border:1px solid var(--divider);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:20px;margin-bottom:16px;opacity:1;transition:opacity .2s;}
+  .step.disabled{opacity:.45;pointer-events:none;}
+  .step h2{font-size:1rem;margin:0 0 4px;color:var(--text-primary);font-weight:700;}
+  .step .hint{color:var(--text-secondary);font-size:0.88rem;margin:0 0 14px;}
+  label{display:block;font-size:0.82rem;font-weight:600;color:var(--text-primary);margin:12px 0 5px;}
+  label:first-child{margin-top:0;}
+  input[type=text],input[type=number],textarea,select{width:100%;padding:10px 12px;border:1px solid var(--divider);border-radius:var(--radius-input);font-size:16px;font-family:inherit;background:var(--bg-paper);color:var(--text-primary);transition:border-color .15s;}
+  input[type=text]:focus,input[type=number]:focus,textarea:focus,select:focus{outline:none;border-color:var(--primary);}
+  textarea{min-height:70px;resize:vertical;}
+  .filedrop{border:1px dashed var(--divider);border-radius:var(--radius-card);padding:32px 22px;text-align:center;color:var(--text-secondary);cursor:pointer;background:var(--bg-neutral);transition:background .15s,border-color .15s;}
+  .filedrop.dragover{border-color:var(--primary);background:var(--primary-lighter);}
+  .filedrop input{display:none;}
+  .filedrop .fname{margin-top:8px;font-weight:700;color:var(--text-primary);}
+  button{appearance:none;border:none;border-radius:var(--radius-btn);padding:12px 18px;font-size:0.95rem;font-weight:700;cursor:pointer;background:var(--primary);color:#fff;width:100%;margin-top:14px;transition:background .15s,transform .05s;}
+  button:hover:not(:disabled){background:var(--primary-dark);}
+  button:active:not(:disabled){transform:translateY(1px);}
+  button:disabled{background:var(--text-disabled);box-shadow:none;cursor:default;}
+  button.secondary{background:var(--primary-lighter);color:var(--primary-darker);box-shadow:none;}
+  button.secondary:hover:not(:disabled){background:var(--primary-lighter);opacity:.8;}
+  .mapping-table{width:100%;border-collapse:collapse;font-size:0.88rem;margin-top:6px;}
+  .mapping-table th{padding:8px 4px;border-bottom:1px solid var(--divider);text-align:left;color:var(--text-secondary);font-size:0.72rem;text-transform:uppercase;letter-spacing:.04em;}
+  .mapping-table td{padding:6px 4px;border-bottom:1px solid var(--divider);text-align:left;}
+  .mapping-table select{padding:6px;font-size:0.85rem;}
+  .badge-missing{color:var(--error);font-weight:700;}
+  .modes{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;}
+  .modes label{display:flex;align-items:center;gap:6px;font-weight:500;font-size:0.9rem;margin:0;background:var(--bg-neutral);border:1px solid var(--divider);padding:8px 12px;border-radius:var(--radius-btn);flex:1 1 auto;min-width:120px;}
+  .modes input{width:auto;accent-color:var(--primary);}
+  .alert{background:var(--error-lighter);border:1px solid rgba(255,72,66,.24);color:#7A0C2E;padding:10px 12px;border-radius:var(--radius-input);font-size:0.88rem;margin-top:10px;}
+  .note-box{background:var(--info-lighter);border:1px solid rgba(24,144,255,.24);color:#04297A;padding:10px 12px;border-radius:var(--radius-input);font-size:0.88rem;margin-top:14px;}
+  .ok-box{background:var(--success-lighter);border:1px solid rgba(84,214,44,.24);color:#118D57;padding:10px 12px;border-radius:var(--radius-input);font-size:0.88rem;}
+  .ok-box .toggle{display:inline;background:none;border:none;color:#118D57;text-decoration:underline;font-weight:700;padding:0;margin:0;width:auto;cursor:pointer;font-size:0.88rem;}
+  .mapping-wrap{display:none;margin-top:12px;}
+  .mapping-wrap.shown{display:block;}
+  .results{margin-top:14px;}
+  .results .card{background:var(--bg-paper);border:1px solid var(--divider);border-radius:var(--radius-input);margin-bottom:8px;}
+  .results .row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;gap:10px;}
+  .results .row>span:first-child{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .report-btns{display:flex;gap:8px;flex-shrink:0;}
+  .results a{color:var(--primary-dark);font-weight:700;text-decoration:none;padding:6px 10px;border:1px solid var(--divider);border-radius:var(--radius-btn);font-size:0.88rem;white-space:nowrap;}
+  .results a:hover{background:var(--primary-lighter);}
+  .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-3px;margin-right:6px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  footer{text-align:center;color:var(--text-disabled);font-size:0.82rem;margin-top:20px;}
+  .chat-log{max-height:340px;overflow-y:auto;margin-top:4px;}
+  .chat-empty{color:var(--text-disabled);font-size:0.88rem;padding:6px 2px;}
+  .chat-item{margin-bottom:12px;}
+  .chat-q{display:inline-block;background:var(--primary);color:#fff;padding:8px 12px;border-radius:10px 10px 2px 10px;font-size:0.9rem;font-weight:600;max-width:88%;}
+  .chat-a{background:var(--bg-neutral);border:1px solid var(--divider);color:var(--text-primary);padding:8px 12px;border-radius:2px 10px 10px 10px;font-size:0.9rem;margin-top:6px;white-space:pre-wrap;max-width:88%;}
+  .chat-row{display:flex;gap:8px;margin-top:10px;}
+  .chat-row input{flex:1;}
+  .chat-row button{width:auto;margin-top:0;white-space:nowrap;padding:10px 16px;}
+  .engine{display:flex;align-items:center;gap:8px;font-size:0.84rem;color:var(--text-secondary);margin:0 0 10px;}
+  .engine .dot{width:8px;height:8px;border-radius:50%;background:#FFAB00;flex:none;animation:pulse 1s ease-in-out infinite alternate;}
+  .engine.ready .dot{background:#22C55E;animation:none;}
+  .engine.failed{color:#7A0C2E;}
+  .engine.failed .dot{background:#FF4842;animation:none;}
+  @keyframes pulse{from{opacity:.35}to{opacity:1}}
+  .zip-row{margin-bottom:12px;}
+  .zip-row a{display:inline-block;font-weight:700;}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="inner">
+    <h1>Batting Report Generator</h1>
+    <p>Upload a GameChanger Staff stats export. Everything runs right here in your browser — your CSV is never uploaded or sent anywhere.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="step" id="step1">
+    <h2>1. Upload your CSV</h2>
+    <p class="hint">From GameChanger: Team → Stats → Export Stats (requires Staff access).</p>
+    <div class="engine" id="engineStatus"><span class="dot"></span><span id="engineText">Loading the report engine… (first visit takes 5–15 seconds)</span></div>
+    <div class="filedrop" id="filedrop">
+      <div style="font-weight:700;color:var(--text-primary);">Select a file</div>
+      <div style="margin-top:2px;">Drop your CSV here or tap to browse</div>
+      <div class="fname" id="fname"></div>
+      <input type="file" id="fileInput" accept=".csv">
+    </div>
+    <div id="uploadError"></div>
+  </div>
+
+  <div class="step disabled" id="step2">
+    <h2>2. Roster details</h2>
+    <p class="hint">Columns are matched automatically — you'll only see a mapping table below if something couldn't be matched.</p>
+    <div id="mappingSummary"></div>
+    <div class="mapping-wrap" id="mappingWrap">
+      <table class="mapping-table" id="mappingTable"></table>
+    </div>
+    <div id="mappingError"></div>
+
+    <label for="teamName">Team name</label>
+    <input type="text" id="teamName" placeholder="e.g. Riverside Youth 12U">
+
+    <label for="seasonLabel">Season label (optional)</label>
+    <input type="text" id="seasonLabel" placeholder="e.g. Spring 2026">
+
+    <label for="minPa">Minimum PA to count as a "regular"</label>
+    <input type="number" id="minPa" value="15" min="1">
+
+    <button id="confirmBtn">Load roster</button>
+  </div>
+
+  <div class="step disabled" id="stepChat">
+    <h2>Ask about this roster</h2>
+    <p class="hint">Answers are computed straight from your CSV — nothing here is sent anywhere. Try
+      "who has the most home runs?", "what's Luke's OBP?", or "Luke vs Owen, who has more RBI?".</p>
+    <div class="chat-log" id="chatLog"><div class="chat-empty">No questions yet.</div></div>
+    <div class="chat-row">
+      <input type="text" id="chatInput" placeholder="Ask a question about the roster…">
+      <button id="chatSendBtn">Ask</button>
+    </div>
+    <div id="chatError"></div>
+  </div>
+
+  <div class="step disabled" id="step3">
+    <h2>3. What do you want to see?</h2>
+    <p class="hint" id="rosterSummary"></p>
+
+    <label>Report types</label>
+    <div class="modes">
+      <label><input type="checkbox" value="parent" checked> Parent</label>
+      <label><input type="checkbox" value="player" checked> Player</label>
+      <label><input type="checkbox" value="coach"> Coach (internal)</label>
+      <label><input type="checkbox" value="org"> Org leave-behind</label>
+    </div>
+
+    <button id="generateBtn">Generate reports</button>
+    <div id="generateError"></div>
+  </div>
+
+  <div class="step disabled" id="step4">
+    <h2>4. Your reports</h2>
+    <div class="results" id="results"></div>
+  </div>
+
+  <footer>Runs entirely in your browser from the CSV you choose — nothing is uploaded, and no GameChanger login, scraping, or API access is involved.</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script>
+// ---- In-browser engine -------------------------------------------------
+// The original app sent these requests to a Python server. Here the same
+// Python code runs inside the browser via Pyodide, and this shim answers
+// the page's fetch("/api/...") calls locally. No network request carries
+// the CSV or any results anywhere.
+(function () {
+  const PY_FILES = ["py/generate_reports.py", "py/query_engine.py", "py/browser_api.py"];
+  const TEMPLATES = ["_style.html", "parent.html", "player.html", "coach.html", "org.html"];
+  const statusEl = document.getElementById("engineStatus");
+  const statusText = document.getElementById("engineText");
+  let blobUrls = [];
+  let PYODIDE = null;
+
+  const ready = (async () => {
+    const py = PYODIDE = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/" });
+    await py.loadPackage(["pandas", "jinja2"]);
+    py.FS.mkdirTree("/app/templates");
+    py.FS.mkdirTree("/work");
+    const fetchText = async (p) => {
+      const r = await fetch(p, { cache: "no-cache" });
+      if (!r.ok) throw new Error(`Couldn't load ${p} (${r.status})`);
+      return r.text();
+    };
+    await Promise.all([
+      ...PY_FILES.map(async p => py.FS.writeFile("/app/" + p.split("/").pop(), await fetchText(p))),
+      ...TEMPLATES.map(async t => py.FS.writeFile("/app/templates/" + t, await fetchText("templates/" + t))),
+    ]);
+    py.runPython("import sys; sys.path.insert(0, '/app')");
+    return py.pyimport("browser_api");
+  })();
+
+  ready.then(() => {
+    statusEl.classList.add("ready");
+    statusText.textContent = "Ready — your data stays on this device.";
+  }).catch(err => {
+    console.error(err);
+    statusEl.classList.add("failed");
+    statusText.textContent = "The report engine couldn't load. Check your connection and reload the page.";
+  });
+
+  const respond = (jsonText) => {
+    const data = JSON.parse(jsonText);
+    const status = data._status || 200;
+    delete data._status;
+    return new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json" } });
+  };
+
+  const fileToBlobUrl = (py, path, type) => {
+    const bytes = py.FS.readFile(path);
+    const url = URL.createObjectURL(new Blob([bytes], { type }));
+    blobUrls.push(url);
+    return url;
+  };
+
+  const realFetch = window.fetch.bind(window);
+  window.fetch = async (url, opts = {}) => {
+    if (typeof url !== "string" || !url.startsWith("/api/")) return realFetch(url, opts);
+    let api;
+    try { api = await ready; }
+    catch (e) { return respond(JSON.stringify({ _status: 503, detail: "The report engine couldn't load. Reload the page and try again." })); }
+    try {
+      if (url === "/api/upload") {
+        const file = opts.body.get("file");
+        const bytes = new Uint8Array(await file.arrayBuffer());
+        PYODIDE.FS.writeFile("/work/upload.csv", bytes);
+        return respond(api.upload(file.name));
+      }
+      if (url === "/api/confirm") return respond(api.confirm(opts.body));
+      if (url === "/api/ask") return respond(api.ask(opts.body));
+      if (url === "/api/generate") {
+        const res = JSON.parse(api.generate(opts.body));
+        if (res._status) return respond(JSON.stringify(res));
+        blobUrls.forEach(u => URL.revokeObjectURL(u));
+        blobUrls = [];
+        const html = "text/html;charset=utf-8";
+        for (const p of res.players) for (const m of Object.keys(p.reports)) p.reports[m] = fileToBlobUrl(PYODIDE, p.reports[m], html);
+        for (const t of res.team_reports) t.url = fileToBlobUrl(PYODIDE, t.url, html);
+        res.zip = fileToBlobUrl(PYODIDE, res.zip, "application/zip");
+        return respond(JSON.stringify(res));
+      }
+      return respond(JSON.stringify({ _status: 404, detail: "Unknown action." }));
+    } catch (e) {
+      console.error(e);
+      return respond(JSON.stringify({ _status: 500, detail: "Something went wrong reading that file: " + String(e.message || e).split("\n").slice(-2).join(" ") }));
+    }
+  };
+})();
+</script>
+<script>
+let sessionId = null;
+
+const $ = (id) => document.getElementById(id);
+const step2 = $("step2"), stepChat = $("stepChat"), step3 = $("step3"), step4 = $("step4");
+
+// ---- Step 1: upload ----
+const filedrop = $("filedrop"), fileInput = $("fileInput"), fname = $("fname");
+filedrop.addEventListener("click", () => fileInput.click());
+["dragover","dragenter"].forEach(evt => filedrop.addEventListener(evt, e => { e.preventDefault(); filedrop.classList.add("dragover"); }));
+["dragleave","drop"].forEach(evt => filedrop.addEventListener(evt, e => { e.preventDefault(); filedrop.classList.remove("dragover"); }));
+filedrop.addEventListener("drop", e => {
+  if (e.dataTransfer.files.length) { fileInput.files = e.dataTransfer.files; handleFile(e.dataTransfer.files[0]); }
+});
+fileInput.addEventListener("change", () => { if (fileInput.files.length) handleFile(fileInput.files[0]); });
+
+async function handleFile(file) {
+  fname.textContent = file.name;
+  $("uploadError").innerHTML = "";
+  autofillFromFilename(file.name);
+  const fd = new FormData();
+  fd.append("file", file);
+  try {
+    const res = await fetch("/api/upload", { method: "POST", body: fd });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Upload failed.");
+    sessionId = data.session_id;
+    renderMappingTable(data.headers, data.mapping, data.candidate_fields, data.missing_required, data.header_row_skipped);
+    step2.classList.remove("disabled");
+    step2.scrollIntoView({behavior:"smooth", block:"start"});
+  } catch (err) {
+    $("uploadError").innerHTML = `<div class="alert">${err.message}</div>`;
+  }
+}
+
+// GameChanger export filenames commonly look like
+// "<Team Name> <Season> <Year> Stats.csv" (e.g. "BWLL Coast Giants Spring
+// 2026 Stats.csv"). Pre-fill team/season from that pattern when present —
+// still fully editable, just one less thing to type.
+function autofillFromFilename(filename) {
+  const base = filename.replace(/\.csv$/i, "").replace(/\s+Stats$/i, "").trim();
+  const m = base.match(/^(.*?)\s+((Spring|Summer|Fall|Winter)\s+\d{4})$/i);
+  if (m) {
+    if (!$("teamName").value) $("teamName").value = m[1].trim();
+    if (!$("seasonLabel").value) $("seasonLabel").value = m[2].trim();
+  } else if (!$("teamName").value && base) {
+    $("teamName").value = base;
+  }
+}
+
+const REQUIRED = ["name","ab","h","bb","so","2b","3b","hr"];
+
+function renderMappingTable(headers, mapping, fields, missingRequired, headerRowSkipped) {
+  const table = $("mappingTable");
+  let html = "<tr><th>Field</th><th>Column in your CSV</th></tr>";
+  for (const field of fields) {
+    const current = mapping[field] || "";
+    const isRequired = REQUIRED.includes(field);
+    const options = ["<option value=''>-- not present --</option>"]
+      .concat(headers.map(h => `<option value="${escapeHtml(h)}" ${h === current ? "selected" : ""}>${escapeHtml(h)}</option>`));
+    html += `<tr>
+      <td>${field}${isRequired ? ' <span class="badge-missing">*</span>' : ''}</td>
+      <td><select data-field="${field}">${options.join("")}</select></td>
+    </tr>`;
+  }
+  table.innerHTML = html;
+
+  const summary = $("mappingSummary");
+  const wrap = $("mappingWrap");
+  const skipNote = headerRowSkipped
+    ? " A section-label header row was detected and skipped automatically."
+    : "";
+  if (missingRequired && missingRequired.length) {
+    // A real alignment issue — show the table so it can be fixed.
+    wrap.classList.add("shown");
+    summary.innerHTML = "";
+    $("mappingError").innerHTML =
+      `<div class="alert">Missing required columns: ${missingRequired.join(", ")}. Pick them above if they exist under a different name, or re-export from GameChanger with these included.</div>`;
+  } else {
+    // Clean detection — collapse the table, show a one-line confirmation.
+    wrap.classList.remove("shown");
+    $("mappingError").innerHTML = "";
+    summary.innerHTML =
+      `<div class="ok-box">Columns matched automatically.${skipNote} ` +
+      `<button type="button" class="toggle" id="toggleMapping">Show column mapping</button></div>`;
+    $("toggleMapping").addEventListener("click", () => {
+      const showing = wrap.classList.toggle("shown");
+      $("toggleMapping").textContent = showing ? "Hide column mapping" : "Show column mapping";
+    });
+  }
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+}
+
+function currentMapping() {
+  const out = {};
+  document.querySelectorAll("#mappingTable select[data-field]").forEach(sel => {
+    out[sel.dataset.field] = sel.value || null;
+  });
+  return out;
+}
+
+// ---- Step 2: confirm mapping / load roster ----
+$("confirmBtn").addEventListener("click", async () => {
+  $("mappingError").innerHTML = "";
+  const btn = $("confirmBtn");
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Loading…';
+  try {
+    const res = await fetch("/api/confirm", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        session_id: sessionId,
+        mapping: currentMapping(),
+        team_name: $("teamName").value || "Your Team Name",
+        season_label: $("seasonLabel").value || null,
+        min_pa: parseInt($("minPa").value, 10) || 15,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Couldn't load that roster.");
+    $("rosterSummary").textContent = `Loaded ${data.n_players} players` +
+      (data.is_pergame ? " (per-game data found — trend charts will be available)." : " (season totals only — no trend chart).");
+    stepChat.classList.remove("disabled");
+    step3.classList.remove("disabled");
+    stepChat.scrollIntoView({behavior:"smooth", block:"start"});
+  } catch (err) {
+    $("mappingError").innerHTML = `<div class="alert">${err.message}</div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = "Load roster";
+  }
+});
+
+// ---- Step 3: generate ----
+$("generateBtn").addEventListener("click", async () => {
+  $("generateError").innerHTML = "";
+  const btn = $("generateBtn");
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Generating…';
+  const modes = Array.from(document.querySelectorAll(".modes input:checked")).map(i => i.value);
+  try {
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: sessionId, modes }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Couldn't generate reports.");
+    renderResults(data.players, data.team_reports, data.zip);
+    step4.classList.remove("disabled");
+    step4.scrollIntoView({behavior:"smooth", block:"start"});
+  } catch (err) {
+    $("generateError").innerHTML = `<div class="alert">${err.message}</div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = "Generate reports";
+  }
+});
+
+// ---- Chat: ask a question about the loaded roster ----
+function appendChat(question, answerText, isError) {
+  const log = $("chatLog");
+  const empty = log.querySelector(".chat-empty");
+  if (empty) empty.remove();
+  const item = document.createElement("div");
+  item.className = "chat-item";
+  const answerHtml = escapeHtml(answerText).replace(/\n/g, "<br>");
+  item.innerHTML = `<div class="chat-q">${escapeHtml(question)}</div>` +
+    `<div class="chat-a"${isError ? ' style="color:#7a2f2f;"' : ""}>${answerHtml}</div>`;
+  log.appendChild(item);
+  log.scrollTop = log.scrollHeight;
+}
+
+async function sendChat() {
+  const input = $("chatInput");
+  const question = input.value.trim();
+  if (!question || !sessionId) return;
+  $("chatError").innerHTML = "";
+  const btn = $("chatSendBtn");
+  btn.disabled = true;
+  input.value = "";
+  try {
+    const res = await fetch("/api/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: sessionId, question }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Couldn't answer that.");
+    appendChat(question, data.answer, false);
+  } catch (err) {
+    appendChat(question, err.message, true);
+  } finally {
+    btn.disabled = false;
+    input.focus();
+  }
+}
+$("chatSendBtn").addEventListener("click", sendChat);
+$("chatInput").addEventListener("keydown", (e) => { if (e.key === "Enter") sendChat(); });
+
+const MODE_LABELS = { parent: "Parent", player: "Player" };
+
+function renderResults(players, teamReports, zipUrl) {
+  const el = $("results");
+  players = players || [];
+  teamReports = teamReports || [];
+  if (!players.length && !teamReports.length) { el.innerHTML = "<p>No files were generated.</p>"; return; }
+
+  const playerRows = players.map(p => {
+    const btns = Object.keys(MODE_LABELS)
+      .filter(mode => p.reports[mode])
+      .map(mode => `<a href="${p.reports[mode]}" target="_blank" rel="noopener">${MODE_LABELS[mode]}</a>`)
+      .join("");
+    return `
+      <div class="card"><div class="row">
+        <span>${escapeHtml(p.name)}</span>
+        <span class="report-btns">${btns}</span>
+      </div></div>
+    `;
+  }).join("");
+
+  const teamRows = teamReports.map(t => `
+    <div class="card"><div class="row">
+      <span>${escapeHtml(t.label)}</span>
+      <span class="report-btns"><a href="${t.url}" target="_blank" rel="noopener">Open</a></span>
+    </div></div>
+  `).join("");
+
+  const zipRow = zipUrl
+    ? `<div class="zip-row"><a href="${zipUrl}" download="batting-reports.zip">Download all reports (.zip)</a>
+       <p class="hint" style="margin:4px 0 0;">Report links below only work while this page is open — download the zip to keep them.</p></div>`
+    : "";
+  el.innerHTML = zipRow + playerRows + teamRows;
+}
+</script>
+</body>
+</html>

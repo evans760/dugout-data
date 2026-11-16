@@ -1,0 +1,5 @@
+.DS_Store
+__pycache__/
+# Real team exports must never be committed to this public repo
+*.csv
+!sample/synthetic_roster.csv
