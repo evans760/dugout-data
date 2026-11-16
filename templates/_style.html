@@ -110,10 +110,17 @@
   /* compact 3-chip reliability legend (replaces a full paragraph) */
   .legend-chips{display:flex;gap:8px;flex-wrap:wrap;}
   .legend-compact p{font-size:14px;color:var(--text);}
-  .legend-def-list{display:flex;flex-direction:column;gap:8px;}
-  .legend-def-row{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;}
-  .legend-def-row .badge{flex-shrink:0;margin-top:1px;}
-  .legend-def-text{font-size:13.5px;color:var(--text);line-height:1.5;flex:1 1 200px;}
+  /* Two-column grid so every description starts at the same left edge,
+     whatever the width of its badge. */
+  .legend-def-list{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:10px 12px;align-items:start;}
+  .legend-def-row{display:contents;}
+  .legend-def-row .badge{justify-self:start;margin-top:1px;}
+  .legend-def-text{font-size:13.5px;color:var(--text);line-height:1.5;}
+  @media (max-width:420px){
+    /* Phones: badge above its description rather than squeezing the text column. */
+    .legend-def-list{grid-template-columns:minmax(0,1fr);gap:4px;}
+    .legend-def-row .legend-def-text{margin-bottom:8px;}
+  }
 
   /* stat card */
   .stat-card{
