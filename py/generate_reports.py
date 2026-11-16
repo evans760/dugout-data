@@ -79,6 +79,10 @@ RATE_STAT_FLOOR = 40
 # rostered players show 0 recorded chances at all).
 DEFENSE_RATE_STAT_FLOOR = 10
 
+# Below this many batters faced (roughly 8 innings at youth level), a
+# pitcher gets one encouraging line instead of a full pitching section.
+PITCHING_FLOOR_BF = 30
+
 # Reliability thresholds. The "reliable" number below for each stat is the
 # PA/AB it takes for that stat to stop bouncing around much between two
 # random halves of the same sample — professional-baseball research puts
@@ -109,7 +113,47 @@ RELIABILITY_THRESHOLDS = {
     "fpct": ("TC", 30),
     "error_rate": ("TC", 30),
     "range_factor": ("DEF_INN", 60),
+    # Pitching, calibrated against real youth exports (a team's busiest
+    # pitcher faces ~250-320 batters and throws ~1,000 pitches a season):
+    # rates measured per pitch use pitch count (NP), the rest batters faced (BF).
+    "strike_pct": ("NP", 300),
+    "fps_pct": ("BF", 120),
+    "swm_pct": ("NP", 400),
+    "bb_per_inn": ("BF", 150),
+    "k_per_bb": ("BF", 150),
+    "opp_avg": ("BF", 150),
 }
+
+# Pitching is judged against simple coaching goals, not against teammates —
+# a team usually has only 5-8 pitchers, too few for "above the middle" to
+# mean much. These are common youth-coaching rules of thumb, shown in the
+# report as "a common goal", never as an official standard.
+#   goal = meeting it (green), near = close (yellow), past near = needs work (red)
+PITCHING_GOALS = {
+    "strike_pct": {"goal": 60.0, "near": 50.0, "higher_is_better": True,
+                   "goal_text": "60% or more of pitches for strikes"},
+    "fps_pct": {"goal": 60.0, "near": 50.0, "higher_is_better": True,
+                "goal_text": "a first-pitch strike to 60% or more of batters"},
+    "bb_per_inn": {"goal": 1.0, "near": 1.5, "higher_is_better": False,
+                   "goal_text": "1 walk or fewer per inning"},
+    "k_per_bb": {"goal": 2.0, "near": 1.0, "higher_is_better": True,
+                 "goal_text": "2 or more strikeouts for every walk"},
+}
+GOAL_TIER_LABELS = {
+    "goal_met": "meeting the goal",
+    "near_goal": "close to the goal",
+    "below_goal": "working toward the goal",
+}
+# One-line pitching goal, checked in this order: the first stat that's
+# furthest from its goal (red before yellow) becomes the next goal.
+PITCHING_GOAL_PRIORITY = ["strike_pct", "fps_pct", "bb_per_inn", "k_per_bb"]
+PITCHING_NEXT_GOAL_TEXT = {
+    "strike_pct": "Throw more strikes: aim for 6 of every 10 pitches.",
+    "fps_pct": "Get ahead early: aim for a first-pitch strike to 6 of every 10 batters.",
+    "bb_per_inn": "Cut down on walks: aim for 1 walk or fewer per inning.",
+    "k_per_bb": "Strike out more batters than you walk: aim for 2 strikeouts for every walk.",
+}
+
 
 TEAM_OPS_STRONG_CUTOFF = 0.900  # at/above this, the bottom line explains it as a strong roster
 # How parent reports compare a hitter to the team:
@@ -126,7 +170,7 @@ COMPARISON_VIEW = "dots"
 VISIBLE_KEYS = [
     "trend", "focus", "k_pct", "bb_pct", "bb_per_k",
     "avg", "obp", "slg", "ops", "iso", "where_he_stands", "all_numbers",
-    "defense",
+    "defense", "pitching",
 ]
 DEFAULT_VISIBLE = {k: True for k in VISIBLE_KEYS}
 
@@ -305,6 +349,112 @@ def detect_fielding_columns(headers: list[str], section_row: Optional[list[str]]
         mapping[canon] = _resolve_column_in_range(headers, start, end, candidates)
     return mapping
 
+# --------------------------------------------------------------------------
+# Pitching columns — resolved by position inside the "Pitching" section of
+# the section-label row, exactly like fielding (H, BB, SO, HR, SB, CS, LD%,
+# FB%, GB%, BABIP... all repeat between Batting and Pitching). All prefixed
+# "p_" so they can never collide with a batting canonical name.
+PITCH_TYPES = [
+    ("fb", "Fastball"), ("cb", "Curveball"), ("ct", "Cutter"),
+    ("sl", "Slider"), ("ch", "Changeup"), ("os", "Off-speed"),
+]
+PITCHING_COLUMN_CANDIDATES = {
+    "p_ip": ["ip"], "p_gp": ["gp"], "p_gs": ["gs"], "p_bf": ["bf"],
+    "p_np": ["#p", "np", "pitches"], "p_w": ["w"], "p_l": ["l"], "p_sv": ["sv"],
+    "p_h": ["h"], "p_r": ["r"], "p_er": ["er"], "p_bb": ["bb"], "p_so": ["so", "k"],
+    "p_hbp": ["hbp"], "p_wp": ["wp"], "p_hr": ["hr"],
+    # Percentages / averages as exported (not summable — converted to counts in load_and_aggregate()).
+    "p_s_pct": ["s%"], "p_fps_pct": ["fps%"], "p_sm_pct": ["sm%"],
+    "p_gb_pct": ["gb%"], "p_fb_pct": ["fb%"], "p_ld_pct": ["ld%"],
+    "p_top_mph": ["topmph"],
+    "p_era": ["era"],  # only used to detect the league's game length for ERA
+}
+for _t, _label in PITCH_TYPES:
+    PITCHING_COLUMN_CANDIDATES[f"p_{_t}_n"] = [_t]
+    PITCHING_COLUMN_CANDIDATES[f"p_{_t}_strikes"] = [f"{_t}s"]
+    PITCHING_COLUMN_CANDIDATES[f"p_{_t}_mph"] = [f"mph{_t}"]
+    PITCHING_COLUMN_CANDIDATES[f"p_{_t}_top"] = [f"top{_t}"]
+
+# Plain counts: summed when rows are combined.
+PITCHING_SUM_FIELDS = (
+    ["p_ip", "p_gp", "p_gs", "p_bf", "p_np", "p_w", "p_l", "p_sv", "p_h", "p_r", "p_er",
+     "p_bb", "p_so", "p_hbp", "p_wp", "p_hr"]
+    + [f"p_{t}_{k}" for t, _ in PITCH_TYPES for k in ("n", "strikes")]
+)
+# Percent/average columns read from the file, used only to derive counts below.
+PITCHING_RATE_SOURCE_FIELDS = (
+    ["p_s_pct", "p_fps_pct", "p_sm_pct", "p_gb_pct", "p_fb_pct", "p_ld_pct"]
+    + [f"p_{t}_mph" for t, _ in PITCH_TYPES]
+)
+# Counts derived from those rates (strikes = S% x pitches, etc.), plus the
+# denominator each one was taken over, so combining rows stays exact.
+PITCHING_DERIVED_FIELDS = (
+    ["p_strikes", "p_np_s", "p_fps", "p_bf_fps", "p_swm", "p_np_sm", "p_gb_w", "p_fb_w", "p_ld_w"]
+    + [f"p_{t}_mph_w" for t, _ in PITCH_TYPES] + [f"p_{t}_n_mph" for t, _ in PITCH_TYPES]
+)
+# Top velocities: combined with max(), never summed.
+PITCHING_MAX_FIELDS = ["p_top_mph"] + [f"p_{t}_top" for t, _ in PITCH_TYPES]
+# Speeds outside this range are treated as scoring typos (real exports have
+# shown 112 and 130 mph for 10U pitchers) — hidden from family reports and
+# flagged on the coach page instead.
+PLAUSIBLE_MPH = (25.0, 95.0)
+
+
+def _plausible_mph(v: float) -> Optional[float]:
+    return v if v and PLAUSIBLE_MPH[0] <= v <= PLAUSIBLE_MPH[1] else None
+
+
+def detect_pitching_columns(headers: list[str], section_row: Optional[list[str]]) -> dict[str, Optional[str]]:
+    """Same contract as detect_fielding_columns(), for the "Pitching" section.
+    All-None when the export has no Pitching section — pitching is optional."""
+    mapping: dict[str, Optional[str]] = {canon: None for canon in PITCHING_COLUMN_CANDIDATES}
+    if not section_row:
+        return mapping
+    rng = _find_section_range(section_row, "Pitching")
+    if not rng:
+        return mapping
+    start, end = rng
+    for canon, candidates in PITCHING_COLUMN_CANDIDATES.items():
+        mapping[canon] = _resolve_column_in_range(headers, start, end, candidates)
+    return mapping
+
+
+def _derive_pitching_counts(df: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
+    """Turns the export's per-player percentages into summable counts (and
+    their denominators) so duplicate rows / per-game rows combine exactly.
+    Returns (df with the derived columns added, their names)."""
+    if "p_np" not in df.columns and "p_bf" not in df.columns:
+        return df, []
+    zero = pd.Series(0.0, index=df.index)
+
+    def col(name, default=zero):
+        return pd.to_numeric(df[name], errors="coerce") if name in df.columns else default
+
+    np_, bf = col("p_np"), col("p_bf")
+    new: dict[str, pd.Series] = {}
+
+    def from_pct(pct_col, base, out_name, denom_name=None):
+        pct = col(pct_col, pd.Series(float("nan"), index=df.index))
+        has = pct.notna() & base.notna()
+        new[out_name] = (pct.fillna(0) / 100.0 * base.fillna(0)).where(has, 0.0)
+        if denom_name:
+            new[denom_name] = base.fillna(0).where(has, 0.0)
+
+    from_pct("p_s_pct", np_, "p_strikes", "p_np_s")
+    from_pct("p_fps_pct", bf, "p_fps", "p_bf_fps")
+    from_pct("p_sm_pct", np_, "p_swm", "p_np_sm")
+    for kind in ("gb", "fb", "ld"):
+        from_pct(f"p_{kind}_pct", bf, f"p_{kind}_w")
+    for t, _ in PITCH_TYPES:
+        n = col(f"p_{t}_n")
+        mph = col(f"p_{t}_mph", pd.Series(float("nan"), index=df.index))
+        has = mph.notna() & (mph > 0) & n.notna() & (n > 0)
+        new[f"p_{t}_mph_w"] = (mph.fillna(0) * n.fillna(0)).where(has, 0.0)
+        new[f"p_{t}_n_mph"] = n.fillna(0).where(has, 0.0)
+    df = pd.concat([df.drop(columns=[c for c in new if c in df.columns]), pd.DataFrame(new, index=df.index)], axis=1)
+    return df, list(new)
+
+
 # Rows at the bottom of a GameChanger export ("Totals" summary row, a blank
 # spacer row, a "Glossary" key) aren't players and must never become one.
 # In the exports we've seen, these rows have no Last/First at all so the
@@ -455,6 +605,12 @@ INNINGS_NOTATION_FIELDS = [
 FIELDING_COUNTING_FIELDS = ["putouts", "assists", "errors", "double_plays"] + INNINGS_NOTATION_FIELDS
 
 COUNTING_FIELDS = ["pa", "ab", "r", "h", "2b", "3b", "hr", "rbi", "bb", "so", "sb", "cs", "hbp", "sf", "sh"] + FIELDING_COUNTING_FIELDS
+# Pitching counts (and top velocities, which combine with max — see _agg_for()).
+PITCHING_NUMERIC_FIELDS = PITCHING_SUM_FIELDS + PITCHING_MAX_FIELDS
+
+
+def _agg_for(cols: list[str]) -> dict[str, str]:
+    return {c: ("max" if c in PITCHING_MAX_FIELDS else "sum") for c in cols}
 
 
 def _innings_to_decimal(v: float) -> float:
@@ -512,11 +668,22 @@ def load_and_aggregate(csv_path: Path, mapping: dict[str, Optional[str]], assume
 
     # coerce counting columns to numeric, treat missing as absent (not zero)
     # so we can tell "column not in export" apart from "value is 0"
-    present_counting = [c for c in COUNTING_FIELDS if c in df.columns]
+    present_counting = [c for c in COUNTING_FIELDS + PITCHING_NUMERIC_FIELDS if c in df.columns]
     for c in present_counting:
         df[c] = pd.to_numeric(df[c], errors="coerce")
-        if c in INNINGS_NOTATION_FIELDS:
+        if c in INNINGS_NOTATION_FIELDS or c == "p_ip":
             df[c] = df[c].apply(_innings_to_decimal)
+    # ERA's game length (6 innings in most youth leagues) is read back out of
+    # the export itself — ERA = ER / IP x innings-per-game — rather than assumed.
+    if all(c in df.columns for c in ("p_er", "p_ip", "p_era")):
+        era = pd.to_numeric(df["p_era"], errors="coerce")
+        ok = (df["p_er"] > 0) & (df["p_ip"] > 0) & (era > 0)
+        if ok.any():
+            game_len = (era[ok] * df.loc[ok, "p_ip"] / df.loc[ok, "p_er"]).median()
+            if 3 <= game_len <= 9:
+                flags["era_innings"] = int(round(game_len))
+    df, derived = _derive_pitching_counts(df)
+    present_counting += derived
 
     # Some exports have no single name column — just separate Last/First.
     # Build a combined "First Last" field (matters: templates split on the
@@ -567,7 +734,7 @@ def load_and_aggregate(csv_path: Path, mapping: dict[str, Optional[str]], assume
                 rows.append(row)
             pergame_by_player[name] = rows
 
-        agg = {c: "sum" for c in present_counting}
+        agg = _agg_for(present_counting)
         season_df = df.groupby("name", as_index=False, sort=False).agg(agg)
     else:
         # Still collapse any incidental duplicate name by summing counting
@@ -581,7 +748,7 @@ def load_and_aggregate(csv_path: Path, mapping: dict[str, Optional[str]], assume
             other_cols = [c for c in df.columns if c not in present_counting and c != "name"]
             first_seen = df.drop_duplicates(subset="name", keep="first")[["name"] + other_cols]
             if present_counting:
-                summed = df.groupby("name", as_index=False, sort=False)[present_counting].sum()
+                summed = df.groupby("name", as_index=False, sort=False)[present_counting].agg(_agg_for(present_counting))
                 season_df = first_seen.merge(summed, on="name", how="left")
             else:
                 season_df = first_seen
@@ -659,8 +826,45 @@ class PlayerStats:
     primary_position_innings: float = 0.0
     below_defense_floor: bool = True
 
+    # Pitching (only populated when the export has a Pitching section — see
+    # detect_pitching_columns()). p_ip is true decimal innings.
+    has_pitching_data: bool = False
+    below_pitching_floor: bool = True
+    p_ip: float = 0.0
+    p_gp: float = 0.0
+    p_gs: float = 0.0
+    p_bf: float = 0.0
+    p_np: float = 0.0
+    p_w: float = 0.0
+    p_l: float = 0.0
+    p_sv: float = 0.0
+    p_h: float = 0.0
+    p_r: float = 0.0
+    p_er: float = 0.0
+    p_bb: float = 0.0
+    p_so: float = 0.0
+    p_hbp: float = 0.0
+    p_wp: float = 0.0
+    p_hr: float = 0.0
+    strike_pct: Optional[float] = None
+    fps_pct: Optional[float] = None
+    swm_pct: Optional[float] = None
+    bb_per_inn: Optional[float] = None
+    k_per_bb: Optional[float] = None
+    opp_avg: Optional[float] = None
+    era: Optional[float] = None
+    era_innings: int = 6
+    whip: Optional[float] = None
+    pitches_per_inn: Optional[float] = None
+    gb_pct: Optional[float] = None
+    ld_pct: Optional[float] = None
+    fb_pct: Optional[float] = None
+    top_mph: Optional[float] = None
+    top_mph_suspect: Optional[float] = None  # recorded but implausible (see PLAUSIBLE_MPH)
+    pitch_mix: list = field(default_factory=list)
 
-def compute_player_stats(row: pd.Series) -> PlayerStats:
+
+def compute_player_stats(row: pd.Series, era_innings: int = 6) -> PlayerStats:
     def g(col):
         v = row.get(col)
         return 0.0 if v is None or (isinstance(v, float) and math.isnan(v)) else float(v)
@@ -738,6 +942,47 @@ def compute_player_stats(row: pd.Series) -> PlayerStats:
         p.has_fielding_data = tc > 0 or p.def_innings > 0
         p.below_defense_floor = tc < DEFENSE_RATE_STAT_FLOOR
 
+    # Pitching — only present when the export had a Pitching section.
+    if "p_bf" in row.index or "p_ip" in row.index:
+        for f in ("p_ip", "p_gp", "p_gs", "p_bf", "p_np", "p_w", "p_l", "p_sv", "p_h", "p_r",
+                  "p_er", "p_bb", "p_so", "p_hbp", "p_wp", "p_hr"):
+            setattr(p, f, g(f))
+        p.has_pitching_data = p.p_bf > 0 or p.p_ip > 0
+        p.below_pitching_floor = p.p_bf < PITCHING_FLOOR_BF
+        ip = p.p_ip
+        p.strike_pct = (g("p_strikes") / g("p_np_s") * 100) if g("p_np_s") > 0 else None
+        p.fps_pct = (g("p_fps") / g("p_bf_fps") * 100) if g("p_bf_fps") > 0 else None
+        p.swm_pct = (g("p_swm") / g("p_np_sm") * 100) if g("p_np_sm") > 0 else None
+        p.bb_per_inn = (p.p_bb / ip) if ip > 0 else None
+        p.k_per_bb = (p.p_so / p.p_bb) if p.p_bb > 0 else None
+        ab_against = p.p_bf - p.p_bb - p.p_hbp  # approximation: ignores sacrifices / interference
+        p.opp_avg = (p.p_h / ab_against) if ab_against > 0 else None
+        p.era_innings = era_innings
+        p.era = (p.p_er / ip * era_innings) if ip > 0 else None
+        p.whip = ((p.p_bb + p.p_h) / ip) if ip > 0 else None
+        p.pitches_per_inn = (p.p_np / ip) if ip > 0 and p.p_np > 0 else None
+        bip = g("p_gb_w") + g("p_ld_w") + g("p_fb_w")
+        if bip > 0:
+            p.gb_pct = g("p_gb_w") / bip * 100
+            p.ld_pct = g("p_ld_w") / bip * 100
+            p.fb_pct = g("p_fb_w") / bip * 100
+        raw_top = g("p_top_mph")
+        p.top_mph = _plausible_mph(raw_top)
+        p.top_mph_suspect = raw_top if raw_top and p.top_mph is None else None
+        mix = []
+        for t, label in PITCH_TYPES:
+            n = g(f"p_{t}_n")
+            if n > 0:
+                mph_n = g(f"p_{t}_n_mph")
+                mix.append({
+                    "label": label, "n": n,
+                    "share": (n / p.p_np * 100) if p.p_np > 0 else None,
+                    "strike_pct": (g(f"p_{t}_strikes") / n * 100) if f"p_{t}_strikes" in row.index else None,
+                    "avg_mph": _plausible_mph(g(f"p_{t}_mph_w") / mph_n) if mph_n > 0 else None,
+                    "top_mph": _plausible_mph(g(f"p_{t}_top")),
+                })
+        p.pitch_mix = mix
+
     return p
 
 
@@ -746,6 +991,8 @@ _RELIABILITY_BASIS = {
     "AB": lambda p: p.ab,
     "TC": lambda p: p.def_tc,
     "DEF_INN": lambda p: p.def_innings,
+    "NP": lambda p: p.p_np,
+    "BF": lambda p: p.p_bf,
 }
 
 
@@ -781,6 +1028,9 @@ def attach_reliability(player: PlayerStats) -> None:
         r["fpct"] = reliability_tier("fpct", player)
         r["error_rate"] = reliability_tier("error_rate", player)
         r["range_factor"] = reliability_tier("range_factor", player)
+    if player.has_pitching_data:
+        for key in ("strike_pct", "fps_pct", "swm_pct", "bb_per_inn", "k_per_bb", "opp_avg"):
+            r[key] = reliability_tier(key, player)
     player.reliability = r
 
 
@@ -1073,6 +1323,72 @@ def build_compare_visuals(player: PlayerStats, regulars: list[PlayerStats], team
                 points.append({"pct": pct, "me": q is player})
             dots[key] = {"value": val, "lo": lo, "hi": hi, "points": points}
         return {"mode": "dots", "dots": dots}
+
+
+# --------------------------------------------------------------------------
+# Pitching: coaching goals + teammate dots + one-line pitching goal
+# --------------------------------------------------------------------------
+
+PITCHING_DOT_KEYS = ["strike_pct", "fps_pct", "swm_pct", "bb_per_inn", "k_per_bb", "opp_avg"]
+
+
+def pitching_goal_tier(key: str, player: PlayerStats) -> Optional[str]:
+    """goal_met / near_goal / below_goal against PITCHING_GOALS, or None
+    when there's no number to judge."""
+    goal = PITCHING_GOALS[key]
+    v = getattr(player, key)
+    if key == "k_per_bb" and v is None:
+        # No walks at all: with any strikeouts that's the best possible ratio.
+        return "goal_met" if player.p_so > 0 else None
+    if v is None:
+        return None
+    if goal["higher_is_better"]:
+        return "goal_met" if v >= goal["goal"] else ("near_goal" if v >= goal["near"] else "below_goal")
+    return "goal_met" if v <= goal["goal"] else ("near_goal" if v <= goal["near"] else "below_goal")
+
+
+def build_pitching_context(player: PlayerStats, pitch_pool: list[PlayerStats]) -> dict:
+    goals = {}
+    for key, meta in PITCHING_GOALS.items():
+        tier = pitching_goal_tier(key, player)
+        goals[key] = {
+            "tier": tier,
+            "tier_label": GOAL_TIER_LABELS.get(tier, ""),
+            "goal_text": meta["goal_text"],
+        }
+
+    dots = {}
+    for key in PITCHING_DOT_KEYS:
+        val = getattr(player, key)
+        ranked = sorted((q for q in pitch_pool if getattr(q, key) is not None), key=lambda q: getattr(q, key))
+        if val is None or len(ranked) < 3:
+            continue  # too few teammates to draw a meaningful spread
+        vals = [getattr(q, key) for q in ranked]
+        lo, hi = vals[0], vals[-1]
+        span = (hi - lo) or 1.0
+        dots[key] = {
+            "value": val, "lo": lo, "hi": hi,
+            "points": [{"pct": round((v - lo) / span * 100, 1), "me": q is player} for q, v in zip(ranked, vals)],
+        }
+
+    next_goal = None
+    for wanted in ("below_goal", "near_goal"):
+        for key in PITCHING_GOAL_PRIORITY:
+            if goals[key]["tier"] == wanted:
+                next_goal = {"key": key, "text": PITCHING_NEXT_GOAL_TEXT[key]}
+                break
+        if next_goal:
+            break
+
+    return {
+        "goals": goals,
+        "dots": dots,
+        "next_goal": next_goal,
+        "n_pitchers": len(pitch_pool),
+        "has_batted_ball": player.gb_pct is not None,
+        "has_velocity": bool(player.top_mph) or any(m["avg_mph"] or m["top_mph"] for m in player.pitch_mix),
+        "has_pitch_mix": bool(player.pitch_mix),
+    }
 
 
 # --------------------------------------------------------------------------
@@ -1449,6 +1765,10 @@ def build_env(templates_dir: Path) -> Environment:
     )
     env.filters["fmt3"] = fmt3
     env.filters["fmt_inn"] = fmt_innings
+    env.filters["pct1"] = lambda v: "—" if v is None else f"{v:.1f}%"
+    env.filters["dec2"] = lambda v: "—" if v is None else f"{v:.2f}"
+    env.filters["dec1"] = lambda v: "—" if v is None else f"{v:.1f}"
+    env.filters["fmt3o"] = lambda v: "—" if v is None else fmt3(v)
     env.filters["reliability_label"] = lambda key: RELIABILITY_DISPLAY_LABELS.get(key, str(key).upper())
     env.filters["reliability_explain"] = lambda key: RELIABILITY_EXPLANATIONS.get(key, "")
     return env
@@ -1459,12 +1779,14 @@ def build_player_context(player: PlayerStats, comparisons: Optional[dict], focus
                           config: dict, n_regulars: int, n_excluded: int, home_run_count_team: int,
                           n_players_team: int, compare_visuals: Optional[dict] = None,
                           visible: Optional[dict] = None, def_comparisons: Optional[dict] = None,
-                          generated_date: str = "") -> dict:
+                          generated_date: str = "", pitching: Optional[dict] = None) -> dict:
     return {
         "config": config,
         "player": player,
         "cmp": comparisons,
         "def_cmp": def_comparisons,
+        "pitch": pitching,
+        "pitching_floor_bf": PITCHING_FLOOR_BF,
         "focus": focus,
         "trend": trend,
         "team_ops": team_ops,
@@ -1552,7 +1874,7 @@ def build_player_list(season_df: pd.DataFrame, config: dict) -> tuple[list[Playe
     always agree on the exact same numbers."""
     all_players: list[PlayerStats] = []
     for _, row in season_df.iterrows():
-        p = compute_player_stats(row)
+        p = compute_player_stats(row, config.get("era_innings", 6))
         attach_reliability(p)
         all_players.append(p)
 
@@ -1569,6 +1891,7 @@ def render_all(season_df: pd.DataFrame, pergame_by_player: dict, dq_flags: dict,
                 templates_dir: Path, out_dir: Path, modes: list[str],
                 visible: Optional[dict] = None) -> None:
     env = build_env(templates_dir)
+    config = {**config, "era_innings": dq_flags.get("era_innings", config.get("era_innings", 6))}
 
     all_players, regulars, team_ops = build_player_list(season_df, config)
     min_pa = config["min_pa_regular"]
@@ -1582,6 +1905,7 @@ def render_all(season_df: pd.DataFrame, pergame_by_player: dict, dq_flags: dict,
     # have barely any fielding chances — so this is its own pool, not the
     # batting "regulars" list.
     defensive_pool = [p for p in all_players if p.has_fielding_data and not p.below_defense_floor]
+    pitch_pool = [p for p in all_players if p.has_pitching_data and not p.below_pitching_floor]
 
     now = datetime.now()
     generated_date = f"{now:%B} {now.day}, {now:%Y}"
@@ -1607,6 +1931,7 @@ def render_all(season_df: pd.DataFrame, pergame_by_player: dict, dq_flags: dict,
             len(regulars), n_excluded, home_run_count_team, len(all_players),
             compare_visuals=visuals, visible=visible, def_comparisons=def_comparisons,
             generated_date=generated_date,
+            pitching=build_pitching_context(p, pitch_pool) if p in pitch_pool else None,
         )
 
     all_names = [p.name for p in all_players]
@@ -1683,6 +2008,15 @@ def render_all(season_df: pd.DataFrame, pergame_by_player: dict, dq_flags: dict,
                 key=lambda p: p.def_tc, reverse=True,
             ),
             "defense_rate_stat_floor": DEFENSE_RATE_STAT_FLOOR,
+            "pitching_rows": sorted(
+                (p for p in all_players if p.has_pitching_data),
+                key=lambda p: p.p_ip, reverse=True,
+            ),
+            "pitching_floor_bf": PITCHING_FLOOR_BF,
+            "team_pitch_ip": sum(p.p_ip for p in all_players if p.has_pitching_data),
+            "team_pitch_np": sum(p.p_np for p in all_players if p.has_pitching_data),
+            "pitch_goals": {p.name: {k: pitching_goal_tier(k, p) for k in PITCHING_GOALS}
+                            for p in all_players if p.has_pitching_data},
         }
         html = env.get_template("coach.html").render(**coach_ctx)
         out_path = out_dir / "coach-summary.html"
@@ -1754,6 +2088,9 @@ def main(argv=None):
     mapping.update(detect_fielding_columns(headers, section_row))
     if any(mapping[k] for k in FIELDING_COLUMN_CANDIDATES):
         print("Detected a Fielding section — defensive stats will be included where available.")
+    mapping.update(detect_pitching_columns(headers, section_row))
+    if any(mapping[k] for k in PITCHING_COLUMN_CANDIDATES):
+        print("Detected a Pitching section — pitching stats will be included where available.")
     mapping = confirm_mapping(headers, mapping, args.yes)
 
     try:

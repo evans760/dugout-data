@@ -261,6 +261,23 @@
     z-index:2;
   }
 
+  table.roster-table td.goal-goal_met{color:var(--success-text);font-weight:700;}
+  table.roster-table td.goal-near_goal{color:var(--warning-text);font-weight:700;}
+  table.roster-table td.goal-below_goal{color:var(--error-text);font-weight:700;}
+  /* pitching goal tiers: same green / yellow / red meaning as the batting tiers */
+  .tier-line b.tier-goal_met{color:var(--success-text);}
+  .tier-line b.tier-near_goal{color:var(--warning-text);}
+  .tier-line b.tier-below_goal{color:var(--error-text);}
+  h3.sub-title{font-size:15px;margin:0 0 8px;color:var(--navy);}
+  /* batted-ball split: neutral blues (style, not a grade) */
+  .bb-split{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--lightgray);margin-top:6px;}
+  .bb-seg{display:block;height:100%;}
+  .bb-seg.gb,.bb-key.gb{background:#1E3A8A;}
+  .bb-seg.ld,.bb-key.ld{background:#60A5FA;}
+  .bb-seg.fb,.bb-key.fb{background:#BFDBFE;}
+  .bb-legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--text);margin-top:6px;}
+  .bb-key{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:4px;}
+
   /* one-focus module */
   .focus-box{
     background:var(--navy);
@@ -295,6 +312,13 @@
   }
   .allnum-card .lbl{color:var(--text);}
   .allnum-card .val{font-weight:800;color:var(--navy);font-size:17px;}
+
+  /* pitching: label/value cards that stay visible at every width */
+  .kv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;}
+  .kv-grid .allnum-card{margin:0;}
+  table.count-table.pitch-mix{width:100%;border-collapse:collapse;font-size:14px;}
+  table.count-table.pitch-mix th{text-align:left;background:var(--navy);color:#fff;padding:7px 8px;font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;}
+  table.count-table.pitch-mix td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);}
 
   /* roster table (coach / org modes only) */
   table.roster-table{width:100%;border-collapse:collapse;font-size:13px;}
@@ -478,6 +502,63 @@
   </div>
 
 
+  <h2 class="section-title">Your Defense</h2>
+  <div class="module">
+    <div class="callout">You've played mostly <b>Second Base</b> this stretch.</div>
+    <div class="statgrid">
+      <div class="box">
+        <span class="n">.920</span>
+        <span class="lbl">Fielding %</span>
+        <p class="tip">Out of every ball you had a chance at, how many you handled cleanly. .950 means 95 out of 100.</p>
+      </div>
+      <div class="box">
+        <span class="n">5.8</span>
+        <span class="lbl">Plays per 9 innings</span>
+        <p class="tip">How involved you are on defense. This depends a lot on what position you play, so it's more useful to watch your own over time than to compare it to a teammate's.</p>
+      </div>
+      <div class="box">
+        <span class="n">12</span>
+        <span class="lbl">Putouts</span>
+        <p class="tip">Times you were the one who actually got the out.</p>
+      </div>
+      <div class="box">
+        <span class="n">34</span>
+        <span class="lbl">Assists</span>
+        <p class="tip">Times you helped get an out, like throwing to first base.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Your Pitching</h2>
+  <div class="module">
+    <div class="callout">You pitched <b>33.2 innings</b> and faced 154 batters this stretch.</div>
+    <div class="statgrid">
+      <div class="box">
+        <span class="n">57%</span>
+        <span class="lbl">Strikes</span>
+        <p class="tip">About 6 out of every 10 pitches you threw were strikes.</p>
+      </div>
+      <div class="box">
+        <span class="n">42</span>
+        <span class="lbl">Strikeouts</span>
+        <p class="tip">Batters you struck out.</p>
+      </div>
+      <div class="box">
+        <span class="n">53%</span>
+        <span class="lbl">First-pitch strikes</span>
+        <p class="tip">How often your first pitch to a batter was a strike. Getting ahead makes everything easier.</p>
+      </div>
+      <div class="box">
+        <span class="n">57</span>
+        <span class="lbl">Top speed (mph)</span>
+        <p class="tip">Your fastest recorded pitch.</p>
+      </div>
+    </div>
+  </div>
+  <div class="module focus-box">
+    <div class="focus-kicker">Your next pitching goal</div>
+    <div class="focus-title">Throw more strikes: aim for 6 of every 10 pitches.</div>
+  </div>
 
   <footer>
     Built from a GameChanger Staff stats export

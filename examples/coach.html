@@ -261,6 +261,23 @@
     z-index:2;
   }
 
+  table.roster-table td.goal-goal_met{color:var(--success-text);font-weight:700;}
+  table.roster-table td.goal-near_goal{color:var(--warning-text);font-weight:700;}
+  table.roster-table td.goal-below_goal{color:var(--error-text);font-weight:700;}
+  /* pitching goal tiers: same green / yellow / red meaning as the batting tiers */
+  .tier-line b.tier-goal_met{color:var(--success-text);}
+  .tier-line b.tier-near_goal{color:var(--warning-text);}
+  .tier-line b.tier-below_goal{color:var(--error-text);}
+  h3.sub-title{font-size:15px;margin:0 0 8px;color:var(--navy);}
+  /* batted-ball split: neutral blues (style, not a grade) */
+  .bb-split{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--lightgray);margin-top:6px;}
+  .bb-seg{display:block;height:100%;}
+  .bb-seg.gb,.bb-key.gb{background:#1E3A8A;}
+  .bb-seg.ld,.bb-key.ld{background:#60A5FA;}
+  .bb-seg.fb,.bb-key.fb{background:#BFDBFE;}
+  .bb-legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--text);margin-top:6px;}
+  .bb-key{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:4px;}
+
   /* one-focus module */
   .focus-box{
     background:var(--navy);
@@ -295,6 +312,13 @@
   }
   .allnum-card .lbl{color:var(--text);}
   .allnum-card .val{font-weight:800;color:var(--navy);font-size:17px;}
+
+  /* pitching: label/value cards that stay visible at every width */
+  .kv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;}
+  .kv-grid .allnum-card{margin:0;}
+  table.count-table.pitch-mix{width:100%;border-collapse:collapse;font-size:14px;}
+  table.count-table.pitch-mix th{text-align:left;background:var(--navy);color:#fff;padding:7px 8px;font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;}
+  table.count-table.pitch-mix td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);}
 
   /* roster table (coach / org modes only) */
   table.roster-table{width:100%;border-collapse:collapse;font-size:13px;}
@@ -888,6 +912,264 @@ Piper Delgado (13 PA).
     </div>
   </div>
 
+  <h2 class="section-title">Team Defense</h2>
+  <div class="module">
+    <div class="callout note" style="margin-top:0;margin-bottom:12px;">
+      Only players with at least one recorded fielding chance are listed. Below
+      10 total chances (PO+A+E), fielding % and range factor are too small a
+      sample to read anything into — shown as "—" rather than a misleading number.
+    </div>
+    <div class="tablewrap">
+      <table class="roster-table">
+        <thead>
+          <tr>
+            <th>Player</th><th>Position</th><th>Chances</th><th>FPCT</th><th>Range/9</th><th>E</th><th>DP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Noah Robinson</td>
+            <td>Catcher</td>
+            <td>91</td>
+            <td>.934</td>
+            <td>9.4</td>
+            <td>6</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>Owen Bennett</td>
+            <td>First Base</td>
+            <td>82</td>
+            <td>.927</td>
+            <td>8.9</td>
+            <td>6</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>Maya Chen</td>
+            <td>Shortstop</td>
+            <td>60</td>
+            <td>.967</td>
+            <td>6.6</td>
+            <td>2</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>Sofia Alvarez</td>
+            <td>Second Base</td>
+            <td>57</td>
+            <td>.842</td>
+            <td>5.5</td>
+            <td>9</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>Ava Thompson</td>
+            <td>Second Base</td>
+            <td>50</td>
+            <td>.920</td>
+            <td>5.8</td>
+            <td>4</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>Grace Kim</td>
+            <td>First Base</td>
+            <td>49</td>
+            <td>.918</td>
+            <td>6.3</td>
+            <td>4</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>Ruby Hayes</td>
+            <td>Third Base</td>
+            <td>43</td>
+            <td>.884</td>
+            <td>4.3</td>
+            <td>5</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>Liam Patel</td>
+            <td>Third Base</td>
+            <td>41</td>
+            <td>.951</td>
+            <td>4.8</td>
+            <td>2</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>Ethan Brooks</td>
+            <td>Center Field</td>
+            <td>35</td>
+            <td>.971</td>
+            <td>3.7</td>
+            <td>1</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>Caleb Foster</td>
+            <td>Left Field</td>
+            <td>25</td>
+            <td>.880</td>
+            <td>2.8</td>
+            <td>3</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>Mason Garcia</td>
+            <td>Left Field</td>
+            <td>22</td>
+            <td>1.000</td>
+            <td>2.8</td>
+            <td>0</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>Theo Coleman</td>
+            <td>Center Field</td>
+            <td>21</td>
+            <td>1.000</td>
+            <td>2.7</td>
+            <td>0</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>Isla Nguyen</td>
+            <td>Right Field</td>
+            <td>20</td>
+            <td>1.000</td>
+            <td>2.7</td>
+            <td>0</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>Piper Delgado</td>
+            <td>Catcher</td>
+            <td>11</td>
+            <td>.818</td>
+            <td>5.4</td>
+            <td>2</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>Zoe Martinez</td>
+            <td>Right Field</td>
+            <td>7</td>
+            <td>—</td>
+            <td>—</td>
+            <td>2</td>
+            <td>0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h2 class="section-title">Team Pitching</h2>
+  <div class="module">
+    <div class="callout">
+      6 players pitched this stretch, for 90.0 innings      and 1610 pitches. The four goal columns are coloured against common youth coaching goals
+      (green meeting it, yellow close, red working toward it): 60%+ strikes, 60%+ first-pitch strikes, 1 walk or
+      fewer per inning, and 2+ strikeouts per walk. Pitchers under 30 batters faced show "—"
+      for rates, which are too small a sample to read.
+    </div>
+    <div class="tablewrap">
+      <table class="roster-table pitch-table">
+        <thead>
+          <tr>
+            <th>Player</th><th>IP</th><th>Share</th><th>Pitches</th><th>Strike %</th><th>1st-pitch K %</th>
+            <th>BB/IP</th><th>K/BB</th><th>Whiff %</th><th>Opp AVG</th><th>ERA</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Ava Thompson</td>
+            <td>33.2</td>
+            <td>37%</td>
+            <td>564</td>
+            <td class="goal-near_goal">57.3%</td>
+            <td class="goal-near_goal">52.6%</td>
+            <td class="goal-goal_met">0.56</td>
+            <td class="goal-goal_met">2.21</td>
+            <td>12.1%</td>
+            <td>.241</td>
+            <td>3.56</td>
+          </tr>
+          <tr>
+            <td>Maya Chen</td>
+            <td>24.2</td>
+            <td>27%</td>
+            <td>448</td>
+            <td class="goal-goal_met">62.1%</td>
+            <td class="goal-goal_met">64.7%</td>
+            <td class="goal-goal_met">0.49</td>
+            <td class="goal-goal_met">2.92</td>
+            <td>16.7%</td>
+            <td>.275</td>
+            <td>4.38</td>
+          </tr>
+          <tr>
+            <td>Ethan Brooks</td>
+            <td>14.2</td>
+            <td>16%</td>
+            <td>283</td>
+            <td class="goal-near_goal">50.5%</td>
+            <td class="goal-below_goal">48.7%</td>
+            <td class="goal-goal_met">0.55</td>
+            <td class="goal-near_goal">1.62</td>
+            <td>9.2%</td>
+            <td>.353</td>
+            <td>4.91</td>
+          </tr>
+          <tr>
+            <td>Ruby Hayes</td>
+            <td>11.1</td>
+            <td>13%</td>
+            <td>173</td>
+            <td class="goal-near_goal">52.0%</td>
+            <td class="goal-near_goal">59.6%</td>
+            <td class="goal-goal_met">0.62</td>
+            <td class="goal-near_goal">1.57</td>
+            <td>15.0%</td>
+            <td>.227</td>
+            <td>1.59</td>
+          </tr>
+          <tr>
+            <td>Caleb Foster</td>
+            <td>4.2</td>
+            <td>5%</td>
+            <td>132</td>
+            <td class="goal-below_goal">50.0%</td>
+            <td class="goal-below_goal">37.8%</td>
+            <td class="goal-below_goal">1.50</td>
+            <td class="goal-below_goal">0.57</td>
+            <td>5.3%</td>
+            <td>.517</td>
+            <td>10.29</td>
+          </tr>
+          <tr>
+            <td>Theo Coleman</td>
+            <td>1.0</td>
+            <td>1%</td>
+            <td>10</td>
+            <td class="">—</td>
+            <td class="">—</td>
+            <td class="">—</td>
+            <td class="">—</td>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout note" style="margin-top:10px;">
+      <b>Workload:</b> "Share" is each pitcher's part of the team's innings. This export only has season totals, not
+      pitch counts per game, so it <b>can't check daily pitch limits or rest days</b>. Track those separately.
+    </div>
+  </div>
 
   <footer>
     Built from a GameChanger Staff stats export · Internal document, not for distribution to families

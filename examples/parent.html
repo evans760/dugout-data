@@ -261,6 +261,23 @@
     z-index:2;
   }
 
+  table.roster-table td.goal-goal_met{color:var(--success-text);font-weight:700;}
+  table.roster-table td.goal-near_goal{color:var(--warning-text);font-weight:700;}
+  table.roster-table td.goal-below_goal{color:var(--error-text);font-weight:700;}
+  /* pitching goal tiers: same green / yellow / red meaning as the batting tiers */
+  .tier-line b.tier-goal_met{color:var(--success-text);}
+  .tier-line b.tier-near_goal{color:var(--warning-text);}
+  .tier-line b.tier-below_goal{color:var(--error-text);}
+  h3.sub-title{font-size:15px;margin:0 0 8px;color:var(--navy);}
+  /* batted-ball split: neutral blues (style, not a grade) */
+  .bb-split{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--lightgray);margin-top:6px;}
+  .bb-seg{display:block;height:100%;}
+  .bb-seg.gb,.bb-key.gb{background:#1E3A8A;}
+  .bb-seg.ld,.bb-key.ld{background:#60A5FA;}
+  .bb-seg.fb,.bb-key.fb{background:#BFDBFE;}
+  .bb-legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--text);margin-top:6px;}
+  .bb-key{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:4px;}
+
   /* one-focus module */
   .focus-box{
     background:var(--navy);
@@ -295,6 +312,13 @@
   }
   .allnum-card .lbl{color:var(--text);}
   .allnum-card .val{font-weight:800;color:var(--navy);font-size:17px;}
+
+  /* pitching: label/value cards that stay visible at every width */
+  .kv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;}
+  .kv-grid .allnum-card{margin:0;}
+  table.count-table.pitch-mix{width:100%;border-collapse:collapse;font-size:14px;}
+  table.count-table.pitch-mix th{text-align:left;background:var(--navy);color:#fff;padding:7px 8px;font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;}
+  table.count-table.pitch-mix td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);}
 
   /* roster table (coach / org modes only) */
   table.roster-table{width:100%;border-collapse:collapse;font-size:13px;}
@@ -753,6 +777,309 @@ Focus on strikeout rate (k%)      </div>
   </div>
 
 
+  <h2 class="section-title">Defense</h2>
+  <div class="module">
+    <div class="callout">
+      Ava has played mostly <b>Second Base</b> this stretch
+      (38.1 innings there).
+      These numbers come from 50 recorded fielding chances (a ball hit or thrown to
+      the player that the player had a chance to field) — enough to say something, tagged below with how much to trust
+      each one the same way the batting numbers are. <b>Range Factor</b> in particular is heavily
+      influenced by position — a catcher or infielder naturally gets far more chances per inning than an
+      outfielder does — so it's more useful for tracking the player's own progress over time than for comparing
+      the player to a teammate who plays somewhere else.
+    </div>
+  </div>
+
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Fielding % (FPCT)</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">.920</span>
+        <span class="badge reliable">RELIABLE</span>
+      </span>
+    </div>
+    <div class="explain">Of every ball the player had a chance to field (50 chances — 12 putouts
+      plus 34 assists plus 4 errors), the share handled cleanly. Same
+      .XXX notation as batting average — .950 means the player converted 95 out of 100 chances. <b>Higher is
+      better.</b></div>
+    <div class="tier-line">The player is <b class="tier-around_middle">right around the middle</b> among the roster's other fielders with enough chances to compare.</div>
+<div class="distance">2 fewer errors would close most of this gap.</div>  </div>
+
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Range Factor</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">5.8</span>
+        <span class="badge reliable">RELIABLE</span>
+      </span>
+    </div>
+    <div class="explain">Putouts plus assists, scaled to a per-9-innings rate ((PO + A) ÷ innings fielded × 9) — a rough measure
+      of how often the player is involved in a defensive play, not just how cleanly. Because it depends so much on
+      position (see note above), <b>read this as the player's own trend over time more than a head-to-head
+      comparison.</b> <b>Higher is better.</b></div>
+    <div class="tier-line">The player is <b class="tier-above_middle">above the middle</b> among the roster's other fielders with enough innings to compare.</div>
+<div class="distance">About 3.7 more plays made per 9 innings would close most of this gap.</div>  </div>
+
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Error Rate</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">8.0%</span>
+        <span class="badge reliable">RELIABLE</span>
+      </span>
+    </div>
+    <div class="explain">4 errors out of 50 chances. The flip side of fielding %, shown as its
+      own number because it's the most direct read on "how often did a play get away from the player."
+      <b>Lower is better.</b></div>
+    <div class="tier-line">The player is <b class="tier-around_middle">right around the middle</b> among the roster's other fielders with enough chances to compare.</div>
+<div class="distance">Already at or beyond this benchmark for the team's regulars.</div>    <div class="substat">The player was also part of 1 double play this stretch.</div>
+  </div>
+
+
+
+  <h2 class="section-title">Pitching</h2>
+  <div class="module">
+    <div class="callout">
+      Ava pitched <b>33.2 innings</b> this stretch, facing
+      154 batters and throwing 564 pitches.
+      Pitching is measured against simple coaching goals rather than ranked against teammates, because a
+      team only has a handful of pitchers. The dots still show where the player sits among the team's
+      5 pitchers with enough innings to compare. The goals are common rules of thumb
+      for youth pitchers, not an official standard.
+    </div>
+  </div>
+
+  <div class="module focus-box">
+    <div class="focus-kicker">Next pitching goal</div>
+    <div class="focus-title">Throw more strikes: aim for 6 of every 10 pitches.</div>
+  </div>
+
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Strike %</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">57.3%</span>
+        <span class="badge reliable">RELIABLE</span>
+      </span>
+    </div>
+    <div class="explain">The share of all pitches that were strikes (called, swinging, or fouled off), including balls
+      put in play. 60% means 6 of every 10 pitches. Throwing strikes is the single biggest thing a young pitcher
+      controls. <b>Higher is better.</b></div>
+      <div class="tier-line">Common coaching goal: 60% or more of pitches for strikes. The player is <b class="tier-near_goal">close to the goal</b>.</div>
+
+      <div class="inline-compare">
+    <div class="dp-track small">
+      <div class="dp-dot" style="left:0.0%"></div>
+      <div class="dp-dot" style="left:4.4%"></div>
+      <div class="dp-dot" style="left:16.8%"></div>
+      <div class="dp-dot me" style="left:60.3%"></div>
+      <div class="dp-dot" style="left:100.0%"></div>
+    </div>
+    <div class="inline-compare-legend">
+      <span><span class="swatch swatch-dot-me"></span> Player: 57.3%</span>
+      <span><span class="swatch swatch-dot-other"></span> Team's pitchers: 50.0%–62.1%</span>
+    </div>
+  </div>
+
+  </div>
+
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">First-Pitch Strike %</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">52.6%</span>
+        <span class="badge reliable">RELIABLE</span>
+      </span>
+    </div>
+    <div class="explain">How often the very first pitch to a batter was a strike. Getting ahead 0–1 puts the pitcher in
+      control of the at-bat; falling behind 1–0 puts the batter in control. <b>Higher is better.</b></div>
+      <div class="tier-line">Common coaching goal: a first-pitch strike to 60% or more of batters. The player is <b class="tier-near_goal">close to the goal</b>.</div>
+
+      <div class="inline-compare">
+    <div class="dp-track small">
+      <div class="dp-dot" style="left:0.0%"></div>
+      <div class="dp-dot" style="left:40.4%"></div>
+      <div class="dp-dot me" style="left:55.0%"></div>
+      <div class="dp-dot" style="left:81.2%"></div>
+      <div class="dp-dot" style="left:100.0%"></div>
+    </div>
+    <div class="inline-compare-legend">
+      <span><span class="swatch swatch-dot-me"></span> Player: 52.6%</span>
+      <span><span class="swatch swatch-dot-other"></span> Team's pitchers: 37.8%–64.7%</span>
+    </div>
+  </div>
+
+  </div>
+
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Walks per Inning</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">0.56</span>
+        <span class="badge reliable">RELIABLE</span>
+      </span>
+    </div>
+    <div class="explain">19 walks over 33.2 innings. Every walk is a free base the
+      defense never had a chance to stop. <b>Lower is better.</b></div>
+      <div class="tier-line">Common coaching goal: 1 walk or fewer per inning. The player is <b class="tier-goal_met">meeting the goal</b>.</div>
+
+      <div class="inline-compare">
+    <div class="dp-track small">
+      <div class="dp-dot" style="left:0.0%"></div>
+      <div class="dp-dot" style="left:5.8%"></div>
+      <div class="dp-dot me" style="left:7.7%"></div>
+      <div class="dp-dot" style="left:12.9%"></div>
+      <div class="dp-dot" style="left:100.0%"></div>
+    </div>
+    <div class="inline-compare-legend">
+      <span><span class="swatch swatch-dot-me"></span> Player: 0.56</span>
+      <span><span class="swatch swatch-dot-other"></span> Team's pitchers: 0.49–1.50</span>
+    </div>
+  </div>
+
+  </div>
+
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Strikeouts per Walk</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">2.21</span>
+        <span class="badge reliable">RELIABLE</span>
+      </span>
+    </div>
+    <div class="explain">42 strikeouts and 19 walks. More strikeouts than walks
+      means the pitcher is winning more of the at-bats they fully control. <b>Higher is better.</b></div>
+      <div class="tier-line">Common coaching goal: 2 or more strikeouts for every walk. The player is <b class="tier-goal_met">meeting the goal</b>.</div>
+
+      <div class="inline-compare">
+    <div class="dp-track small">
+      <div class="dp-dot" style="left:0.0%"></div>
+      <div class="dp-dot" style="left:42.6%"></div>
+      <div class="dp-dot" style="left:44.9%"></div>
+      <div class="dp-dot me" style="left:69.9%"></div>
+      <div class="dp-dot" style="left:100.0%"></div>
+    </div>
+    <div class="inline-compare-legend">
+      <span><span class="swatch swatch-dot-me"></span> Player: 2.21</span>
+      <span><span class="swatch swatch-dot-other"></span> Team's pitchers: 0.57–2.92</span>
+    </div>
+  </div>
+
+  </div>
+
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Swing-and-Miss %</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">12.1%</span>
+        <span class="badge reliable">RELIABLE</span>
+      </span>
+    </div>
+    <div class="explain">The share of all pitches the batter swung at and missed. A sign of how hard the pitcher's
+      pitches are to hit. <b>Higher is better.</b> Shown for context, without a goal.</div>
+      <div class="inline-compare">
+    <div class="dp-track small">
+      <div class="dp-dot" style="left:0.0%"></div>
+      <div class="dp-dot" style="left:34.0%"></div>
+      <div class="dp-dot me" style="left:59.1%"></div>
+      <div class="dp-dot" style="left:85.0%"></div>
+      <div class="dp-dot" style="left:100.0%"></div>
+    </div>
+    <div class="inline-compare-legend">
+      <span><span class="swatch swatch-dot-me"></span> Player: 12.1%</span>
+      <span><span class="swatch swatch-dot-other"></span> Team's pitchers: 5.3%–16.7%</span>
+    </div>
+  </div>
+
+  </div>
+
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Opponents' Batting Average</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">.241</span>
+        <span class="badge reliable">RELIABLE</span>
+      </span>
+    </div>
+    <div class="explain">How well batters hit against this pitcher: 32 hits allowed, counted the same
+      way as a batting average. At this age it depends a lot on the fielders behind the pitcher, so it's shown
+      for context, without a goal. <b>Lower is better.</b></div>
+      <div class="inline-compare">
+    <div class="dp-track small">
+      <div class="dp-dot" style="left:0.0%"></div>
+      <div class="dp-dot me" style="left:4.6%"></div>
+      <div class="dp-dot" style="left:16.3%"></div>
+      <div class="dp-dot" style="left:43.3%"></div>
+      <div class="dp-dot" style="left:100.0%"></div>
+    </div>
+    <div class="inline-compare-legend">
+      <span><span class="swatch swatch-dot-me"></span> Player: .241</span>
+      <span><span class="swatch swatch-dot-other"></span> Team's pitchers: .227–.517</span>
+    </div>
+  </div>
+
+  </div>
+
+  <div class="module stat-card">
+    <div class="top-row"><span class="stat-name">Workload</span></div>
+    <div class="kv-grid">
+      <div class="allnum-card"><span class="lbl">Innings pitched</span><span class="val">33.2</span></div>
+      <div class="allnum-card"><span class="lbl">Batters faced</span><span class="val">154</span></div>
+<div class="allnum-card"><span class="lbl">Pitches thrown</span><span class="val">564</span></div><div class="allnum-card"><span class="lbl">Pitches per inning</span><span class="val">16.8</span></div><div class="allnum-card"><span class="lbl">Games pitched</span><span class="val">14</span></div><div class="allnum-card"><span class="lbl">Games started</span><span class="val">14</span></div>    </div>
+    <div class="explain" style="margin-top:8px;">Season totals only. This export doesn't include pitch counts for each
+      game, so it can't show whether daily pitch limits or rest days were followed.</div>
+  </div>
+
+  <div class="module stat-card">
+    <div class="top-row"><span class="stat-name">When Batters Made Contact</span></div>
+    <div class="bb-split" role="img" aria-label="Ground balls 56%, line drives 20%, fly balls 24%">
+      <span class="bb-seg gb" style="width:55.861430359008594%"></span>
+      <span class="bb-seg ld" style="width:19.68894623410137%"></span>
+      <span class="bb-seg fb" style="width:24.44962340689004%"></span>
+    </div>
+    <div class="bb-legend">
+      <span><span class="bb-key gb"></span> Ground balls 56%</span>
+      <span><span class="bb-key ld"></span> Line drives 20%</span>
+      <span><span class="bb-key fb"></span> Fly balls 24%</span>
+    </div>
+    <div class="explain" style="margin-top:8px;">Ground balls are usually the easiest to turn into outs; line drives
+      are the hardest. This describes the pitcher's style more than it grades it.</div>
+  </div>
+
+  <div class="module stat-card">
+    <div class="top-row"><span class="stat-name">Velocity &amp; Pitch Mix</span>
+<span class="stat-num-wrap"><span class="stat-num">57 mph</span></span>    </div>
+<div class="explain">Top recorded pitch speed this stretch.</div>    <div class="tablewrap" style="margin-top:8px;">
+      <table class="count-table pitch-mix">
+        <thead><tr><th>Pitch</th><th>Thrown</th><th>Strike %</th><th>Avg mph</th><th>Top mph</th></tr></thead>
+        <tbody>
+          <tr><td>Fastball</td><td>435 (77%)</td>
+            <td>59.8%</td><td>52.4</td><td>57</td></tr>
+          <tr><td>Changeup</td><td>129 (23%)</td>
+            <td>49.6%</td><td>45.7</td><td>51</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="module stat-card">
+    <div class="top-row"><span class="stat-name">All the Pitching Numbers</span></div>
+    <div class="kv-grid">
+      <div class="allnum-card"><span class="lbl">Wins–losses</span><span class="val">0–0</span></div>
+      <div class="allnum-card"><span class="lbl">Strikeouts</span><span class="val">42</span></div>
+      <div class="allnum-card"><span class="lbl">Walks</span><span class="val">19</span></div>
+      <div class="allnum-card"><span class="lbl">Hit batters</span><span class="val">2</span></div>
+      <div class="allnum-card"><span class="lbl">Hits allowed</span><span class="val">32</span></div>
+      <div class="allnum-card"><span class="lbl">Home runs allowed</span><span class="val">1</span></div>
+      <div class="allnum-card"><span class="lbl">Runs allowed (earned)</span><span class="val">23 (20)</span></div>
+      <div class="allnum-card"><span class="lbl">ERA (6-inning games)</span><span class="val">3.56</span></div>
+      <div class="allnum-card"><span class="lbl">WHIP (walks + hits per inning)</span><span class="val">1.51</span></div>
+      <div class="allnum-card"><span class="lbl">Wild pitches</span><span class="val">3</span></div>
+    </div>
+    <div class="explain" style="margin-top:8px;">ERA, WHIP, runs and wins depend heavily on the defense behind the
+      pitcher at this age, so they're listed for the record and left out of the goals above.</div>
+  </div>
 
   <footer>
     Built from a GameChanger Staff stats export · Spring 2026  </footer>

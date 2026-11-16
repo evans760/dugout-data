@@ -236,6 +236,58 @@
   </div>
   {% endif %}
 
+  {% if pitching_rows %}
+  <h2 class="section-title">Team Pitching</h2>
+  <div class="module">
+    <div class="callout">
+      {{ pitching_rows|length }} players pitched this stretch, for {{ team_pitch_ip|fmt_inn }} innings{% if team_pitch_np > 0 %}
+      and {{ team_pitch_np|int }} pitches{% endif %}. The four goal columns are coloured against common youth coaching goals
+      (green meeting it, yellow close, red working toward it): 60%+ strikes, 60%+ first-pitch strikes, 1 walk or
+      fewer per inning, and 2+ strikeouts per walk. Pitchers under {{ pitching_floor_bf }} batters faced show "—"
+      for rates, which are too small a sample to read.
+    </div>
+    <div class="tablewrap">
+      <table class="roster-table pitch-table">
+        <thead>
+          <tr>
+            <th>Player</th><th>IP</th><th>Share</th><th>Pitches</th><th>Strike %</th><th>1st-pitch K %</th>
+            <th>BB/IP</th><th>K/BB</th><th>Whiff %</th><th>Opp AVG</th><th>ERA</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in pitching_rows %}
+          {% set ok = p.p_bf >= pitching_floor_bf %}
+          {% set gt = pitch_goals[p.name] %}
+          <tr>
+            <td>{{ p.name }}{% if p.number %} #{{ p.number }}{% endif %}</td>
+            <td>{{ p.p_ip|fmt_inn }}</td>
+            <td>{{ (p.p_ip / team_pitch_ip * 100)|round|int if team_pitch_ip > 0 else 0 }}%</td>
+            <td>{{ p.p_np|int if p.p_np > 0 else "—" }}</td>
+            <td class="{{ 'goal-' ~ gt.strike_pct if ok and gt.strike_pct }}">{{ p.strike_pct|pct1 if ok else "—" }}</td>
+            <td class="{{ 'goal-' ~ gt.fps_pct if ok and gt.fps_pct }}">{{ p.fps_pct|pct1 if ok else "—" }}</td>
+            <td class="{{ 'goal-' ~ gt.bb_per_inn if ok and gt.bb_per_inn }}">{{ p.bb_per_inn|dec2 if ok else "—" }}</td>
+            <td class="{{ 'goal-' ~ gt.k_per_bb if ok and gt.k_per_bb }}">{{ (p.k_per_bb|dec2 if p.k_per_bb is not none else "No BB") if ok else "—" }}</td>
+            <td>{{ p.swm_pct|pct1 if ok else "—" }}</td>
+            <td>{{ p.opp_avg|fmt3o if ok else "—" }}</td>
+            <td>{{ p.era|dec2 if ok else "—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="callout note" style="margin-top:10px;">
+      <b>Workload:</b> "Share" is each pitcher's part of the team's innings. This export only has season totals, not
+      pitch counts per game, so it <b>can't check daily pitch limits or rest days</b>. Track those separately.
+      {% set suspect = pitching_rows|selectattr("top_mph_suspect")|list %}
+      {% if suspect %}
+      <br><b>Check the scoring:</b>
+      {% for p in suspect %}{{ p.name }} has a recorded top speed of {{ p.top_mph_suspect|int }} mph{% if not loop.last %}; {% endif %}{% endfor %}.
+      That's almost certainly a typo, so it's left out of the family reports.
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
   <footer>
     Built from a GameChanger Staff stats export · Internal document, not for distribution to families
   </footer>

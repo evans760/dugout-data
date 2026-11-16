@@ -161,6 +161,55 @@
   </div>
   {% endif %}
 
+  {% if visible.pitching and pitch %}
+  <h2 class="section-title">Your Pitching</h2>
+  <div class="module">
+    <div class="callout">You pitched <b>{{ player.p_ip|fmt_inn }} innings</b> and faced {{ player.p_bf|int }} batters this stretch.</div>
+    <div class="statgrid">
+      {% if player.strike_pct is not none %}
+      <div class="box">
+        <span class="n">{{ player.strike_pct|round|int }}%</span>
+        <span class="lbl">Strikes</span>
+        <p class="tip">About {{ (player.strike_pct / 10)|round|int }} out of every 10 pitches you threw were strikes.</p>
+      </div>
+      {% endif %}
+      <div class="box">
+        <span class="n">{{ player.p_so|int }}</span>
+        <span class="lbl">Strikeouts</span>
+        <p class="tip">Batters you struck out.</p>
+      </div>
+      {% if player.fps_pct is not none %}
+      <div class="box">
+        <span class="n">{{ player.fps_pct|round|int }}%</span>
+        <span class="lbl">First-pitch strikes</span>
+        <p class="tip">How often your first pitch to a batter was a strike. Getting ahead makes everything easier.</p>
+      </div>
+      {% endif %}
+      {% if player.top_mph %}
+      <div class="box">
+        <span class="n">{{ player.top_mph|int }}</span>
+        <span class="lbl">Top speed (mph)</span>
+        <p class="tip">Your fastest recorded pitch.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="module focus-box">
+    <div class="focus-kicker">Your next pitching goal</div>
+    {% if pitch.next_goal %}
+    <div class="focus-title">{{ pitch.next_goal.text }}</div>
+    {% else %}
+    <div class="focus-title">You're hitting every pitching goal. Keep doing it, game after game!</div>
+    {% endif %}
+  </div>
+  {% elif visible.pitching and player.has_pitching_data %}
+  <h2 class="section-title">Your Pitching</h2>
+  <div class="module callout">
+    You also pitched this stretch: {{ player.p_ip|fmt_inn }} innings{% if player.p_so > 0 %} and {{ player.p_so|int }}
+    strikeout{{ "s" if player.p_so != 1 else "" }}{% endif %}. Every inning on the mound makes you better.
+  </div>
+  {% endif %}
+
   <footer>
     Built from a GameChanger Staff stats export
   </footer>

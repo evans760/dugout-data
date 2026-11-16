@@ -59,9 +59,11 @@ def upload(filename: str) -> str:
     section_row = skipped_rows[0] if skipped_rows else None
     mapping = gr.detect_columns(headers)
     mapping.update(gr.detect_fielding_columns(headers, section_row))
+    mapping.update(gr.detect_pitching_columns(headers, section_row))
     STATE.update({
         "header_row": header_row,
-        "fielding_mapping": {k: v for k, v in mapping.items() if k in gr.FIELDING_COLUMN_CANDIDATES},
+        "fielding_mapping": {k: v for k, v in mapping.items()
+                             if k in gr.FIELDING_COLUMN_CANDIDATES or k in gr.PITCHING_COLUMN_CANDIDATES},
     })
     return json.dumps({
         "session_id": "local",

@@ -525,6 +525,237 @@
   </div>
   {% endif %}
 
+  {% macro pitch_dots(key, kind) %}
+  {% if pitch.dots[key] is defined %}
+  {% set d = pitch.dots[key] %}
+  <div class="inline-compare">
+    <div class="dp-track small">
+      {% for pt in d.points %}
+      <div class="dp-dot{% if pt.me %} me{% endif %}" style="left:{{ pt.pct }}%"></div>
+      {% endfor %}
+    </div>
+    <div class="inline-compare-legend">
+      {% if kind == "pct" %}
+      <span><span class="swatch swatch-dot-me"></span> Player: {{ d.value|pct1 }}</span>
+      <span><span class="swatch swatch-dot-other"></span> Team's pitchers: {{ d.lo|pct1 }}–{{ d.hi|pct1 }}</span>
+      {% elif kind == "avg" %}
+      <span><span class="swatch swatch-dot-me"></span> Player: {{ d.value|fmt3 }}</span>
+      <span><span class="swatch swatch-dot-other"></span> Team's pitchers: {{ d.lo|fmt3 }}–{{ d.hi|fmt3 }}</span>
+      {% else %}
+      <span><span class="swatch swatch-dot-me"></span> Player: {{ d.value|dec2 }}</span>
+      <span><span class="swatch swatch-dot-other"></span> Team's pitchers: {{ d.lo|dec2 }}–{{ d.hi|dec2 }}</span>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+  {% endmacro %}
+
+  {% macro goal_line(key) %}
+  {% set g = pitch.goals[key] %}
+  {% if g.tier %}
+  <div class="tier-line">Common coaching goal: {{ g.goal_text }}. The player is <b class="tier-{{ g.tier }}">{{ g.tier_label }}</b>.</div>
+  {% endif %}
+  {% endmacro %}
+
+  {% if visible.pitching and pitch %}
+  <h2 class="section-title">Pitching</h2>
+  <div class="module">
+    <div class="callout">
+      {{ player.name.split(" ")[0] }} pitched <b>{{ player.p_ip|fmt_inn }} innings</b> this stretch, facing
+      {{ player.p_bf|int }} batters{% if player.p_np > 0 %} and throwing {{ player.p_np|int }} pitches{% endif %}.
+      Pitching is measured against simple coaching goals rather than ranked against teammates, because a
+      team only has a handful of pitchers. The dots still show where the player sits among the team's
+      {{ pitch.n_pitchers }} pitchers with enough innings to compare. The goals are common rules of thumb
+      for youth pitchers, not an official standard.
+    </div>
+  </div>
+
+  <div class="module focus-box">
+    <div class="focus-kicker">Next pitching goal</div>
+    {% if pitch.next_goal %}
+    <div class="focus-title">{{ pitch.next_goal.text }}</div>
+    {% else %}
+    <div class="focus-title">Every pitching goal below is being met. The next step is doing it consistently, game after game.</div>
+    {% endif %}
+  </div>
+
+  {% if player.strike_pct is not none %}
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Strike %</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">{{ player.strike_pct|pct1 }}</span>
+        <span class="badge {{ player.reliability.strike_pct }}">{{ player.reliability.strike_pct|reliability_label }}</span>
+      </span>
+    </div>
+    <div class="explain">The share of all pitches that were strikes (called, swinging, or fouled off), including balls
+      put in play. 60% means 6 of every 10 pitches. Throwing strikes is the single biggest thing a young pitcher
+      controls. <b>Higher is better.</b></div>
+    {{ goal_line("strike_pct") }}
+    {{ pitch_dots("strike_pct", "pct") }}
+  </div>
+  {% endif %}
+
+  {% if player.fps_pct is not none %}
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">First-Pitch Strike %</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">{{ player.fps_pct|pct1 }}</span>
+        <span class="badge {{ player.reliability.fps_pct }}">{{ player.reliability.fps_pct|reliability_label }}</span>
+      </span>
+    </div>
+    <div class="explain">How often the very first pitch to a batter was a strike. Getting ahead 0–1 puts the pitcher in
+      control of the at-bat; falling behind 1–0 puts the batter in control. <b>Higher is better.</b></div>
+    {{ goal_line("fps_pct") }}
+    {{ pitch_dots("fps_pct", "pct") }}
+  </div>
+  {% endif %}
+
+  {% if player.bb_per_inn is not none %}
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Walks per Inning</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">{{ player.bb_per_inn|dec2 }}</span>
+        <span class="badge {{ player.reliability.bb_per_inn }}">{{ player.reliability.bb_per_inn|reliability_label }}</span>
+      </span>
+    </div>
+    <div class="explain">{{ player.p_bb|int }} walks over {{ player.p_ip|fmt_inn }} innings. Every walk is a free base the
+      defense never had a chance to stop. <b>Lower is better.</b></div>
+    {{ goal_line("bb_per_inn") }}
+    {{ pitch_dots("bb_per_inn", "dec") }}
+  </div>
+  {% endif %}
+
+  {% if pitch.goals.k_per_bb.tier %}
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Strikeouts per Walk</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">{{ player.k_per_bb|dec2 if player.k_per_bb is not none else "No walks" }}</span>
+        <span class="badge {{ player.reliability.k_per_bb }}">{{ player.reliability.k_per_bb|reliability_label }}</span>
+      </span>
+    </div>
+    <div class="explain">{{ player.p_so|int }} strikeouts and {{ player.p_bb|int }} walks. More strikeouts than walks
+      means the pitcher is winning more of the at-bats they fully control. <b>Higher is better.</b></div>
+    {{ goal_line("k_per_bb") }}
+    {{ pitch_dots("k_per_bb", "dec") }}
+  </div>
+  {% endif %}
+
+  {% if player.swm_pct is not none %}
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Swing-and-Miss %</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">{{ player.swm_pct|pct1 }}</span>
+        <span class="badge {{ player.reliability.swm_pct }}">{{ player.reliability.swm_pct|reliability_label }}</span>
+      </span>
+    </div>
+    <div class="explain">The share of all pitches the batter swung at and missed. A sign of how hard the pitcher's
+      pitches are to hit. <b>Higher is better.</b> Shown for context, without a goal.</div>
+    {{ pitch_dots("swm_pct", "pct") }}
+  </div>
+  {% endif %}
+
+  {% if player.opp_avg is not none %}
+  <div class="module stat-card">
+    <div class="top-row">
+      <span class="stat-name">Opponents' Batting Average</span>
+      <span class="stat-num-wrap">
+        <span class="stat-num">{{ player.opp_avg|fmt3 }}</span>
+        <span class="badge {{ player.reliability.opp_avg }}">{{ player.reliability.opp_avg|reliability_label }}</span>
+      </span>
+    </div>
+    <div class="explain">How well batters hit against this pitcher: {{ player.p_h|int }} hits allowed, counted the same
+      way as a batting average. At this age it depends a lot on the fielders behind the pitcher, so it's shown
+      for context, without a goal. <b>Lower is better.</b></div>
+    {{ pitch_dots("opp_avg", "avg") }}
+  </div>
+  {% endif %}
+
+  <div class="module stat-card">
+    <div class="top-row"><span class="stat-name">Workload</span></div>
+    <div class="kv-grid">
+      <div class="allnum-card"><span class="lbl">Innings pitched</span><span class="val">{{ player.p_ip|fmt_inn }}</span></div>
+      <div class="allnum-card"><span class="lbl">Batters faced</span><span class="val">{{ player.p_bf|int }}</span></div>
+      {% if player.p_np > 0 %}<div class="allnum-card"><span class="lbl">Pitches thrown</span><span class="val">{{ player.p_np|int }}</span></div>{% endif %}
+      {% if player.pitches_per_inn is not none %}<div class="allnum-card"><span class="lbl">Pitches per inning</span><span class="val">{{ player.pitches_per_inn|dec1 }}</span></div>{% endif %}
+      {% if player.p_gp > 0 %}<div class="allnum-card"><span class="lbl">Games pitched</span><span class="val">{{ player.p_gp|int }}</span></div>{% endif %}
+      {% if player.p_gs > 0 %}<div class="allnum-card"><span class="lbl">Games started</span><span class="val">{{ player.p_gs|int }}</span></div>{% endif %}
+    </div>
+    <div class="explain" style="margin-top:8px;">Season totals only. This export doesn't include pitch counts for each
+      game, so it can't show whether daily pitch limits or rest days were followed.</div>
+  </div>
+
+  {% if pitch.has_batted_ball %}
+  <div class="module stat-card">
+    <div class="top-row"><span class="stat-name">When Batters Made Contact</span></div>
+    <div class="bb-split" role="img" aria-label="Ground balls {{ player.gb_pct|round|int }}%, line drives {{ player.ld_pct|round|int }}%, fly balls {{ player.fb_pct|round|int }}%">
+      <span class="bb-seg gb" style="width:{{ player.gb_pct }}%"></span>
+      <span class="bb-seg ld" style="width:{{ player.ld_pct }}%"></span>
+      <span class="bb-seg fb" style="width:{{ player.fb_pct }}%"></span>
+    </div>
+    <div class="bb-legend">
+      <span><span class="bb-key gb"></span> Ground balls {{ player.gb_pct|round|int }}%</span>
+      <span><span class="bb-key ld"></span> Line drives {{ player.ld_pct|round|int }}%</span>
+      <span><span class="bb-key fb"></span> Fly balls {{ player.fb_pct|round|int }}%</span>
+    </div>
+    <div class="explain" style="margin-top:8px;">Ground balls are usually the easiest to turn into outs; line drives
+      are the hardest. This describes the pitcher's style more than it grades it.</div>
+  </div>
+  {% endif %}
+
+  {% if pitch.has_velocity or pitch.has_pitch_mix %}
+  <div class="module stat-card">
+    <div class="top-row"><span class="stat-name">{{ "Velocity &amp; Pitch Mix" if pitch.has_pitch_mix else "Top Speed" }}</span>
+      {% if player.top_mph %}<span class="stat-num-wrap"><span class="stat-num">{{ player.top_mph|int }} mph</span></span>{% endif %}
+    </div>
+    {% if player.top_mph %}<div class="explain">Top recorded pitch speed this stretch.</div>{% endif %}
+    {% if pitch.has_pitch_mix %}
+    <div class="tablewrap" style="margin-top:8px;">
+      <table class="count-table pitch-mix">
+        <thead><tr><th>Pitch</th><th>Thrown</th><th>Strike %</th><th>Avg mph</th><th>Top mph</th></tr></thead>
+        <tbody>
+          {% for m in player.pitch_mix %}
+          <tr><td>{{ m.label }}</td><td>{{ m.n|int }}{% if m.share is not none %} ({{ m.share|round|int }}%){% endif %}</td>
+            <td>{{ m.strike_pct|pct1 }}</td><td>{{ m.avg_mph|dec1 }}</td><td>{{ m.top_mph|int if m.top_mph else "—" }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <div class="module stat-card">
+    <div class="top-row"><span class="stat-name">All the Pitching Numbers</span></div>
+    <div class="kv-grid">
+      <div class="allnum-card"><span class="lbl">Wins–losses</span><span class="val">{{ player.p_w|int }}–{{ player.p_l|int }}</span></div>
+      {% if player.p_sv > 0 %}<div class="allnum-card"><span class="lbl">Saves</span><span class="val">{{ player.p_sv|int }}</span></div>{% endif %}
+      <div class="allnum-card"><span class="lbl">Strikeouts</span><span class="val">{{ player.p_so|int }}</span></div>
+      <div class="allnum-card"><span class="lbl">Walks</span><span class="val">{{ player.p_bb|int }}</span></div>
+      <div class="allnum-card"><span class="lbl">Hit batters</span><span class="val">{{ player.p_hbp|int }}</span></div>
+      <div class="allnum-card"><span class="lbl">Hits allowed</span><span class="val">{{ player.p_h|int }}</span></div>
+      <div class="allnum-card"><span class="lbl">Home runs allowed</span><span class="val">{{ player.p_hr|int }}</span></div>
+      <div class="allnum-card"><span class="lbl">Runs allowed (earned)</span><span class="val">{{ player.p_r|int }} ({{ player.p_er|int }})</span></div>
+      <div class="allnum-card"><span class="lbl">ERA ({{ player.era_innings }}-inning games)</span><span class="val">{{ player.era|dec2 }}</span></div>
+      <div class="allnum-card"><span class="lbl">WHIP (walks + hits per inning)</span><span class="val">{{ player.whip|dec2 }}</span></div>
+      <div class="allnum-card"><span class="lbl">Wild pitches</span><span class="val">{{ player.p_wp|int }}</span></div>
+    </div>
+    <div class="explain" style="margin-top:8px;">ERA, WHIP, runs and wins depend heavily on the defense behind the
+      pitcher at this age, so they're listed for the record and left out of the goals above.</div>
+  </div>
+  {% elif visible.pitching and player.has_pitching_data %}
+  <h2 class="section-title">Pitching</h2>
+  <div class="module callout">
+    {{ player.name.split(" ")[0] }} also took the mound this stretch: {{ player.p_ip|fmt_inn }} innings, facing
+    {{ player.p_bf|int }} batters{% if player.p_so > 0 %} with {{ player.p_so|int }} strikeout{{ "s" if player.p_so != 1 else "" }}{% endif %}.
+    That's not enough innings yet for pitching numbers to mean much, but every inning on the mound is experience.
+  </div>
+  {% endif %}
+
   <footer>
     Built from a GameChanger Staff stats export{% if config.season_label %} · {{ config.season_label }}{% endif %}
   </footer>
