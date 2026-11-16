@@ -126,7 +126,7 @@ VISIBLE_KEYS = [
 DEFAULT_VISIBLE = {k: True for k in VISIBLE_KEYS}
 
 TIER_LABELS = {
-    # These plug into a sentence of the shape "He's {tier_label} among the
+    # These plug into a sentence of the shape "The player is {tier_label} among the
     # team's regular hitters" (see templates) — keep them grammatical in
     # that slot if you edit them.
     "leading": "leading",
@@ -159,7 +159,7 @@ RELIABILITY_EXPLANATIONS = {
                "Treat it as a meaningful signal, not the final word yet.",
     "noisy": "Too few chances so far for this number to mean much on its own — "
              "one or two more games could swing it a lot. Read it as “what "
-             "happened,” not “who he is.”",
+             "happened,” not “who the player is.”",
 }
 
 # --------------------------------------------------------------------------
@@ -899,13 +899,13 @@ def compare_rate_stat(value_pct: float, pool_pct: list[float], tier: str, pa: fl
         # visibly explained, e.g. the parent/player tier-line; this text also
         # gets reused verbatim in coach mode, which has no such system on
         # screen, so it needs to stand on its own).
-        target_phrase = "would move him into the upper third of the team's regular hitters"
+        target_phrase = "would move the player into the upper third of the team's regular hitters"
     elif tier == "above_middle":
         target = min(pool_pct) if lower_is_better else max(pool_pct)
-        target_phrase = "would make him the team's best in this stat"
+        target_phrase = "would make the player the team's best in this stat"
     else:
         target = median_val
-        target_phrase = "would put him at the middle of the team's regular hitters"
+        target_phrase = "would put the player at the middle of the team's regular hitters"
     delta_pct = (value_pct - target) if lower_is_better else (target - value_pct)
     if delta_pct <= 0:
         return "Already at or beyond this benchmark for the team's regulars."
@@ -918,7 +918,7 @@ def compare_rate_stat(value_pct: float, pool_pct: list[float], tier: str, pa: fl
 def build_comparisons(player: PlayerStats, regulars: list[PlayerStats]) -> dict:
     """Returns {stat_key: StatCompare} for every stat we tier/distance,
     computed against the 'regulars' pool (which includes this player, since
-    he is one, if he clears the min-PA bar)."""
+    they are one, if they clear the min-PA bar)."""
     out: dict[str, StatCompare] = {}
 
     def do_points_stat(key, attr, unit_fn):
@@ -958,7 +958,7 @@ def build_comparisons(player: PlayerStats, regulars: list[PlayerStats]) -> dict:
             target = statistics.median(bkpool)
             if player.bb_per_k < target and player.so > 0:
                 extra_bb = max(1, math.ceil(target * player.so - player.bb))
-                bkdist = f"About {extra_bb} more walks at this strikeout rate would put him at the middle of the group."
+                bkdist = f"About {extra_bb} more walks at this strikeout rate would put the player at the middle of the group."
             else:
                 bkdist = None
         else:
@@ -1032,7 +1032,7 @@ def build_defensive_comparisons(player: PlayerStats, defensive_pool: list[Player
 
 
 def build_compare_visuals(player: PlayerStats, regulars: list[PlayerStats], team_ops: dict) -> dict:
-    """Geometry for the 'Where He Stands on the Roster' module: bars scaled
+    """Geometry for the 'Where the Player Stands on the Roster' module: bars scaled
     to the player's own number (with a team-average marker) when the team
     is a fair yardstick, or a dot-plot distribution across the regulars
     when the roster is too strong (team OPS >= cutoff) for a team-average
