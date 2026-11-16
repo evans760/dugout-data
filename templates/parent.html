@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ player.name }} — Batting Report</title>
+<title>{{ player.name }} — Season Report</title>
 {% include "_style.html" %}
 </head>
 <body>
@@ -298,14 +298,15 @@
       {{ team_ops.ops|fmt3 }}), measured against the team's {{ n_regulars }} "regular" hitters
       ({{ config.min_pa_regular }}+ plate appearances this stretch){% if n_excluded > 0 %}; {{ n_excluded }}
       of {{ n_players_team }} rostered players had too few plate appearances to fairly include{% endif %}.
-      On that bar, <b>the filled blue portion is the player's own number</b> — the further right it reaches, the
-      higher the number is — and <b>the thin black line is where the team average falls</b>. Blue past the
-      black line means the player is above the team average; blue short of it means below.
+      On that bar, <b>the filled green portion is the player's own number</b> — the further right it reaches, the
+      higher the number is — and <b>the thin black line is where the team average falls</b>. Green past the
+      black line means the player is above the team average; green short of it means below.
       {% else %}
-      The team is unusually strong this stretch (team OPS {{ team_ops.ops|fmt3 }}), so instead of a
-      team-average bar, each card below shows a dot on the spread of the team's {{ n_regulars }} regular
-      hitters ({{ config.min_pa_regular }}+ plate appearances this stretch). <b>Each small gray dot is one
-      teammate; the larger blue dot is the player.</b> Further right on the line means a higher number.
+      Each card below also shows where the player sits among the team's {{ n_regulars }} regular
+      hitters ({{ config.min_pa_regular }}+ plate appearances this stretch){% if n_excluded > 0 %}; {{ n_excluded }}
+      of {{ n_players_team }} rostered players had too few plate appearances to fairly include{% endif %}.
+      <b>Each small gray dot is one teammate; the larger green dot is the player.</b> Further right on
+      the line means a higher number.
       {% endif %}
       {% endif %}
     </div>

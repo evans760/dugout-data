@@ -1,6 +1,6 @@
-# Batting Report Generator (browser version)
+# Dugout Data
 
-Turns a GameChanger season stats CSV into per-player batting reports
+Turns a GameChanger season stats CSV into per-player season reports
 (parent and player versions) and a coach summary.
 
 **Everything runs in your browser.** The page uses
@@ -27,8 +27,8 @@ change to `templates/` or `py/`:
 ## Embed it (e.g. Squarespace)
 
 ```html
-<iframe src="https://evans760.github.io/batting-reports/"
-  title="Batting Report Generator"
+<iframe src="https://evans760.github.io/dugout-data/"
+  title="Dugout Data"
   style="width:100%;height:1600px;border:0;"></iframe>
 ```
 

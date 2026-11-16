@@ -38,13 +38,11 @@
       <div class="box"><span class="n">{{ team_ops.ops|fmt3 }}</span><span class="lbl">Team OPS (regulars)</span></div>
     </div>
     <div class="callout note">
-      {% if team_ops.use_bars %}
-      This team's OPS is under .900, a fairly typical range, so the individual parent/player reports
-      compare each hitter to a bar showing the team average.
-      {% else %}
-      This team's OPS is unusually high (.900+) — high enough that comparing hitters to a single team
-      average would make nearly everyone look mediocre by comparison and not mean much. So instead, the
-      individual parent/player reports show each hitter as a dot on the spread of the whole team.
+      The parent reports show each hitter as one highlighted dot among the team's regulars (the other
+      dots carry no names), so families see where their player sits across the whole team.
+      {% if not team_ops.use_bars %}
+      This team's OPS is unusually high (.900+), so the parent reports also note that landing in the
+      middle of this roster still means a solid season by typical standards.
       {% endif %}
     </div>
   </div>

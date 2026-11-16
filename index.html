@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Batting Report Generator</title>
+<title>Dugout Data</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -115,7 +115,7 @@
 
 <header class="hero">
   <div class="inner">
-    <h1>Batting Report Generator</h1>
+    <h1>Dugout Data</h1>
     <p>Upload a GameChanger Staff stats export. Everything runs right here in your browser — your CSV is never uploaded or sent anywhere.</p>
     <a class="examples-btn" href="examples.html">See example reports →</a>
   </div>
@@ -510,7 +510,7 @@ function renderResults(players, teamReports, zipUrl) {
   `).join("");
 
   const zipRow = zipUrl
-    ? `<div class="zip-row"><a href="${zipUrl}" download="batting-reports.zip">Download all reports (.zip)</a>
+    ? `<div class="zip-row"><a href="${zipUrl}" download="dugout-data-reports.zip">Download all reports (.zip)</a>
        <p class="hint" style="margin:4px 0 0;">Report links below only work while this page is open — download the zip to keep them.</p></div>`
     : "";
   el.innerHTML = zipRow + playerRows + teamRows;

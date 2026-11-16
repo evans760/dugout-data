@@ -111,7 +111,12 @@ RELIABILITY_THRESHOLDS = {
     "range_factor": ("DEF_INN", 60),
 }
 
-TEAM_OPS_STRONG_CUTOFF = 0.900  # at/above this, switch to dot-plot framing
+TEAM_OPS_STRONG_CUTOFF = 0.900  # at/above this, the bottom line explains it as a strong roster
+# How parent reports compare a hitter to the team:
+#   "dots" — every regular as a dot, this player highlighted (default)
+#   "bars" — this player's number against a team-average marker
+#   "auto" — bars, unless team OPS >= TEAM_OPS_STRONG_CUTOFF, then dots
+COMPARISON_VIEW = "dots"
 
 # Which sections/stat-cards a parent/player report can show. The CLI always
 # uses every key True (unchanged v1 behavior); the web app's free-text
@@ -1032,15 +1037,14 @@ def build_defensive_comparisons(player: PlayerStats, defensive_pool: list[Player
 
 
 def build_compare_visuals(player: PlayerStats, regulars: list[PlayerStats], team_ops: dict) -> dict:
-    """Geometry for the 'Where the Player Stands on the Roster' module: bars scaled
-    to the player's own number (with a team-average marker) when the team
-    is a fair yardstick, or a dot-plot distribution across the regulars
-    when the roster is too strong (team OPS >= cutoff) for a team-average
-    bar to mean anything."""
+    """Geometry for the 'Where the Player Stands on the Roster' module: a
+    dot-plot distribution across the regulars (default), or bars scaled to
+    the player's own number with a team-average marker. See COMPARISON_VIEW."""
     stat_keys = ["avg", "obp", "slg", "ops"]
     team_vals = {"avg": team_ops["avg"], "obp": team_ops["obp"], "slg": team_ops["slg"], "ops": team_ops["ops"]}
 
-    if team_ops["use_bars"]:
+    use_bars = COMPARISON_VIEW == "bars" or (COMPARISON_VIEW == "auto" and team_ops["use_bars"])
+    if use_bars:
         bars = {}
         for key in stat_keys:
             val = getattr(player, key)
@@ -1056,14 +1060,17 @@ def build_compare_visuals(player: PlayerStats, regulars: list[PlayerStats], team
     else:
         dots = {}
         for key in stat_keys:
-            pool = sorted(getattr(p, key) for p in regulars)
-            lo, hi = (pool[0], pool[-1]) if pool else (0, 1)
+            ranked = sorted(regulars, key=lambda q: getattr(q, key))
+            vals = [getattr(q, key) for q in ranked]
+            lo, hi = (vals[0], vals[-1]) if vals else (0, 1)
             span = (hi - lo) or 1.0
             val = getattr(player, key)
             points = []
-            for v in pool:
+            for q, v in zip(ranked, vals):
                 pct = round((v - lo) / span * 100, 1)
-                points.append({"pct": pct, "me": abs(v - val) < 1e-9})
+                # Highlight by identity, not value, so a teammate with the
+                # exact same number isn't also drawn as "the player".
+                points.append({"pct": pct, "me": q is player})
             dots[key] = {"value": val, "lo": lo, "hi": hi, "points": points}
         return {"mode": "dots", "dots": dots}
 

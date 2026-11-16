@@ -26,7 +26,7 @@ import query_engine as qe
 WORK = Path("/work")
 CSV_PATH = WORK / "upload.csv"
 OUT_DIR = WORK / "output"
-ZIP_PATH = WORK / "batting-reports.zip"
+ZIP_PATH = WORK / "dugout-data-reports.zip"
 TEMPLATES_DIR = Path("/app/templates")
 ALLOWED_MODES = {"parent", "player", "coach"}
 TEAM_FILE_LABELS = {
