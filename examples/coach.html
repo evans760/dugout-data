@@ -98,6 +98,11 @@
   .callout b{color:var(--navy);}
   .callout.note{font-size:13.5px;color:var(--gray);}
 
+  /* Paragraph rhythm: long explanations are split into short paragraphs so
+     no block reads as a wall of text. */
+  .callout p,.explain p,.summary-box p,.lede p{margin:0 0 10px;}
+  .callout p:last-child,.explain p:last-child,.summary-box p:last-child,.lede p:last-child{margin-bottom:0;}
+
   /* reliability badge — sized/weighted to sit next to the number it
      qualifies, not the smallest text on the card. See stat-num-wrap. */
   .badge{
@@ -363,6 +368,7 @@
   }
 
   @media print{
+    .callout p,.explain p,.summary-box p,.lede p{margin-bottom:4px;}
     body{font-size:11.5px;background:#fff;color:#000;line-height:1.4;}
     .wrap{padding:0;max-width:100%;}
     header.hero{background:#212B36 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-radius:0;padding:12px 14px;margin-bottom:10px;}
@@ -414,12 +420,14 @@
   </header>
 
   <div class="module lede">
-    This page is for coaching staff only — unlike the parent/player reports, it shows every player by
-    name with ordinal ranks. Regulars are players with 15+ plate appearances this stretch
+    <p>This page is for coaching staff only — unlike the parent/player reports, it shows every player by
+    name with ordinal ranks.</p>
+    <p>Regulars are players with 15+ plate appearances this stretch
     (14 of 15); rate stats below 40 PA are unreliable
-    enough that individual player reports skip interpreting them entirely. Beyond the raw numbers below,
+    enough that individual player reports skip interpreting them entirely.</p>
+    <p>Beyond the raw numbers below,
     this page also groups players by shared practice needs, flags team-wide trend direction, and calls
-    out playing-time gaps — everything a GameChanger export alone won't do for you.
+    out playing-time gaps — everything a GameChanger export alone won't do for you.</p>
   </div>
 
   <h2 class="section-title">Roster Snapshot</h2>
@@ -560,10 +568,11 @@
   <h2 class="section-title">Practice Focus Groups</h2>
   <div class="module">
     <div class="callout">
-      Each player's own report already points to one development focus, chosen the same way for
-      everyone (prefer the most trustworthy stat with the clearest room to grow). This groups those
+      <p>Each player's own report already points to one development focus, chosen the same way for
+      everyone (prefer the most trustworthy stat with the clearest room to grow).</p>
+      <p>This groups those
       into shared buckets so you can run focused stations at practice instead of guessing who needs
-      what — or repeating the same drill for the whole team when only a few players actually need it.
+      what — or repeating the same drill for the whole team when only a few players actually need it.</p>
     </div>
     <div class="stat-card">
       <div class="top-row">
@@ -571,7 +580,7 @@
         <span class="stat-num">11</span>
       </div>
       <div class="explain">
-Ava Thompson <span style="color:var(--gray);">— already at or beyond this benchmark for the team's regulars.</span><br>Caleb Foster <span style="color:var(--gray);">— about 8 fewer strikeouts over a season this length would put the player at the middle of the team's regular hitters.</span><br>Ethan Brooks <span style="color:var(--gray);">— about 1 fewer strikeout over a season this length would make the player the team's best in this stat.</span><br>Isla Nguyen <span style="color:var(--gray);">— about 7 fewer strikeouts over a season this length would put the player at the middle of the team's regular hitters.</span><br>Liam Patel <span style="color:var(--gray);">— already at or beyond this benchmark for the team's regulars.</span><br>Noah Robinson <span style="color:var(--gray);">— about 2 fewer strikeouts over a season this length would put the player at the middle of the team's regular hitters.</span><br>Owen Bennett <span style="color:var(--gray);">— about 2 fewer strikeouts over a season this length would put the player at the middle of the team's regular hitters.</span><br>Ruby Hayes <span style="color:var(--gray);">— about 5 fewer strikeouts over a season this length would make the player the team's best in this stat.</span><br>Sofia Alvarez <span style="color:var(--gray);">— about 5 fewer strikeouts over a season this length would make the player the team's best in this stat.</span><br>Theo Coleman <span style="color:var(--gray);">— about 2 fewer strikeouts over a season this length would put the player at the middle of the team's regular hitters.</span><br>Zoe Martinez <span style="color:var(--gray);">— already at or beyond this benchmark for the team's regulars.</span>      </div>
+<p>Ava Thompson <span style="color:var(--gray);">— already at or beyond this benchmark for the team's regulars.</span></p><p>Caleb Foster <span style="color:var(--gray);">— about 8 fewer strikeouts over a season this length would put the player at the middle of the team's regular hitters.</span></p><p>Ethan Brooks <span style="color:var(--gray);">— about 1 fewer strikeout over a season this length would make the player the team's best in this stat.</span></p><p>Isla Nguyen <span style="color:var(--gray);">— about 7 fewer strikeouts over a season this length would put the player at the middle of the team's regular hitters.</span></p><p>Liam Patel <span style="color:var(--gray);">— already at or beyond this benchmark for the team's regulars.</span></p><p>Noah Robinson <span style="color:var(--gray);">— about 2 fewer strikeouts over a season this length would put the player at the middle of the team's regular hitters.</span></p><p>Owen Bennett <span style="color:var(--gray);">— about 2 fewer strikeouts over a season this length would put the player at the middle of the team's regular hitters.</span></p><p>Ruby Hayes <span style="color:var(--gray);">— about 5 fewer strikeouts over a season this length would make the player the team's best in this stat.</span></p><p>Sofia Alvarez <span style="color:var(--gray);">— about 5 fewer strikeouts over a season this length would make the player the team's best in this stat.</span></p><p>Theo Coleman <span style="color:var(--gray);">— about 2 fewer strikeouts over a season this length would put the player at the middle of the team's regular hitters.</span></p><p>Zoe Martinez <span style="color:var(--gray);">— already at or beyond this benchmark for the team's regulars.</span></p>      </div>
     </div>
     <div class="stat-card">
       <div class="top-row">
@@ -579,7 +588,7 @@ Ava Thompson <span style="color:var(--gray);">— already at or beyond this benc
         <span class="stat-num">2</span>
       </div>
       <div class="explain">
-Mason Garcia <span style="color:var(--gray);">— about 4 more walks over a season this length would put the player at the middle of the team's regular hitters.</span><br>Maya Chen <span style="color:var(--gray);">— about 5 more walks over a season this length would make the player the team's best in this stat.</span>      </div>
+<p>Mason Garcia <span style="color:var(--gray);">— about 4 more walks over a season this length would put the player at the middle of the team's regular hitters.</span></p><p>Maya Chen <span style="color:var(--gray);">— about 5 more walks over a season this length would make the player the team's best in this stat.</span></p>      </div>
     </div>
     <div class="callout note">
       <b>Already strong — stretch goals, not real gaps</b> (skip these first if practice time is short):
@@ -621,7 +630,7 @@ Piper Delgado (13 PA)      — more reps before any number here means much.
     <div class="callout note" style="margin-top:12px;">
       <b>Most improved (OBP, early → late):</b>
 Noah Robinson (.150 → .565), Ethan Brooks (.364 → .550).
-      <b>Worth a check-in (OBP, early → late):</b>
+<br><br><b>Worth a check-in (OBP, early → late):</b>
 Mason Garcia (.455 → .182), Ruby Hayes (.500 → .364).
     </div>
   </div>
@@ -906,9 +915,11 @@ Piper Delgado (13 PA).
       </table>
     </div>
     <div class="callout note" style="margin-top:10px;">
-      Rank is ordinal by OPS among regulars only, for internal use. This table — names plus ranks
+      <p>Rank is ordinal by OPS among regulars only, for internal use.</p>
+      <p>This table — names plus ranks
       together — is the one place in this tool's output where that combination is allowed; it never
-      appears in a parent or player report. A CSV version of this table is written alongside this file.
+      appears in a parent or player report.</p>
+      <p>A CSV version of this table is written alongside this file.</p>
     </div>
   </div>
 
@@ -1070,10 +1081,12 @@ Piper Delgado (13 PA).
   <h2 class="section-title">Team Pitching</h2>
   <div class="module">
     <div class="callout">
-      6 players pitched this stretch, for 90.0 innings      and 1610 pitches. The four goal columns are coloured against common youth coaching goals
+      <p>6 players pitched this stretch, for 90.0 innings      and 1610 pitches.</p>
+      <p>The four goal columns are coloured against common youth coaching goals
       (green meeting it, yellow close, red working toward it): 60%+ strikes, 60%+ first-pitch strikes, 1 walk or
-      fewer per inning, and 2+ strikeouts per walk. Pitchers under 30 batters faced show "—"
-      for rates, which are too small a sample to read.
+      fewer per inning, and 2+ strikeouts per walk.</p>
+      <p>Pitchers under 30 batters faced show "—"
+      for rates, which are too small a sample to read.</p>
     </div>
     <div class="tablewrap">
       <table class="roster-table pitch-table">
@@ -1166,8 +1179,9 @@ Piper Delgado (13 PA).
       </table>
     </div>
     <div class="callout note" style="margin-top:10px;">
-      <b>Workload:</b> "Share" is each pitcher's part of the team's innings. This export only has season totals, not
-      pitch counts per game, so it <b>can't check daily pitch limits or rest days</b>. Track those separately.
+      <p><b>Workload:</b> "Share" is each pitcher's part of the team's innings.</p>
+      <p>This export only has season totals, not
+      pitch counts per game, so it <b>can't check daily pitch limits or rest days</b>. Track those separately.</p>
     </div>
   </div>
 

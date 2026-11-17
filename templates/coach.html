@@ -22,12 +22,14 @@
   </header>
 
   <div class="module lede">
-    This page is for coaching staff only — unlike the parent/player reports, it shows every player by
-    name with ordinal ranks. Regulars are players with {{ min_pa }}+ plate appearances this stretch
+    <p>This page is for coaching staff only — unlike the parent/player reports, it shows every player by
+    name with ordinal ranks.</p>
+    <p>Regulars are players with {{ min_pa }}+ plate appearances this stretch
     ({{ n_regulars }} of {{ n_players_team }}); rate stats below {{ rate_stat_floor }} PA are unreliable
-    enough that individual player reports skip interpreting them entirely. Beyond the raw numbers below,
+    enough that individual player reports skip interpreting them entirely.</p>
+    <p>Beyond the raw numbers below,
     this page also groups players by shared practice needs, flags team-wide trend direction, and calls
-    out playing-time gaps — everything a GameChanger export alone won't do for you.
+    out playing-time gaps — everything a GameChanger export alone won't do for you.</p>
   </div>
 
   <h2 class="section-title">Roster Snapshot</h2>
@@ -81,10 +83,11 @@
   <h2 class="section-title">Practice Focus Groups</h2>
   <div class="module">
     <div class="callout">
-      Each player's own report already points to one development focus, chosen the same way for
-      everyone (prefer the most trustworthy stat with the clearest room to grow). This groups those
+      <p>Each player's own report already points to one development focus, chosen the same way for
+      everyone (prefer the most trustworthy stat with the clearest room to grow).</p>
+      <p>This groups those
       into shared buckets so you can run focused stations at practice instead of guessing who needs
-      what — or repeating the same drill for the whole team when only a few players actually need it.
+      what — or repeating the same drill for the whole team when only a few players actually need it.</p>
     </div>
     {% for g in practice_groups.groups %}
     <div class="stat-card">
@@ -93,7 +96,7 @@
         <span class="stat-num">{{ g.players|length }}</span>
       </div>
       <div class="explain">
-        {% for p in g.players %}{{ p.name }}{% if p.distance_text %} <span style="color:var(--gray);">— {{ p.distance_text|lower }}</span>{% endif %}{% if not loop.last %}<br>{% endif %}{% endfor %}
+        {% for p in g.players %}<p>{{ p.name }}{% if p.distance_text %} <span style="color:var(--gray);">— {{ p.distance_text|lower }}</span>{% endif %}</p>{% endfor %}
       </div>
     </div>
     {% endfor %}
@@ -137,7 +140,7 @@
       {% for m in movers.most_improved %}{{ m.name }} ({{ m.first_obp|fmt3 }} → {{ m.last_obp|fmt3 }}){% if not loop.last %}, {% endif %}{% endfor %}.
       {% endif %}
       {% if movers.worth_checkin %}
-      <b>Worth a check-in (OBP, early → late):</b>
+      {% if movers.most_improved %}<br><br>{% endif %}<b>Worth a check-in (OBP, early → late):</b>
       {% for m in movers.worth_checkin %}{{ m.name }} ({{ m.first_obp|fmt3 }} → {{ m.last_obp|fmt3 }}){% if not loop.last %}, {% endif %}{% endfor %}.
       {% endif %}
     </div>
@@ -197,9 +200,11 @@
       </table>
     </div>
     <div class="callout note" style="margin-top:10px;">
-      Rank is ordinal by OPS among regulars only, for internal use. This table — names plus ranks
+      <p>Rank is ordinal by OPS among regulars only, for internal use.</p>
+      <p>This table — names plus ranks
       together — is the one place in this tool's output where that combination is allowed; it never
-      appears in a parent or player report. A CSV version of this table is written alongside this file.
+      appears in a parent or player report.</p>
+      <p>A CSV version of this table is written alongside this file.</p>
     </div>
   </div>
 
@@ -240,11 +245,13 @@
   <h2 class="section-title">Team Pitching</h2>
   <div class="module">
     <div class="callout">
-      {{ pitching_rows|length }} players pitched this stretch, for {{ team_pitch_ip|fmt_inn }} innings{% if team_pitch_np > 0 %}
-      and {{ team_pitch_np|int }} pitches{% endif %}. The four goal columns are coloured against common youth coaching goals
+      <p>{{ pitching_rows|length }} players pitched this stretch, for {{ team_pitch_ip|fmt_inn }} innings{% if team_pitch_np > 0 %}
+      and {{ team_pitch_np|int }} pitches{% endif %}.</p>
+      <p>The four goal columns are coloured against common youth coaching goals
       (green meeting it, yellow close, red working toward it): 60%+ strikes, 60%+ first-pitch strikes, 1 walk or
-      fewer per inning, and 2+ strikeouts per walk. Pitchers under {{ pitching_floor_bf }} batters faced show "—"
-      for rates, which are too small a sample to read.
+      fewer per inning, and 2+ strikeouts per walk.</p>
+      <p>Pitchers under {{ pitching_floor_bf }} batters faced show "—"
+      for rates, which are too small a sample to read.</p>
     </div>
     <div class="tablewrap">
       <table class="roster-table pitch-table">
@@ -276,13 +283,14 @@
       </table>
     </div>
     <div class="callout note" style="margin-top:10px;">
-      <b>Workload:</b> "Share" is each pitcher's part of the team's innings. This export only has season totals, not
-      pitch counts per game, so it <b>can't check daily pitch limits or rest days</b>. Track those separately.
+      <p><b>Workload:</b> "Share" is each pitcher's part of the team's innings.</p>
+      <p>This export only has season totals, not
+      pitch counts per game, so it <b>can't check daily pitch limits or rest days</b>. Track those separately.</p>
       {% set suspect = pitching_rows|selectattr("top_mph_suspect")|list %}
       {% if suspect %}
-      <br><b>Check the scoring:</b>
+      <p><b>Check the scoring:</b>
       {% for p in suspect %}{{ p.name }} has a recorded top speed of {{ p.top_mph_suspect|int }} mph{% if not loop.last %}; {% endif %}{% endfor %}.
-      That's almost certainly a typo, so it's left out of the family reports.
+      That's almost certainly a typo, so it's left out of the family reports.</p>
       {% endif %}
     </div>
   </div>

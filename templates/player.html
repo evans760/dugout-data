@@ -34,23 +34,26 @@
   </div>
 
   <div class="module callout" style="margin-top:-6px;">
-    Quick heads up: baseball writes some numbers in a weird way. Instead of "30%," you'll see
-    <b>.300</b>. Here's the trick — ignore the dot, and just read it like a number out of 10:
+    <p>Quick heads up: baseball writes some numbers in a weird way. Instead of "30%," you'll see
+    <b>.300</b>.</p>
+    <p>Here's the trick — ignore the dot, and just read it like a number out of 10:
     <b>.300 means 3 hits for every 10 times you batted.</b> <b>.500</b> would mean 5 out of 10 — half the
-    time! You'll see numbers like this a lot below.
+    time!</p>
+    <p>You'll see numbers like this a lot below.</p>
   </div>
 
   {% if trend and visible.trend %}
   <h2 class="section-title">How You've Trended</h2>
   <div class="module">
     <div class="callout">
-      Your season is split into three chunks of games — early, middle, and late — so you can see if
-      you're heading in a good direction, not just one big average for the whole year. Starting with the
+      <p>Your season is split into three chunks of games — early, middle, and late — so you can see if
+      you're heading in a good direction, not just one big average for the whole year.</p>
+      <p>Starting with the
       middle box, you'll see a little triangle next to each number:
       <span class="trend-chip good">▲</span> or <span class="trend-chip bad">▼</span> shows if it went up
       or down from the box before it, and green always means "that's the good direction for this stat" —
-      even if that means the number went down (like strikeouts). A gray <span class="trend-chip flat">→</span>
-      means it barely changed.
+      even if that means the number went down (like strikeouts).</p>
+      <p>A gray <span class="trend-chip flat">→</span> means it barely changed.</p>
     </div>
     <div class="trend-grid">
       {% for t in trend %}

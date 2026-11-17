@@ -98,6 +98,11 @@
   .callout b{color:var(--navy);}
   .callout.note{font-size:13.5px;color:var(--gray);}
 
+  /* Paragraph rhythm: long explanations are split into short paragraphs so
+     no block reads as a wall of text. */
+  .callout p,.explain p,.summary-box p,.lede p{margin:0 0 10px;}
+  .callout p:last-child,.explain p:last-child,.summary-box p:last-child,.lede p:last-child{margin-bottom:0;}
+
   /* reliability badge — sized/weighted to sit next to the number it
      qualifies, not the smallest text on the card. See stat-num-wrap. */
   .badge{
@@ -363,6 +368,7 @@
   }
 
   @media print{
+    .callout p,.explain p,.summary-box p,.lede p{margin-bottom:4px;}
     body{font-size:11.5px;background:#fff;color:#000;line-height:1.4;}
     .wrap{padding:0;max-width:100%;}
     header.hero{background:#212B36 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-radius:0;padding:12px 14px;margin-bottom:10px;}
@@ -421,20 +427,23 @@
 A season with real strengths and one clear thing to build on.
     </div>
 
-    Ava's clearest established strength this stretch is
+    <p>    Ava's clearest established strength this stretch is
     avoiding strikeouts — that's backed by enough plate appearances to trust
     it, not just a good week or two.
+</p>
 
 
+<p>
 The trend shows the player's on-base rate cooling some since earlier in the stretch — worth watching, but one stretch of games doesn't undo a season.
+</p>
 
-    Going forward, the clearest
+    <p>Going forward, the clearest
     opportunity is strikeout rate (k%) — that's squarely within the player's
     control, and building on it is likely to lift the rest of the numbers along
-    with it.
+    with it.</p>
 
-    Everything here is meant to be read as "the player's story so far," not a final grade — youth stats swing
-    fast, and the next stretch of games can look very different.
+    <p>Everything here is meant to be read as "the player's story so far," not a final grade — youth stats swing
+    fast, and the next stretch of games can look very different.</p>
   </div>
 
   <div class="module callout" style="margin-top:-6px;">
@@ -445,17 +454,20 @@ The trend shows the player's on-base rate cooling some since earlier in the stre
   <h2 class="section-title">Is the Player Improving?</h2>
   <div class="module">
     <div class="callout">
-      The season is split into three roughly equal chunks of games — early, middle, and late — and each
+      <p>The season is split into three roughly equal chunks of games — early, middle, and late — and each
       chunk below shows the player's numbers just for that stretch (not a running season total), so you can see
-      which direction the player is heading rather than one big average that hides it. Starting with the middle
+      which direction the player is heading rather than one big average that hides it.</p>
+      <p>Starting with the middle
       column, each number also has a small triangle: <span class="trend-chip good">▲</span> or
       <span class="trend-chip bad">▼</span> shows whether it moved up or down compared to the chunk
       before it, and the color tells you whether that direction is good — green is good, red means it's
-      worth watching, and a gray <span class="trend-chip flat">→</span> means it barely changed. (Up
+      worth watching, and a gray <span class="trend-chip flat">→</span> means it barely changed.</p>
+      <p>(Up
       isn't always the "good" color — for strikeout rate, for example, down is green, because striking
-      out less is the improvement.) This compares groups of several games to each other, not one game to
+      out less is the improvement.)</p>
+      <p>This compares groups of several games to each other, not one game to
       the next, and each chunk is still a small sample on its own — read it as a pattern worth watching,
-      not a verdict.
+      not a verdict.</p>
     </div>
     <div class="trend-grid">
       <div class="trend-card">
@@ -503,8 +515,10 @@ Focus on strikeout rate (k%)      </div>
       <p style="margin:0 0 8px;">
       A stat built from only a handful of at-bats can look great or terrible just from luck. A kid who
       gets 2 hits in the first 4 at-bats of the season isn't necessarily "a .500 hitter" — that's only 4
-      tries, and it's just as likely to have been a lucky couple of swings as a sign of real skill. The
-      more at-bats a number is built from, the more it reflects how the player actually hits, rather than one hot
+      tries, and it's just as likely to have been a lucky couple of swings as a sign of real skill.
+      </p>
+      <p style="margin:0 0 8px;">
+      The more at-bats a number is built from, the more it reflects how the player actually hits, rather than one hot
       or cold stretch. So every number below is tagged with how much to trust it yet:
       </p>
       <div class="legend-def-list">
@@ -532,10 +546,10 @@ Focus on strikeout rate (k%)      </div>
         <span class="badge reliable">RELIABLE</span>
       </span>
     </div>
-    <div class="explain">A strikeout happens when the batter gets three strikes before putting the ball in play — the at-bat
-      ends with no chance to reach base or drive anyone in. This is the share of the player's trips to the plate
-      that ended that way: 12 strikeouts out of 66 trips. <b>Lower is
-      better</b> — every strikeout is a plate appearance with zero chance of a positive outcome.</div>
+    <div class="explain"><p>A strikeout happens when the batter gets three strikes before putting the ball in play — the at-bat
+      ends with no chance to reach base or drive anyone in.</p><p>This is the share of the player's trips to the plate
+      that ended that way: 12 strikeouts out of 66 trips.</p><p><b>Lower is
+      better</b> — every strikeout is a plate appearance with zero chance of a positive outcome.</p></div>
     <div class="tier-line">The player is <b class="tier-around_middle">right around the middle</b> among the team's regular hitters.</div>
 <div class="distance">Already at or beyond this benchmark for the team's regulars.</div>  </div>
 
@@ -547,11 +561,11 @@ Focus on strikeout rate (k%)      </div>
         <span class="badge partial">PARTIAL</span>
       </span>
     </div>
-    <div class="explain">A walk happens when the pitcher throws four pitches outside the strike zone before the batter
+    <div class="explain"><p>A walk happens when the pitcher throws four pitches outside the strike zone before the batter
       gets three strikes — the batter is awarded first base without needing to hit the ball at all. It rewards
-      patience: recognizing which pitches are worth swinging at. 10 walks out of
-      66 trips to the plate. <b>Higher is better</b> — every walk is a free trip to
-      first base.</div>
+      patience: recognizing which pitches are worth swinging at.</p><p>10 walks out of
+      66 trips to the plate.</p><p><b>Higher is better</b> — every walk is a free trip to
+      first base.</p></div>
     <div class="tier-line">The player is <b class="tier-above_middle">above the middle</b> among the team's regular hitters.</div>
 <div class="distance">About 6 more walks over a season this length would make the player the team's best in this stat.</div>  </div>
 
@@ -563,25 +577,25 @@ Focus on strikeout rate (k%)      </div>
         <span class="badge partial">PARTIAL</span>
       </span>
     </div>
-    <div class="explain">This divides the two numbers above — walks by strikeouts — into one score for plate discipline: is the player
-      controlling at-bats, or getting overpowered? A value of 1.00 would mean exactly as many walks
-      as strikeouts; above 1.00 means more walks than strikeouts, which is unusual and a very good sign.
-      <b>Higher is better.</b></div>
+    <div class="explain"><p>This divides the two numbers above — walks by strikeouts — into one score for plate discipline: is the player
+      controlling at-bats, or getting overpowered?</p><p>A value of 1.00 would mean exactly as many walks
+      as strikeouts; above 1.00 means more walks than strikeouts, which is unusual and a very good sign.</p><p><b>Higher is better.</b></p></div>
     <div class="tier-line">The player is <b class="tier-above_middle">above the middle</b> among the team's regular hitters.</div>
   </div>
 
   <div class="module">
     <div class="callout">
-      <b>AVG, OBP and SLG take more at-bats to trust than K% or BB% do</b> — batting average
+      <p><b>AVG, OBP and SLG take more at-bats to trust than K% or BB% do</b> — batting average
       especially, since it's the most sensitive to a handful of lucky or unlucky bounces. Ava Thompson
-      has 56 at-bats this stretch; the badge on each card below (RELIABLE / PARTIAL /
+      has 56 at-bats this stretch.</p>
+      <p>The badge on each card below (RELIABLE / PARTIAL /
       STILL SETTLING) says how much weight that specific number can carry at this sample size — some may
-      already be solid even if others aren't.
-      Each card below also shows where the player sits among the team's 14 regular
+      already be solid even if others aren't.</p>
+      <p>Each card below also shows where the player sits among the team's 14 regular
       hitters (15+ plate appearances this stretch); 1
-      of 15 rostered players had too few plate appearances to fairly include.
-      <b>Each small gray dot is one teammate; the larger blue dot is the player.</b> Further right on
-      the line means a higher number.
+      of 15 rostered players had too few plate appearances to fairly include.</p>
+      <p><b>Each small gray dot is one teammate; the larger blue dot is the player.</b> Further right on
+      the line means a higher number.</p>
     </div>
   </div>
 
@@ -593,9 +607,9 @@ Focus on strikeout rate (k%)      </div>
         <span class="badge partial">PARTIAL</span>
       </span>
     </div>
-    <div class="explain">The classic baseball stat: of all the player's at-bats (trips to the plate that didn't end in a walk or hit-by-pitch),
-      what share ended in a hit — a ball put in play that let the batter reach base safely? A .253 average means
-      the player got a hit in roughly 1 out of every 4 at-bats. <b>Higher is better.</b></div>
+    <div class="explain"><p>The classic baseball stat: of all the player's at-bats (trips to the plate that didn't end in a walk or hit-by-pitch),
+      what share ended in a hit — a ball put in play that let the batter reach base safely?</p><p>A .253 average means
+      the player got a hit in roughly 1 out of every 4 at-bats.</p><p><b>Higher is better.</b></p></div>
     <div class="tier-line">The player is <b class="tier-above_middle">above the middle</b> among the team's regular hitters.</div>
 <div class="distance">7 more hits would close most of this gap.</div>    <div class="inline-compare">
       <div class="dp-track small">
@@ -629,9 +643,9 @@ Focus on strikeout rate (k%)      </div>
         <span class="badge partial">PARTIAL</span>
       </span>
     </div>
-    <div class="explain">Batting average only counts hits. This counts every way of reaching base safely — a hit, a walk, or
-      getting hit by a pitch — divided by all the player's trips to the plate. It's a broader, and arguably more
-      complete, measure of "how often does the player NOT make an out." <b>Higher is better.</b></div>
+    <div class="explain"><p>Batting average only counts hits. This counts every way of reaching base safely — a hit, a walk, or
+      getting hit by a pitch — divided by all the player's trips to the plate.</p><p>It's a broader, and arguably more
+      complete, measure of "how often does the player NOT make an out."</p><p><b>Higher is better.</b></p></div>
     <div class="tier-line">The player is <b class="tier-above_middle">above the middle</b> among the team's regular hitters.</div>
 <div class="distance">8 more times on base would close most of this gap.</div>    <div class="inline-compare">
       <div class="dp-track small">
@@ -665,10 +679,10 @@ Focus on strikeout rate (k%)      </div>
         <span class="badge partial">PARTIAL</span>
       </span>
     </div>
-    <div class="explain">This measures power, not just contact. Instead of every hit counting the same, a single is worth 1
-      "base," a double 2, a triple 3, and a home run 4 — those are added up and divided by at-bats. A
+    <div class="explain"><p>This measures power, not just contact. Instead of every hit counting the same, a single is worth 1
+      "base," a double 2, a triple 3, and a home run 4 — those are added up and divided by at-bats.</p><p>A
       hitter who mostly singles will have a slugging % close to the batting average; a hitter who racks
-      up doubles and home runs will have one noticeably higher. <b>Higher is better.</b></div>
+      up doubles and home runs will have one noticeably higher.</p><p><b>Higher is better.</b></p></div>
     <div class="tier-line">The player is <b class="tier-above_middle">above the middle</b> among the team's regular hitters.</div>
 <div class="distance">2 more total bases would close most of this gap.</div>    <div class="inline-compare">
       <div class="dp-track small">
@@ -704,10 +718,10 @@ Focus on strikeout rate (k%)      </div>
         <span class="badge partial">PARTIAL</span>
       </span>
     </div>
-    <div class="explain">This just adds the two numbers above — on-base % and slugging % — into one score. It's a quick
+    <div class="explain"><p>This just adds the two numbers above — on-base % and slugging % — into one score.</p><p>It's a quick
       answer to "is this an all-around good hitter?" without checking two separate stats. There's no
       fixed cutoff for what counts as "good" at this level, so the card below compares it to the rest of
-      the team instead of a textbook number. <b>Higher is better.</b></div>
+      the team instead of a textbook number.</p><p><b>Higher is better.</b></p></div>
     <div class="tier-line">The player is <b class="tier-above_middle">above the middle</b> among the team's regular hitters.</div>
 <div class="distance">A composite of the AVG/OBP/SLG gaps above — closing those closes this one too.</div>    <div class="inline-compare">
       <div class="dp-track small">
@@ -780,14 +794,16 @@ Focus on strikeout rate (k%)      </div>
   <h2 class="section-title">Defense</h2>
   <div class="module">
     <div class="callout">
-      Ava has played mostly <b>Second Base</b> this stretch
+      <p>      Ava has played mostly <b>Second Base</b> this stretch
       (38.1 innings there).
-      These numbers come from 50 recorded fielding chances (a ball hit or thrown to
+</p>
+      <p>These numbers come from 50 recorded fielding chances (a ball hit or thrown to
       the player that the player had a chance to field) — enough to say something, tagged below with how much to trust
-      each one the same way the batting numbers are. <b>Range Factor</b> in particular is heavily
+      each one the same way the batting numbers are.</p>
+      <p><b>Range Factor</b> in particular is heavily
       influenced by position — a catcher or infielder naturally gets far more chances per inning than an
       outfielder does — so it's more useful for tracking the player's own progress over time than for comparing
-      the player to a teammate who plays somewhere else.
+      the player to a teammate who plays somewhere else.</p>
     </div>
   </div>
 
@@ -799,10 +815,10 @@ Focus on strikeout rate (k%)      </div>
         <span class="badge reliable">RELIABLE</span>
       </span>
     </div>
-    <div class="explain">Of every ball the player had a chance to field (50 chances — 12 putouts
-      plus 34 assists plus 4 errors), the share handled cleanly. Same
-      .XXX notation as batting average — .950 means the player converted 95 out of 100 chances. <b>Higher is
-      better.</b></div>
+    <div class="explain"><p>Of every ball the player had a chance to field (50 chances — 12 putouts
+      plus 34 assists plus 4 errors), the share handled cleanly.</p><p>Same
+      .XXX notation as batting average — .950 means the player converted 95 out of 100 chances.</p><p><b>Higher is
+      better.</b></p></div>
     <div class="tier-line">The player is <b class="tier-around_middle">right around the middle</b> among the roster's other fielders with enough chances to compare.</div>
 <div class="distance">2 fewer errors would close most of this gap.</div>  </div>
 
@@ -814,10 +830,10 @@ Focus on strikeout rate (k%)      </div>
         <span class="badge reliable">RELIABLE</span>
       </span>
     </div>
-    <div class="explain">Putouts plus assists, scaled to a per-9-innings rate ((PO + A) ÷ innings fielded × 9) — a rough measure
-      of how often the player is involved in a defensive play, not just how cleanly. Because it depends so much on
+    <div class="explain"><p>Putouts plus assists, scaled to a per-9-innings rate ((PO + A) ÷ innings fielded × 9) — a rough measure
+      of how often the player is involved in a defensive play, not just how cleanly.</p><p>Because it depends so much on
       position (see note above), <b>read this as the player's own trend over time more than a head-to-head
-      comparison.</b> <b>Higher is better.</b></div>
+      comparison.</b></p><p><b>Higher is better.</b></p></div>
     <div class="tier-line">The player is <b class="tier-above_middle">above the middle</b> among the roster's other fielders with enough innings to compare.</div>
 <div class="distance">About 3.7 more plays made per 9 innings would close most of this gap.</div>  </div>
 
@@ -829,9 +845,8 @@ Focus on strikeout rate (k%)      </div>
         <span class="badge reliable">RELIABLE</span>
       </span>
     </div>
-    <div class="explain">4 errors out of 50 chances. The flip side of fielding %, shown as its
-      own number because it's the most direct read on "how often did a play get away from the player."
-      <b>Lower is better.</b></div>
+    <div class="explain"><p>4 errors out of 50 chances. The flip side of fielding %, shown as its
+      own number because it's the most direct read on "how often did a play get away from the player."</p><p><b>Lower is better.</b></p></div>
     <div class="tier-line">The player is <b class="tier-around_middle">right around the middle</b> among the roster's other fielders with enough chances to compare.</div>
 <div class="distance">Already at or beyond this benchmark for the team's regulars.</div>    <div class="substat">The player was also part of 1 double play this stretch.</div>
   </div>
@@ -841,12 +856,13 @@ Focus on strikeout rate (k%)      </div>
   <h2 class="section-title">Pitching</h2>
   <div class="module">
     <div class="callout">
-      Ava pitched <b>33.2 innings</b> this stretch, facing
-      154 batters and throwing 564 pitches.
-      Pitching is measured against simple coaching goals rather than ranked against teammates, because a
-      team only has a handful of pitchers. The dots still show where the player sits among the team's
+      <p>Ava pitched <b>33.2 innings</b> this stretch, facing
+      154 batters and throwing 564 pitches.</p>
+      <p>Pitching is measured against simple coaching goals rather than ranked against teammates, because a
+      team only has a handful of pitchers.</p>
+      <p>The dots still show where the player sits among the team's
       5 pitchers with enough innings to compare. The goals are common rules of thumb
-      for youth pitchers, not an official standard.
+      for youth pitchers, not an official standard.</p>
     </div>
   </div>
 
@@ -863,9 +879,9 @@ Focus on strikeout rate (k%)      </div>
         <span class="badge reliable">RELIABLE</span>
       </span>
     </div>
-    <div class="explain">The share of all pitches that were strikes (called, swinging, or fouled off), including balls
-      put in play. 60% means 6 of every 10 pitches. Throwing strikes is the single biggest thing a young pitcher
-      controls. <b>Higher is better.</b></div>
+    <div class="explain"><p>The share of all pitches that were strikes (called, swinging, or fouled off), including balls
+      put in play. 60% means 6 of every 10 pitches.</p><p>Throwing strikes is the single biggest thing a young pitcher
+      controls.</p><p><b>Higher is better.</b></p></div>
       <div class="tier-line">Common coaching goal: 60% or more of pitches for strikes. The player is <b class="tier-near_goal">close to the goal</b>.</div>
 
       <div class="inline-compare">
@@ -892,8 +908,8 @@ Focus on strikeout rate (k%)      </div>
         <span class="badge reliable">RELIABLE</span>
       </span>
     </div>
-    <div class="explain">How often the very first pitch to a batter was a strike. Getting ahead 0–1 puts the pitcher in
-      control of the at-bat; falling behind 1–0 puts the batter in control. <b>Higher is better.</b></div>
+    <div class="explain"><p>How often the very first pitch to a batter was a strike. Getting ahead 0–1 puts the pitcher in
+      control of the at-bat; falling behind 1–0 puts the batter in control.</p><p><b>Higher is better.</b></p></div>
       <div class="tier-line">Common coaching goal: a first-pitch strike to 60% or more of batters. The player is <b class="tier-near_goal">close to the goal</b>.</div>
 
       <div class="inline-compare">
@@ -920,8 +936,8 @@ Focus on strikeout rate (k%)      </div>
         <span class="badge reliable">RELIABLE</span>
       </span>
     </div>
-    <div class="explain">19 walks over 33.2 innings. Every walk is a free base the
-      defense never had a chance to stop. <b>Lower is better.</b></div>
+    <div class="explain"><p>19 walks over 33.2 innings. Every walk is a free base the
+      defense never had a chance to stop.</p><p><b>Lower is better.</b></p></div>
       <div class="tier-line">Common coaching goal: 1 walk or fewer per inning. The player is <b class="tier-goal_met">meeting the goal</b>.</div>
 
       <div class="inline-compare">
@@ -948,8 +964,8 @@ Focus on strikeout rate (k%)      </div>
         <span class="badge reliable">RELIABLE</span>
       </span>
     </div>
-    <div class="explain">42 strikeouts and 19 walks. More strikeouts than walks
-      means the pitcher is winning more of the at-bats they fully control. <b>Higher is better.</b></div>
+    <div class="explain"><p>42 strikeouts and 19 walks. More strikeouts than walks
+      means the pitcher is winning more of the at-bats they fully control.</p><p><b>Higher is better.</b></p></div>
       <div class="tier-line">Common coaching goal: 2 or more strikeouts for every walk. The player is <b class="tier-goal_met">meeting the goal</b>.</div>
 
       <div class="inline-compare">
@@ -976,8 +992,8 @@ Focus on strikeout rate (k%)      </div>
         <span class="badge reliable">RELIABLE</span>
       </span>
     </div>
-    <div class="explain">The share of all pitches the batter swung at and missed. A sign of how hard the pitcher's
-      pitches are to hit. <b>Higher is better.</b> Shown for context, without a goal.</div>
+    <div class="explain"><p>The share of all pitches the batter swung at and missed. A sign of how hard the pitcher's
+      pitches are to hit.</p><p><b>Higher is better.</b> Shown for context, without a goal.</p></div>
       <div class="inline-compare">
     <div class="dp-track small">
       <div class="dp-dot" style="left:0.0%"></div>
@@ -1002,9 +1018,9 @@ Focus on strikeout rate (k%)      </div>
         <span class="badge reliable">RELIABLE</span>
       </span>
     </div>
-    <div class="explain">How well batters hit against this pitcher: 32 hits allowed, counted the same
-      way as a batting average. At this age it depends a lot on the fielders behind the pitcher, so it's shown
-      for context, without a goal. <b>Lower is better.</b></div>
+    <div class="explain"><p>How well batters hit against this pitcher: 32 hits allowed, counted the same
+      way as a batting average.</p><p>At this age it depends a lot on the fielders behind the pitcher, so it's shown
+      for context, without a goal.</p><p><b>Lower is better.</b></p></div>
       <div class="inline-compare">
     <div class="dp-track small">
       <div class="dp-dot" style="left:0.0%"></div>
@@ -1027,8 +1043,8 @@ Focus on strikeout rate (k%)      </div>
       <div class="allnum-card"><span class="lbl">Innings pitched</span><span class="val">33.2</span></div>
       <div class="allnum-card"><span class="lbl">Batters faced</span><span class="val">154</span></div>
 <div class="allnum-card"><span class="lbl">Pitches thrown</span><span class="val">564</span></div><div class="allnum-card"><span class="lbl">Pitches per inning</span><span class="val">16.8</span></div><div class="allnum-card"><span class="lbl">Games pitched</span><span class="val">14</span></div><div class="allnum-card"><span class="lbl">Games started</span><span class="val">14</span></div>    </div>
-    <div class="explain" style="margin-top:8px;">Season totals only. This export doesn't include pitch counts for each
-      game, so it can't show whether daily pitch limits or rest days were followed.</div>
+    <div class="explain" style="margin-top:8px;"><p>Season totals only. This export doesn't include pitch counts for each
+      game, so it can't show whether daily pitch limits or rest days were followed.</p></div>
   </div>
 
   <div class="module stat-card">
@@ -1043,8 +1059,8 @@ Focus on strikeout rate (k%)      </div>
       <span><span class="bb-key ld"></span> Line drives 20%</span>
       <span><span class="bb-key fb"></span> Fly balls 24%</span>
     </div>
-    <div class="explain" style="margin-top:8px;">Ground balls are usually the easiest to turn into outs; line drives
-      are the hardest. This describes the pitcher's style more than it grades it.</div>
+    <div class="explain" style="margin-top:8px;"><p>Ground balls are usually the easiest to turn into outs; line drives
+      are the hardest. This describes the pitcher's style more than it grades it.</p></div>
   </div>
 
   <div class="module stat-card">
@@ -1077,8 +1093,8 @@ Focus on strikeout rate (k%)      </div>
       <div class="allnum-card"><span class="lbl">WHIP (walks + hits per inning)</span><span class="val">1.51</span></div>
       <div class="allnum-card"><span class="lbl">Wild pitches</span><span class="val">3</span></div>
     </div>
-    <div class="explain" style="margin-top:8px;">ERA, WHIP, runs and wins depend heavily on the defense behind the
-      pitcher at this age, so they're listed for the record and left out of the goals above.</div>
+    <div class="explain" style="margin-top:8px;"><p>ERA, WHIP, runs and wins depend heavily on the defense behind the
+      pitcher at this age, so they're listed for the record and left out of the goals above.</p></div>
   </div>
 
   <footer>
