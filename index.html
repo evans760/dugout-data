@@ -143,18 +143,6 @@
     <div id="uploadError"></div>
   </div>
 
-  <div class="step" id="whatsNext">
-    <p class="eyebrow">Once your file is in, you can</p>
-    <div class="preview-item">
-      <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-      <div>
-        <h2>Ask about this roster</h2>
-        <p class="hint">Answers are computed straight from your CSV — nothing here is sent anywhere. Try
-          "who has the most home runs?", "what's Luke's OBP?", or "Luke vs Owen, who has more RBI?".</p>
-      </div>
-    </div>
-  </div>
-
   <div class="step disabled" id="step2">
     <h2>2. Roster details</h2>
     <div id="mappingSummary"></div>
@@ -175,18 +163,6 @@
     <button id="confirmBtn">Load roster</button>
   </div>
 
-  <div class="step disabled" id="stepChat">
-    <h2>Ask about this roster</h2>
-    <p class="hint">Answers are computed straight from your CSV — nothing here is sent anywhere. Try
-      "who has the most home runs?", "what's Luke's OBP?", or "Luke vs Owen, who has more RBI?".</p>
-    <div class="chat-log" id="chatLog"><div class="chat-empty">No questions yet.</div></div>
-    <div class="chat-row">
-      <input type="text" id="chatInput" placeholder="Ask a question about the roster…">
-      <button id="chatSendBtn">Ask</button>
-    </div>
-    <div id="chatError"></div>
-  </div>
-
   <div class="step disabled" id="step3">
     <h2>3. What do you want to see?</h2>
     <p class="hint" id="rosterSummary"></p>
@@ -205,6 +181,30 @@
   <div class="step disabled" id="step4">
     <h2>4. Your reports</h2>
     <div class="results" id="results"></div>
+  </div>
+
+  <div class="step" id="whatsNext">
+    <p class="eyebrow">Once your file is in, you can</p>
+    <div class="preview-item">
+      <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+      <div>
+        <h2>Ask about this roster</h2>
+        <p class="hint">Answers are computed straight from your CSV — nothing here is sent anywhere. Try
+          "who has the most home runs?", "what's Luke's OBP?", or "Luke vs Owen, who has more RBI?".</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step disabled" id="stepChat">
+    <h2>Ask about this roster</h2>
+    <p class="hint">Answers are computed straight from your CSV — nothing here is sent anywhere. Try
+      "who has the most home runs?", "what's Luke's OBP?", or "Luke vs Owen, who has more RBI?".</p>
+    <div class="chat-log" id="chatLog"><div class="chat-empty">No questions yet.</div></div>
+    <div class="chat-row">
+      <input type="text" id="chatInput" placeholder="Ask a question about the roster…">
+      <button id="chatSendBtn">Ask</button>
+    </div>
+    <div id="chatError"></div>
   </div>
 
   <footer>Runs entirely in your browser from the CSV you choose — nothing is uploaded, and no GameChanger login, scraping, or API access is involved.</footer>
@@ -329,7 +329,6 @@ async function handleFile(file) {
     sessionId = data.session_id;
     renderMappingTable(data.headers, data.mapping, data.candidate_fields, data.missing_required, data.header_row_skipped);
     step2.classList.remove("disabled");
-    $("whatsNext").classList.add("disabled");
     step2.scrollIntoView({behavior:"smooth", block:"start"});
   } catch (err) {
     $("uploadError").innerHTML = `<div class="alert">${err.message}</div>`;
@@ -426,9 +425,10 @@ $("confirmBtn").addEventListener("click", async () => {
     if (!res.ok) throw new Error(data.detail || "Couldn't load that roster.");
     $("rosterSummary").textContent = `Loaded ${data.n_players} players` +
       (data.is_pergame ? " (per-game data found — trend charts will be available)." : " (season totals only — no trend chart).");
+    $("whatsNext").classList.add("disabled");
     stepChat.classList.remove("disabled");
     step3.classList.remove("disabled");
-    stepChat.scrollIntoView({behavior:"smooth", block:"start"});
+    step3.scrollIntoView({behavior:"smooth", block:"start"});
   } catch (err) {
     $("mappingError").innerHTML = `<div class="alert">${err.message}</div>`;
   } finally {
