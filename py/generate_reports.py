@@ -1086,6 +1086,16 @@ def tier_from_percentile(pct: float) -> str:
     return "still_finding_it"
 
 
+def upper_third_target(pool: list[float], lower_is_better: bool) -> float:
+    """The teammate value a player would need to match to rank in the
+    "above the middle" band (percentile >= 0.65, see tier_from_percentile).
+    Counted from the best end of the pool, so it is always at least as good
+    as the middle of the team."""
+    best_first = sorted(pool) if lower_is_better else sorted(pool, reverse=True)
+    k = math.floor((1 - 0.65) * (len(best_first) - 1))
+    return best_first[k]
+
+
 @dataclass
 class StatCompare:
     tier: str
@@ -1114,14 +1124,16 @@ def compare_points_stat(value: float, pool: list[float], tier: str, unit_name: s
     else:
         median_val = statistics.median(pool)
         if tier == "around_middle":
-            target = sorted(pool)[max(0, int(len(pool) * 0.65) - 1)]
+            target = upper_third_target(pool, lower_is_better=False)
         elif tier == "above_middle":
             target = max(pool)
         else:
             target = median_val
         pts = round((target - value) * 1000)
         if pts <= 0:
-            return "Already at or above this benchmark for the team's regulars."
+            # Only reachable through tied values; a "you're already there"
+            # line would contradict the tier phrase right above it.
+            return None
         extra = unit_from_points_fn(pts)
         if extra:
             return f"{extra} would close most of this gap."
@@ -1147,8 +1159,7 @@ def compare_rate_stat(value_pct: float, pool_pct: list[float], tier: str, pa: fl
         return "Well clear of the next-closest regular on the team."
     median_val = statistics.median(pool_pct)
     if tier == "around_middle":
-        s = sorted(pool_pct) if lower_is_better else sorted(pool_pct, reverse=True)
-        target = s[max(0, int(len(s) * 0.65) - 1)]
+        target = upper_third_target(pool_pct, lower_is_better)
         # This describes where the target actually sits (not a "tier" — that
         # word only means something where the percentile-band system is
         # visibly explained, e.g. the parent/player tier-line; this text also
@@ -1163,7 +1174,9 @@ def compare_rate_stat(value_pct: float, pool_pct: list[float], tier: str, pa: fl
         target_phrase = "would put the player at the middle of the team's regular hitters"
     delta_pct = (value_pct - target) if lower_is_better else (target - value_pct)
     if delta_pct <= 0:
-        return "Already at or beyond this benchmark for the team's regulars."
+        # Only reachable through tied values; a "you're already there"
+        # line would contradict the tier phrase right above it.
+        return None
     count = max(1, round(delta_pct / 100.0 * pa))
     noun = unit_singular if count == 1 else unit_plural
     verb = "fewer" if lower_is_better else "more"
@@ -1183,9 +1196,9 @@ def build_comparisons(player: PlayerStats, regulars: list[PlayerStats]) -> dict:
         dist = compare_points_stat(getattr(player, attr), pool, tier, attr, unit_fn)
         out[key] = StatCompare(tier, TIER_LABELS[tier], dist)
 
-    do_points_stat("avg", "avg", lambda pts: (lambda extra: f"{extra} more hits" if extra else None)(max(1, round(pts / 1000 * player.ab))))
-    do_points_stat("obp", "obp", lambda pts: (lambda extra: f"{extra} more times on base" if extra else None)(max(1, round(pts / 1000 * (player.ab + player.bb + player.hbp + player.sf)))))
-    do_points_stat("slg", "slg", lambda pts: (lambda extra: f"{extra} more total bases" if extra else None)(max(1, round(pts / 1000 * player.ab))))
+    do_points_stat("avg", "avg", lambda pts: (lambda extra: f"{extra} more hit{'' if extra == 1 else 's'}" if extra else None)(max(1, round(pts / 1000 * player.ab))))
+    do_points_stat("obp", "obp", lambda pts: (lambda extra: f"{extra} more time{'' if extra == 1 else 's'} on base" if extra else None)(max(1, round(pts / 1000 * (player.ab + player.bb + player.hbp + player.sf)))))
+    do_points_stat("slg", "slg", lambda pts: (lambda extra: f"{extra} more total base{'' if extra == 1 else 's'}" if extra else None)(max(1, round(pts / 1000 * player.ab))))
     do_points_stat("ops", "ops", lambda pts: None)
 
     kpool = [p.k_pct for p in regulars]
@@ -1208,12 +1221,17 @@ def build_comparisons(player: PlayerStats, regulars: list[PlayerStats]) -> dict:
         if bktier == "leading" and len(bksorted) > 1:
             next_best = bksorted[1] if bksorted[0] == player.bb_per_k else bksorted[0]
             mult = (player.bb_per_k / next_best) if next_best > 0 else None
-            bkdist = f"Roughly {mult:.1f}x the next-closest regular's mark." if mult else None
+            if mult and mult >= 1.1:
+                bkdist = f"Roughly {mult:.1f}x the next-closest regular's mark."
+            else:
+                # Leading on the tie-averaged percentile but not clearly ahead
+                # of the next value: say so rather than print "0.8x".
+                bkdist = "Right near the top of the team in this stat, with no single clear leader to chase."
         elif bktier != "leading":
             target = statistics.median(bkpool)
             if player.bb_per_k < target and player.so > 0:
                 extra_bb = max(1, math.ceil(target * player.so - player.bb))
-                bkdist = f"About {extra_bb} more walks at this strikeout rate would put the player at the middle of the group."
+                bkdist = f"About {extra_bb} more walk{'' if extra_bb == 1 else 's'} at this strikeout rate would put the player at the middle of the group."
             else:
                 bkdist = None
         else:
@@ -1238,7 +1256,7 @@ def compare_range_factor(value: float, pool: list[float], tier: str) -> Optional
         return "Well clear of the next-closest fielder in this group." if gap > 0 else None
     median_val = statistics.median(pool)
     if tier == "around_middle":
-        target = sorted(pool)[max(0, int(len(pool) * 0.65) - 1)]
+        target = upper_third_target(pool, lower_is_better=False)
     elif tier == "above_middle":
         target = max(pool)
     else:
@@ -1264,7 +1282,7 @@ def build_defensive_comparisons(player: PlayerStats, defensive_pool: list[Player
     ftier = tier_from_percentile(fpct_pctl)
     fdist = compare_points_stat(
         player.fpct, fpool, ftier, "fpct",
-        lambda pts: (lambda extra: f"{extra} fewer errors" if extra else None)(max(1, round(pts / 1000 * player.def_tc))) if player.def_tc > 0 else None,
+        lambda pts: (lambda extra: f"{extra} fewer error{'' if extra == 1 else 's'}" if extra else None)(max(1, round(pts / 1000 * player.def_tc))) if player.def_tc > 0 else None,
     )
     out["fpct"] = StatCompare(ftier, TIER_LABELS[ftier], fdist)
 
