@@ -125,6 +125,9 @@
   <h2 class="section-title">Is the Player Improving?</h2>
   <div class="module">
     <div class="callout">
+      <details class="learn">
+      <summary>How to read the trend</summary>
+      <div class="learn-body">
       <p>The season is split into three roughly equal chunks of games — early, middle, and late — and each
       chunk below shows the player's numbers just for that stretch (not a running season total), so you can see
       which direction the player is heading rather than one big average that hides it.</p>
@@ -139,6 +142,8 @@
       <p>This compares groups of several games to each other, not one game to
       the next, and each chunk is still a small sample on its own — read it as a pattern worth watching,
       not a verdict.</p>
+      </div>
+      </details>
     </div>
     <div class="trend-grid">
       {% for t in trend %}
@@ -213,6 +218,9 @@
 
   <div class="module">
     <div class="callout legend-compact">
+      <details class="learn">
+      <summary>What do RELIABLE, PARTIAL and STILL SETTLING mean?</summary>
+      <div class="learn-body">
       <p style="margin:0 0 8px;">
       A stat built from only a handful of at-bats can look great or terrible just from luck. A kid who
       gets 2 hits in the first 4 at-bats of the season isn't necessarily "a .500 hitter" — that's only 4
@@ -230,6 +238,8 @@
         </div>
         {% endfor %}
       </div>
+      </div>
+      </details>
     </div>
   </div>
   {% endif %}
@@ -243,12 +253,13 @@
         <span class="badge {{ player.reliability.k_pct }}">{{ player.reliability.k_pct|reliability_label }}</span>
       </span>
     </div>
-    <div class="explain"><p>A strikeout happens when the batter gets three strikes before putting the ball in play — the at-bat
-      ends with no chance to reach base or drive anyone in.</p><p>This is the share of the player's trips to the plate
-      that ended that way: {{ player.so|int }} strikeouts out of {{ player.pa|int }} trips.</p><p><b>Lower is
-      better</b> — every strikeout is a plate appearance with zero chance of a positive outcome.</p></div>
+    <div class="explain"><p>The share of the player's trips to the plate that ended in a strikeout: {{ player.so|int }} strikeouts out of {{ player.pa|int }} trips.</p></div>
     <div class="tier-line">The player is <b class="tier-{{ cmp.k_pct.tier }}">{{ cmp.k_pct.tier_label }}</b> among the team's regular hitters.</div>
     {% if cmp.k_pct.distance_text %}<div class="distance">{{ cmp.k_pct.distance_text }}</div>{% endif %}
+    <details class="learn">
+      <summary>What is strikeout rate?</summary>
+      <div class="learn-body"><p>A strikeout happens when the batter gets three strikes before putting the ball in play — the at-bat ends with no chance to reach base or drive anyone in.</p><p><b>Lower is better</b> — every strikeout is a plate appearance with zero chance of a positive outcome.</p></div>
+    </details>
   </div>
   {% endif %}
 
@@ -261,13 +272,13 @@
         <span class="badge {{ player.reliability.bb_pct }}">{{ player.reliability.bb_pct|reliability_label }}</span>
       </span>
     </div>
-    <div class="explain"><p>A walk happens when the pitcher throws four pitches outside the strike zone before the batter
-      gets three strikes — the batter is awarded first base without needing to hit the ball at all. It rewards
-      patience: recognizing which pitches are worth swinging at.</p><p>{{ player.bb|int }} walks out of
-      {{ player.pa|int }} trips to the plate.</p><p><b>Higher is better</b> — every walk is a free trip to
-      first base.</p></div>
+    <div class="explain"><p>{{ player.bb|int }} walks out of {{ player.pa|int }} trips to the plate.</p></div>
     <div class="tier-line">The player is <b class="tier-{{ cmp.bb_pct.tier }}">{{ cmp.bb_pct.tier_label }}</b> among the team's regular hitters.</div>
     {% if cmp.bb_pct.distance_text %}<div class="distance">{{ cmp.bb_pct.distance_text }}</div>{% endif %}
+    <details class="learn">
+      <summary>What is walk rate?</summary>
+      <div class="learn-body"><p>A walk happens when the pitcher throws four pitches outside the strike zone before the batter gets three strikes — the batter is awarded first base without needing to hit the ball at all. It rewards patience: recognizing which pitches are worth swinging at.</p><p><b>Higher is better</b> — every walk is a free trip to first base.</p></div>
+    </details>
   </div>
   {% endif %}
 
@@ -280,11 +291,12 @@
         <span class="badge {{ player.reliability.bb_per_k }}">{{ player.reliability.bb_per_k|reliability_label }}</span>
       </span>
     </div>
-    <div class="explain"><p>This divides the two numbers above — walks by strikeouts — into one score for plate discipline: is the player
-      controlling at-bats, or getting overpowered?</p><p>A value of 1.00 would mean exactly as many walks
-      as strikeouts; above 1.00 means more walks than strikeouts, which is unusual and a very good sign.</p><p><b>Higher is better.</b></p></div>
     <div class="tier-line">The player is <b class="tier-{{ cmp.bb_per_k.tier }}">{{ cmp.bb_per_k.tier_label }}</b> among the team's regular hitters.</div>
     {% if cmp.bb_per_k.distance_text %}<div class="distance">{{ cmp.bb_per_k.distance_text }}</div>{% endif %}
+    <details class="learn">
+      <summary>What is walks per strikeout?</summary>
+      <div class="learn-body"><p>This divides the two numbers above — walks by strikeouts — into one score for plate discipline: is the player controlling at-bats, or getting overpowered?</p><p>A value of 1.00 would mean exactly as many walks as strikeouts; above 1.00 means more walks than strikeouts, which is unusual and a very good sign.</p><p><b>Higher is better.</b></p></div>
+    </details>
   </div>
   {% endif %}
 
@@ -294,6 +306,9 @@
       <p><b>AVG, OBP and SLG take more at-bats to trust than K% or BB% do</b> — batting average
       especially, since it's the most sensitive to a handful of lucky or unlucky bounces. {{ player.name }}
       has {{ player.ab|int }} at-bats this stretch.</p>
+      <details class="learn">
+      <summary>How to read these cards</summary>
+      <div class="learn-body">
       <p>The badge on each card below (RELIABLE / PARTIAL /
       STILL SETTLING) says how much weight that specific number can carry at this sample size — some may
       already be solid even if others aren't.</p>
@@ -314,6 +329,8 @@
       the line means a higher number.</p>
       {% endif %}
       {% endif %}
+      </div>
+      </details>
     </div>
   </div>
   {% endif %}
@@ -327,12 +344,13 @@
         <span class="badge {{ player.reliability.avg }}">{{ player.reliability.avg|reliability_label }}</span>
       </span>
     </div>
-    <div class="explain"><p>The classic baseball stat: of all the player's at-bats (trips to the plate that didn't end in a walk or hit-by-pitch),
-      what share ended in a hit — a ball put in play that let the batter reach base safely?</p><p>A .253 average means
-      the player got a hit in roughly 1 out of every 4 at-bats.</p><p><b>Higher is better.</b></p></div>
     <div class="tier-line">The player is <b class="tier-{{ cmp.avg.tier }}">{{ cmp.avg.tier_label }}</b> among the team's regular hitters.</div>
     {% if cmp.avg.distance_text %}<div class="distance">{{ cmp.avg.distance_text }}</div>{% endif %}
     {% if visible.where_he_stands %}{{ inline_compare("avg") }}{% endif %}
+    <details class="learn">
+      <summary>What is batting average?</summary>
+      <div class="learn-body"><p>The classic baseball stat: of all the player's at-bats (trips to the plate that didn't end in a walk or hit-by-pitch), what share ended in a hit — a ball put in play that let the batter reach base safely?</p><p>A .253 average means the player got a hit in roughly 1 out of every 4 at-bats.</p><p><b>Higher is better.</b></p></div>
+    </details>
   </div>
   {% endif %}
 
@@ -345,12 +363,13 @@
         <span class="badge {{ player.reliability.obp }}">{{ player.reliability.obp|reliability_label }}</span>
       </span>
     </div>
-    <div class="explain"><p>Batting average only counts hits. This counts every way of reaching base safely — a hit, a walk, or
-      getting hit by a pitch — divided by all the player's trips to the plate.</p><p>It's a broader, and arguably more
-      complete, measure of "how often does the player NOT make an out."</p><p><b>Higher is better.</b></p></div>
     <div class="tier-line">The player is <b class="tier-{{ cmp.obp.tier }}">{{ cmp.obp.tier_label }}</b> among the team's regular hitters.</div>
     {% if cmp.obp.distance_text %}<div class="distance">{{ cmp.obp.distance_text }}</div>{% endif %}
     {% if visible.where_he_stands %}{{ inline_compare("obp") }}{% endif %}
+    <details class="learn">
+      <summary>What is on-base %?</summary>
+      <div class="learn-body"><p>Batting average only counts hits. This counts every way of reaching base safely — a hit, a walk, or getting hit by a pitch — divided by all the player's trips to the plate.</p><p>It's a broader, and arguably more complete, measure of "how often does the player NOT make an out."</p><p><b>Higher is better.</b></p></div>
+    </details>
   </div>
   {% endif %}
 
@@ -363,10 +382,6 @@
         <span class="badge {{ player.reliability.slg }}">{{ player.reliability.slg|reliability_label }}</span>
       </span>
     </div>
-    <div class="explain"><p>This measures power, not just contact. Instead of every hit counting the same, a single is worth 1
-      "base," a double 2, a triple 3, and a home run 4 — those are added up and divided by at-bats.</p><p>A
-      hitter who mostly singles will have a slugging % close to the batting average; a hitter who racks
-      up doubles and home runs will have one noticeably higher.</p><p><b>Higher is better.</b></p></div>
     <div class="tier-line">The player is <b class="tier-{{ cmp.slg.tier }}">{{ cmp.slg.tier_label }}</b> among the team's regular hitters.</div>
     {% if cmp.slg.distance_text %}<div class="distance">{{ cmp.slg.distance_text }}</div>{% endif %}
     {% if visible.where_he_stands %}{{ inline_compare("slg") }}{% endif %}
@@ -374,6 +389,10 @@
     <div class="substat">Isolated Power (ISO): <b>{{ player.iso|fmt3 }}</b> — slugging % with batting average subtracted out, so
       singles don't count. What's left is just extra-base pop, on its own.</div>
     {% endif %}
+    <details class="learn">
+      <summary>What is slugging %?</summary>
+      <div class="learn-body"><p>This measures power, not just contact. Instead of every hit counting the same, a single is worth 1 "base," a double 2, a triple 3, and a home run 4 — those are added up and divided by at-bats.</p><p>A hitter who mostly singles will have a slugging % close to the batting average; a hitter who racks up doubles and home runs will have one noticeably higher.</p><p><b>Higher is better.</b></p></div>
+    </details>
   </div>
   {% endif %}
 
@@ -386,13 +405,13 @@
         <span class="badge {{ player.reliability.ops }}">{{ player.reliability.ops|reliability_label }}</span>
       </span>
     </div>
-    <div class="explain"><p>This just adds the two numbers above — on-base % and slugging % — into one score.</p><p>It's a quick
-      answer to "is this an all-around good hitter?" without checking two separate stats. There's no
-      fixed cutoff for what counts as "good" at this level, so the card below compares it to the rest of
-      the team instead of a textbook number.</p><p><b>Higher is better.</b></p></div>
     <div class="tier-line">The player is <b class="tier-{{ cmp.ops.tier }}">{{ cmp.ops.tier_label }}</b> among the team's regular hitters.</div>
     {% if cmp.ops.distance_text %}<div class="distance">{{ cmp.ops.distance_text }}</div>{% endif %}
     {% if visible.where_he_stands %}{{ inline_compare("ops") }}{% endif %}
+    <details class="learn">
+      <summary>What is OPS?</summary>
+      <div class="learn-body"><p>This just adds the two numbers above — on-base % and slugging % — into one score.</p><p>It's a quick answer to "is this an all-around good hitter?" without checking two separate stats. There's no fixed cutoff for what counts as "good" at this level, so the card below compares it to the rest of the team instead of a textbook number.</p><p><b>Higher is better.</b></p></div>
+    </details>
   </div>
   {% endif %}
 
@@ -402,9 +421,6 @@
       <span class="stat-name">Isolated Power (ISO)</span>
       <span class="stat-num-wrap"><span class="stat-num">{{ player.iso|fmt3 }}</span></span>
     </div>
-    <div class="explain"><p>Slugging % (see above) with batting average subtracted out, so singles don't count — what's left is
-      just extra-base power, on its own, separate from how often the player gets a hit at all.</p><p><b>Higher is
-      better.</b> (Shown on its own because SLG is hidden in this view.)</p></div>
   </div>
   {% endif %}
 
@@ -453,6 +469,10 @@
       home run this stretch{% if player.hr > 0 %} — {{ player.name.split(" ")[0] }} is one of them, with {{ player.hr|int }}{% endif %}.
       {% endif %}
     </div>
+    <details class="learn">
+      <summary>What is isolated power?</summary>
+      <div class="learn-body"><p>Slugging % (see above) with batting average subtracted out, so singles don't count — what's left is just extra-base power, on its own, separate from how often the player gets a hit at all.</p><p><b>Higher is better.</b> (Shown on its own because SLG is hidden in this view.)</p></div>
+    </details>
   </div>
   {% endif %}
 
@@ -470,6 +490,9 @@
       {{ player.name.split(" ")[0] }} has played mostly <b>{{ player.primary_position }}</b> this stretch
       ({{ player.primary_position_innings|fmt_inn }} innings there).
       {% endif %}</p>
+      <details class="learn">
+      <summary>How to read the fielding numbers</summary>
+      <div class="learn-body">
       <p>These numbers come from {{ player.def_tc|int }} recorded fielding chances (a ball hit or thrown to
       the player that the player had a chance to field) — enough to say something, tagged below with how much to trust
       each one the same way the batting numbers are.</p>
@@ -477,6 +500,8 @@
       influenced by position — a catcher or infielder naturally gets far more chances per inning than an
       outfielder does — so it's more useful for tracking the player's own progress over time than for comparing
       the player to a teammate who plays somewhere else.</p>
+      </div>
+      </details>
     </div>
   </div>
 
@@ -488,12 +513,13 @@
         <span class="badge {{ player.reliability.fpct }}">{{ player.reliability.fpct|reliability_label }}</span>
       </span>
     </div>
-    <div class="explain"><p>Of every ball the player had a chance to field ({{ player.def_tc|int }} chances — {{ player.putouts|int }} putouts
-      plus {{ player.assists|int }} assists plus {{ player.errors|int }} errors), the share handled cleanly.</p><p>Same
-      .XXX notation as batting average — .950 means the player converted 95 out of 100 chances.</p><p><b>Higher is
-      better.</b></p></div>
+    <div class="explain"><p>Of every ball the player had a chance to field ({{ player.def_tc|int }} chances — {{ player.putouts|int }} putouts plus {{ player.assists|int }} assists plus {{ player.errors|int }} errors), the share handled cleanly.</p></div>
     <div class="tier-line">The player is <b class="tier-{{ def_cmp.fpct.tier }}">{{ def_cmp.fpct.tier_label }}</b> among the roster's other fielders with enough chances to compare.</div>
     {% if def_cmp.fpct.distance_text %}<div class="distance">{{ def_cmp.fpct.distance_text }}</div>{% endif %}
+    <details class="learn">
+      <summary>What is fielding %?</summary>
+      <div class="learn-body"><p>Same .XXX notation as batting average — .950 means the player converted 95 out of 100 chances.</p><p><b>Higher is better.</b></p></div>
+    </details>
   </div>
 
   <div class="module stat-card">
@@ -504,12 +530,13 @@
         <span class="badge {{ player.reliability.range_factor }}">{{ player.reliability.range_factor|reliability_label }}</span>
       </span>
     </div>
-    <div class="explain"><p>Putouts plus assists, scaled to a per-9-innings rate ((PO + A) ÷ innings fielded × 9) — a rough measure
-      of how often the player is involved in a defensive play, not just how cleanly.</p><p>Because it depends so much on
-      position (see note above), <b>read this as the player's own trend over time more than a head-to-head
-      comparison.</b></p><p><b>Higher is better.</b></p></div>
+    <div class="explain"><p>Because it depends so much on position (see note above), <b>read this as the player's own trend over time more than a head-to-head comparison.</b></p></div>
     <div class="tier-line">The player is <b class="tier-{{ def_cmp.range_factor.tier }}">{{ def_cmp.range_factor.tier_label }}</b> among the roster's other fielders with enough innings to compare.</div>
     {% if def_cmp.range_factor.distance_text %}<div class="distance">{{ def_cmp.range_factor.distance_text }}</div>{% endif %}
+    <details class="learn">
+      <summary>What is range factor?</summary>
+      <div class="learn-body"><p>Putouts plus assists, scaled to a per-9-innings rate ((PO + A) ÷ innings fielded × 9) — a rough measure of how often the player is involved in a defensive play, not just how cleanly.</p><p><b>Higher is better.</b></p></div>
+    </details>
   </div>
 
   <div class="module stat-card">
@@ -520,13 +547,16 @@
         <span class="badge {{ player.reliability.error_rate }}">{{ player.reliability.error_rate|reliability_label }}</span>
       </span>
     </div>
-    <div class="explain"><p>{{ player.errors|int }} errors out of {{ player.def_tc|int }} chances. The flip side of fielding %, shown as its
-      own number because it's the most direct read on "how often did a play get away from the player."</p><p><b>Lower is better.</b></p></div>
+    <div class="explain"><p>{{ player.errors|int }} errors out of {{ player.def_tc|int }} chances.</p></div>
     <div class="tier-line">The player is <b class="tier-{{ def_cmp.error_rate.tier }}">{{ def_cmp.error_rate.tier_label }}</b> among the roster's other fielders with enough chances to compare.</div>
     {% if def_cmp.error_rate.distance_text %}<div class="distance">{{ def_cmp.error_rate.distance_text }}</div>{% endif %}
     {% if player.double_plays > 0 %}
     <div class="substat">The player was also part of {{ player.double_plays|int }} double play{{ "s" if player.double_plays != 1 else "" }} this stretch.</div>
     {% endif %}
+    <details class="learn">
+      <summary>What is error rate?</summary>
+      <div class="learn-body"><p>The flip side of fielding %, shown as its own number because it's the most direct read on "how often did a play get away from the player."</p><p><b>Lower is better.</b></p></div>
+    </details>
   </div>
   {% endif %}
 
@@ -568,11 +598,16 @@
     <div class="callout">
       <p>{{ player.name.split(" ")[0] }} pitched <b>{{ player.p_ip|fmt_inn }} innings</b> this stretch, facing
       {{ player.p_bf|int }} batters{% if player.p_np > 0 %} and throwing {{ player.p_np|int }} pitches{% endif %}.</p>
+      <details class="learn">
+      <summary>How pitching is measured</summary>
+      <div class="learn-body">
       <p>Pitching is measured against simple coaching goals rather than ranked against teammates, because a
       team only has a handful of pitchers.</p>
       <p>The dots still show where the player sits among the team's
       {{ pitch.n_pitchers }} pitchers with enough innings to compare. The goals are common rules of thumb
       for youth pitchers, not an official standard.</p>
+      </div>
+      </details>
     </div>
   </div>
 
@@ -594,11 +629,12 @@
         <span class="badge {{ player.reliability.strike_pct }}">{{ player.reliability.strike_pct|reliability_label }}</span>
       </span>
     </div>
-    <div class="explain"><p>The share of all pitches that were strikes (called, swinging, or fouled off), including balls
-      put in play. 60% means 6 of every 10 pitches.</p><p>Throwing strikes is the single biggest thing a young pitcher
-      controls.</p><p><b>Higher is better.</b></p></div>
     {{ goal_line("strike_pct") }}
     {{ pitch_dots("strike_pct", "pct") }}
+    <details class="learn">
+      <summary>What is strike %?</summary>
+      <div class="learn-body"><p>The share of all pitches that were strikes (called, swinging, or fouled off), including balls put in play. 60% means 6 of every 10 pitches.</p><p>Throwing strikes is the single biggest thing a young pitcher controls.</p><p><b>Higher is better.</b></p></div>
+    </details>
   </div>
   {% endif %}
 
@@ -611,10 +647,12 @@
         <span class="badge {{ player.reliability.fps_pct }}">{{ player.reliability.fps_pct|reliability_label }}</span>
       </span>
     </div>
-    <div class="explain"><p>How often the very first pitch to a batter was a strike. Getting ahead 0–1 puts the pitcher in
-      control of the at-bat; falling behind 1–0 puts the batter in control.</p><p><b>Higher is better.</b></p></div>
     {{ goal_line("fps_pct") }}
     {{ pitch_dots("fps_pct", "pct") }}
+    <details class="learn">
+      <summary>What is first-pitch strike %?</summary>
+      <div class="learn-body"><p>How often the very first pitch to a batter was a strike. Getting ahead 0–1 puts the pitcher in control of the at-bat; falling behind 1–0 puts the batter in control.</p><p><b>Higher is better.</b></p></div>
+    </details>
   </div>
   {% endif %}
 
@@ -627,10 +665,13 @@
         <span class="badge {{ player.reliability.bb_per_inn }}">{{ player.reliability.bb_per_inn|reliability_label }}</span>
       </span>
     </div>
-    <div class="explain"><p>{{ player.p_bb|int }} walks over {{ player.p_ip|fmt_inn }} innings. Every walk is a free base the
-      defense never had a chance to stop.</p><p><b>Lower is better.</b></p></div>
+    <div class="explain"><p>{{ player.p_bb|int }} walks over {{ player.p_ip|fmt_inn }} innings.</p></div>
     {{ goal_line("bb_per_inn") }}
     {{ pitch_dots("bb_per_inn", "dec") }}
+    <details class="learn">
+      <summary>What is walks per inning?</summary>
+      <div class="learn-body"><p>Every walk is a free base the defense never had a chance to stop.</p><p><b>Lower is better.</b></p></div>
+    </details>
   </div>
   {% endif %}
 
@@ -643,10 +684,13 @@
         <span class="badge {{ player.reliability.k_per_bb }}">{{ player.reliability.k_per_bb|reliability_label }}</span>
       </span>
     </div>
-    <div class="explain"><p>{{ player.p_so|int }} strikeouts and {{ player.p_bb|int }} walks. More strikeouts than walks
-      means the pitcher is winning more of the at-bats they fully control.</p><p><b>Higher is better.</b></p></div>
+    <div class="explain"><p>{{ player.p_so|int }} strikeouts and {{ player.p_bb|int }} walks.</p></div>
     {{ goal_line("k_per_bb") }}
     {{ pitch_dots("k_per_bb", "dec") }}
+    <details class="learn">
+      <summary>What is strikeouts per walk?</summary>
+      <div class="learn-body"><p>More strikeouts than walks means the pitcher is winning more of the at-bats they fully control.</p><p><b>Higher is better.</b></p></div>
+    </details>
   </div>
   {% endif %}
 
@@ -659,9 +703,11 @@
         <span class="badge {{ player.reliability.swm_pct }}">{{ player.reliability.swm_pct|reliability_label }}</span>
       </span>
     </div>
-    <div class="explain"><p>The share of all pitches the batter swung at and missed. A sign of how hard the pitcher's
-      pitches are to hit.</p><p><b>Higher is better.</b> Shown for context, without a goal.</p></div>
     {{ pitch_dots("swm_pct", "pct") }}
+    <details class="learn">
+      <summary>What is swing-and-miss %?</summary>
+      <div class="learn-body"><p>The share of all pitches the batter swung at and missed. A sign of how hard the pitcher's pitches are to hit.</p><p><b>Higher is better.</b> Shown for context, without a goal.</p></div>
+    </details>
   </div>
   {% endif %}
 
@@ -674,10 +720,12 @@
         <span class="badge {{ player.reliability.opp_avg }}">{{ player.reliability.opp_avg|reliability_label }}</span>
       </span>
     </div>
-    <div class="explain"><p>How well batters hit against this pitcher: {{ player.p_h|int }} hits allowed, counted the same
-      way as a batting average.</p><p>At this age it depends a lot on the fielders behind the pitcher, so it's shown
-      for context, without a goal.</p><p><b>Lower is better.</b></p></div>
+    <div class="explain"><p>{{ player.p_h|int }} hits allowed.</p></div>
     {{ pitch_dots("opp_avg", "avg") }}
+    <details class="learn">
+      <summary>What is opponents' batting average?</summary>
+      <div class="learn-body"><p>How well batters hit against this pitcher, counted the same way as a batting average.</p><p>At this age it depends a lot on the fielders behind the pitcher, so it's shown for context, without a goal.</p><p><b>Lower is better.</b></p></div>
+    </details>
   </div>
   {% endif %}
 
@@ -708,8 +756,6 @@
       <span><span class="bb-key ld"></span> Line drives {{ player.ld_pct|round|int }}%</span>
       <span><span class="bb-key fb"></span> Fly balls {{ player.fb_pct|round|int }}%</span>
     </div>
-    <div class="explain" style="margin-top:8px;"><p>Ground balls are usually the easiest to turn into outs; line drives
-      are the hardest. This describes the pitcher's style more than it grades it.</p></div>
   </div>
   {% endif %}
 
@@ -732,6 +778,10 @@
       </table>
     </div>
     {% endif %}
+    <details class="learn">
+      <summary>What are ground balls, line drives and fly balls?</summary>
+      <div class="learn-body"><p>Ground balls are usually the easiest to turn into outs; line drives are the hardest. This describes the pitcher's style more than it grades it.</p></div>
+    </details>
   </div>
   {% endif %}
 

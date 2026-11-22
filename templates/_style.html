@@ -141,7 +141,9 @@
     align-items:flex-start;
     flex-wrap:wrap;
     gap:8px;
-    margin-bottom:4px;
+    margin-bottom:8px;
+    padding-bottom:10px;
+    border-bottom:1px solid var(--border);
   }
   .stat-card .stat-name{font-weight:700;font-size:15px;color:var(--navy);padding-top:3px;}
   .stat-card .stat-num-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
@@ -165,9 +167,48 @@
     font-size:14px;
     color:var(--text);
     margin-top:8px;
-    padding-top:8px;
-    border-top:1px solid var(--border);
   }
+
+  /* "What is …?" disclosure: the definition is one tap away, the player's
+     own numbers stay the main read. Native <details>, so it works without
+     JS, with screen readers, and on phones. */
+  details.learn{
+    margin-top:12px;
+    padding-top:8px;
+    border-top:1px dashed var(--border);
+    font-size:14px;
+    color:var(--text);
+  }
+  details.learn > summary{
+    cursor:pointer;
+    list-style:none;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    min-height:32px;
+    color:var(--blue);
+    font-weight:600;
+  }
+  details.learn > summary::-webkit-details-marker{display:none;}
+  details.learn > summary::before{
+    content:"";
+    flex:none;
+    border-left:6px solid currentColor;
+    border-top:5px solid transparent;
+    border-bottom:5px solid transparent;
+    transition:transform .15s ease;
+  }
+  details.learn[open] > summary::before{transform:rotate(90deg);}
+  details.learn > summary:hover{color:var(--blue-dark);text-decoration:underline;}
+  details.learn > summary:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px;}
+  details.learn .learn-body{padding:4px 0 2px 14px;}
+  details.learn .learn-body p{margin:0 0 8px;}
+  details.learn .learn-body p:last-child{margin-bottom:0;}
+  .callout > details.learn:first-child{margin-top:0;padding-top:0;border-top:none;}
+  .statgrid .box details.learn{margin-top:6px;padding-top:4px;font-size:12.5px;}
+  .statgrid .box details.learn > summary{min-height:28px;align-items:flex-start;gap:6px;}
+  .statgrid .box details.learn > summary::before{margin-top:.45em;}
+  .statgrid .box details.learn .learn-body{padding-left:0;color:var(--gray);line-height:1.4;}
   .stat-card .substat{
     margin-top:8px;
     padding-top:8px;
@@ -402,5 +443,14 @@
     .summary-box .headline{font-size:12.5px;margin-bottom:4px;}
     table.roster-table{font-size:9px;}
     footer{margin-top:10px;font-size:9px;}
+    details.learn{font-size:10.5px;margin-top:5px;padding-top:4px;}
+    details.learn > summary{min-height:0;}
+    details.learn > summary::before{display:none;}
   }
 </style>
+<script>
+  /* Printed reports should include every explanation, so open them all. */
+  window.addEventListener("beforeprint", function () {
+    document.querySelectorAll("details.learn").forEach(function (d) { d.open = true; });
+  });
+</script>

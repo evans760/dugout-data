@@ -46,6 +46,9 @@
   <h2 class="section-title">How You've Trended</h2>
   <div class="module">
     <div class="callout">
+      <details class="learn">
+      <summary>How to read the arrows</summary>
+      <div class="learn-body">
       <p>Your season is split into three chunks of games — early, middle, and late — so you can see if
       you're heading in a good direction, not just one big average for the whole year.</p>
       <p>Starting with the
@@ -54,6 +57,8 @@
       or down from the box before it, and green always means "that's the good direction for this stat" —
       even if that means the number went down (like strikeouts).</p>
       <p>A gray <span class="trend-chip flat">→</span> means it barely changed.</p>
+      </div>
+      </details>
     </div>
     <div class="trend-grid">
       {% for t in trend %}
@@ -75,28 +80,28 @@
       <div class="box">
         <span class="n">{{ player.avg|fmt3 }}</span>
         <span class="lbl">Batting average</span>
-        <p class="tip">Hits ÷ at-bats. Bigger number = more hits when you swing away.</p>
+        <details class="learn"><summary>What's batting average?</summary><div class="learn-body"><p>Hits ÷ at-bats. Bigger number = more hits when you swing away.</p></div></details>
       </div>
       {% endif %}
       {% if visible.obp %}
       <div class="box">
         <span class="n">{{ player.obp|fmt3 }}</span>
         <span class="lbl">On-base %</span>
-        <p class="tip">Every way you didn't make an out — hits AND walks. Bigger number = reaching base more.</p>
+        <details class="learn"><summary>What's on-base %?</summary><div class="learn-body"><p>Every way you didn't make an out — hits AND walks. Bigger number = reaching base more.</p></div></details>
       </div>
       {% endif %}
       {% if visible.slg %}
       <div class="box">
         <span class="n">{{ player.slg|fmt3 }}</span>
         <span class="lbl">Slugging %</span>
-        <p class="tip">Extra credit for extra-base hits — a double counts more than a single. Bigger number = more power.</p>
+        <details class="learn"><summary>What's slugging %?</summary><div class="learn-body"><p>Extra credit for extra-base hits — a double counts more than a single. Bigger number = more power.</p></div></details>
       </div>
       {% endif %}
       {% if visible.bb_pct %}
       <div class="box">
         <span class="n">{{ "%.0f"|format(player.bb_pct) }}%</span>
         <span class="lbl">Walk rate</span>
-        <p class="tip">How often the pitcher walked you instead of you putting the ball in play. A skill, not luck.</p>
+        <details class="learn"><summary>What's walk rate?</summary><div class="learn-body"><p>How often the pitcher walked you instead of you putting the ball in play. A skill, not luck.</p></div></details>
       </div>
       {% endif %}
     </div>
@@ -141,24 +146,24 @@
       <div class="box">
         <span class="n">{{ player.fpct|fmt3 }}</span>
         <span class="lbl">Fielding %</span>
-        <p class="tip">Out of every ball you had a chance at, how many you handled cleanly. .950 means 95 out of 100.</p>
+        <details class="learn"><summary>What's fielding %?</summary><div class="learn-body"><p>Out of every ball you had a chance at, how many you handled cleanly. .950 means 95 out of 100.</p></div></details>
       </div>
       {% if player.range_factor is not none %}
       <div class="box">
         <span class="n">{{ "%.1f"|format(player.range_factor) }}</span>
         <span class="lbl">Plays per 9 innings</span>
-        <p class="tip">How involved you are on defense. This depends a lot on what position you play, so it's more useful to watch your own over time than to compare it to a teammate's.</p>
+        <details class="learn"><summary>What's plays per 9 innings?</summary><div class="learn-body"><p>How involved you are on defense. This depends a lot on what position you play, so it's more useful to watch your own over time than to compare it to a teammate's.</p></div></details>
       </div>
       {% endif %}
       <div class="box">
         <span class="n">{{ player.putouts|int }}</span>
         <span class="lbl">Putouts</span>
-        <p class="tip">Times you were the one who actually got the out.</p>
+        <details class="learn"><summary>What's a putout?</summary><div class="learn-body"><p>Times you were the one who actually got the out.</p></div></details>
       </div>
       <div class="box">
         <span class="n">{{ player.assists|int }}</span>
         <span class="lbl">Assists</span>
-        <p class="tip">Times you helped get an out, like throwing to first base.</p>
+        <details class="learn"><summary>What's an assist?</summary><div class="learn-body"><p>Times you helped get an out, like throwing to first base.</p></div></details>
       </div>
     </div>
   </div>
@@ -185,7 +190,7 @@
       <div class="box">
         <span class="n">{{ player.fps_pct|round|int }}%</span>
         <span class="lbl">First-pitch strikes</span>
-        <p class="tip">How often your first pitch to a batter was a strike. Getting ahead makes everything easier.</p>
+        <details class="learn"><summary>What's a first-pitch strike?</summary><div class="learn-body"><p>How often your first pitch to a batter was a strike. Getting ahead makes everything easier.</p></div></details>
       </div>
       {% endif %}
       {% if player.top_mph %}
