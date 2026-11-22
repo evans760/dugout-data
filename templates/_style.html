@@ -183,9 +183,9 @@
     cursor:pointer;
     list-style:none;
     display:inline-flex;
-    align-items:center;
+    align-items:flex-start;
     gap:8px;
-    min-height:32px;
+    padding:6px 0;
     color:var(--blue);
     font-weight:600;
   }
@@ -193,6 +193,7 @@
   details.learn > summary::before{
     content:"";
     flex:none;
+    margin-top:.45em;
     border-left:6px solid currentColor;
     border-top:5px solid transparent;
     border-bottom:5px solid transparent;
@@ -206,8 +207,7 @@
   details.learn .learn-body p:last-child{margin-bottom:0;}
   .callout > details.learn:first-child{margin-top:0;padding-top:0;border-top:none;}
   .statgrid .box details.learn{margin-top:6px;padding-top:4px;font-size:12.5px;}
-  .statgrid .box details.learn > summary{min-height:28px;align-items:flex-start;gap:6px;}
-  .statgrid .box details.learn > summary::before{margin-top:.45em;}
+  .statgrid .box details.learn > summary{padding:4px 0;gap:6px;}
   .statgrid .box details.learn .learn-body{padding-left:0;color:var(--gray);line-height:1.4;}
   .stat-card .substat{
     margin-top:8px;
@@ -444,7 +444,7 @@
     table.roster-table{font-size:9px;}
     footer{margin-top:10px;font-size:9px;}
     details.learn{font-size:10.5px;margin-top:5px;padding-top:4px;}
-    details.learn > summary{min-height:0;}
+    details.learn > summary{padding:0;}
     details.learn > summary::before{display:none;}
   }
 </style>

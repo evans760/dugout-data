@@ -189,9 +189,9 @@
     cursor:pointer;
     list-style:none;
     display:inline-flex;
-    align-items:center;
+    align-items:flex-start;
     gap:8px;
-    min-height:32px;
+    padding:6px 0;
     color:var(--blue);
     font-weight:600;
   }
@@ -199,6 +199,7 @@
   details.learn > summary::before{
     content:"";
     flex:none;
+    margin-top:.45em;
     border-left:6px solid currentColor;
     border-top:5px solid transparent;
     border-bottom:5px solid transparent;
@@ -212,8 +213,7 @@
   details.learn .learn-body p:last-child{margin-bottom:0;}
   .callout > details.learn:first-child{margin-top:0;padding-top:0;border-top:none;}
   .statgrid .box details.learn{margin-top:6px;padding-top:4px;font-size:12.5px;}
-  .statgrid .box details.learn > summary{min-height:28px;align-items:flex-start;gap:6px;}
-  .statgrid .box details.learn > summary::before{margin-top:.45em;}
+  .statgrid .box details.learn > summary{padding:4px 0;gap:6px;}
   .statgrid .box details.learn .learn-body{padding-left:0;color:var(--gray);line-height:1.4;}
   .stat-card .substat{
     margin-top:8px;
@@ -450,7 +450,7 @@
     table.roster-table{font-size:9px;}
     footer{margin-top:10px;font-size:9px;}
     details.learn{font-size:10.5px;margin-top:5px;padding-top:4px;}
-    details.learn > summary{min-height:0;}
+    details.learn > summary{padding:0;}
     details.learn > summary::before{display:none;}
   }
 </style>
@@ -857,10 +857,6 @@ Focus on strikeout rate (k%)      </div>
       the order and who's already on base as by the hitting itself, so they're left out of the tiers
       and comparisons elsewhere in this report.
     </div>
-    <details class="learn">
-      <summary>What is isolated power?</summary>
-      <div class="learn-body"><p>Slugging % (see above) with batting average subtracted out, so singles don't count — what's left is just extra-base power, on its own, separate from how often the player gets a hit at all.</p><p><b>Higher is better.</b> (Shown on its own because SLG is hidden in this view.)</p></div>
-    </details>
   </div>
 
 
@@ -1160,6 +1156,10 @@ Focus on strikeout rate (k%)      </div>
       <span><span class="bb-key ld"></span> Line drives 20%</span>
       <span><span class="bb-key fb"></span> Fly balls 24%</span>
     </div>
+    <details class="learn">
+      <summary>What are ground balls, line drives and fly balls?</summary>
+      <div class="learn-body"><p>Ground balls are usually the easiest to turn into outs; line drives are the hardest. This describes the pitcher's style more than it grades it.</p></div>
+    </details>
   </div>
 
   <div class="module stat-card">
@@ -1176,10 +1176,6 @@ Focus on strikeout rate (k%)      </div>
         </tbody>
       </table>
     </div>
-    <details class="learn">
-      <summary>What are ground balls, line drives and fly balls?</summary>
-      <div class="learn-body"><p>Ground balls are usually the easiest to turn into outs; line drives are the hardest. This describes the pitcher's style more than it grades it.</p></div>
-    </details>
   </div>
 
   <div class="module stat-card">
