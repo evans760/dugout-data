@@ -52,7 +52,13 @@
   .examples-btn{display:inline-block;margin-top:14px;padding:9px 16px;border:1px solid rgba(255,255,255,.4);border-radius:var(--radius-btn);color:#fff;font-weight:700;font-size:0.9rem;text-decoration:none;}
   .examples-btn:hover{background:rgba(255,255,255,.1);border-color:#fff;}
   .step{background:var(--bg-paper);border:1px solid var(--divider);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:20px;margin-bottom:16px;opacity:1;transition:opacity .2s;}
-  .step.disabled{opacity:.45;pointer-events:none;}
+  /* Later steps stay out of sight until a file is in; JS removes .disabled. */
+  .step.disabled{display:none;}
+  .eyebrow{font-size:0.75rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--text-secondary);margin:0 0 8px;}
+  .preview-item{display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:start;}
+  .preview-item .ico{width:40px;height:40px;border-radius:10px;background:var(--primary-lighter);color:var(--primary);display:grid;place-items:center;}
+  .preview-item .ico svg{width:20px;height:20px;}
+  .preview-item .hint{margin:0;}
   .step h2{font-size:1rem;margin:0 0 4px;color:var(--text-primary);font-weight:700;}
   .step .hint{color:var(--text-secondary);font-size:0.88rem;margin:0 0 14px;}
   label{display:block;font-size:0.82rem;font-weight:600;color:var(--text-primary);margin:12px 0 5px;}
@@ -135,6 +141,18 @@
       <input type="file" id="fileInput" accept=".csv">
     </div>
     <div id="uploadError"></div>
+  </div>
+
+  <div class="step" id="whatsNext">
+    <p class="eyebrow">Once your file is in, you can</p>
+    <div class="preview-item">
+      <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+      <div>
+        <h2>Ask about this roster</h2>
+        <p class="hint">Answers are computed straight from your CSV — nothing here is sent anywhere. Try
+          "who has the most home runs?", "what's Luke's OBP?", or "Luke vs Owen, who has more RBI?".</p>
+      </div>
+    </div>
   </div>
 
   <div class="step disabled" id="step2">
@@ -311,6 +329,7 @@ async function handleFile(file) {
     sessionId = data.session_id;
     renderMappingTable(data.headers, data.mapping, data.candidate_fields, data.missing_required, data.header_row_skipped);
     step2.classList.remove("disabled");
+    $("whatsNext").classList.add("disabled");
     step2.scrollIntoView({behavior:"smooth", block:"start"});
   } catch (err) {
     $("uploadError").innerHTML = `<div class="alert">${err.message}</div>`;
